@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 12 · NASA OSDR Mouse Transcriptomics Worksheet · PhilSA-ISMDD</title>
+  
+  
+  
+  <style>
+    /* ─── CSS Variables ─── */
+    :root[data-theme="dark"] {
+      --bg-primary: #0a0d14;
+      --bg-secondary: #111520;
+      --bg-card: #141824;
+      --bg-card-hover: #1a1f2e;
+      --border-color: rgba(255,255,255,0.07);
+      --border-accent: rgba(78,151,255,0.3);
+      --text-primary: #e8eaf0;
+      --text-secondary: #8b93a8;
+      --text-muted: #555c72;
+      --accent-primary: #4e97ff;
+      --accent-teal: #2dd4bf;
+      --accent-purple: #a78bfa;
+      --accent-amber: #fbbf24;
+      --accent-rose: #fb7185;
+      --accent-green: #34d399;
+      --code-bg: #0d1117;
+      --code-border: rgba(78,151,255,0.2);
+      --callout-tip-bg: rgba(45,212,191,0.08);
+      --callout-tip-border: rgba(45,212,191,0.4);
+      --callout-warn-bg: rgba(251,191,36,0.08);
+      --callout-warn-border: rgba(251,191,36,0.4);
+      --callout-info-bg: rgba(78,151,255,0.08);
+      --callout-info-border: rgba(78,151,255,0.4);
+      --nav-bg: rgba(10,13,20,0.92);
+      --sidebar-bg: #0d1019;
+      --table-head-bg: rgba(78,151,255,0.1);
+      --table-stripe: rgba(255,255,255,0.02);
+      --shadow-glow: 0 0 40px rgba(78,151,255,0.08);
+      /* worksheet-specific */
+      --ws-task-bg: #111825;
+      --ws-task-border: rgba(78,151,255,0.22);
+      --ws-input-bg: #0d1117;
+      --ws-input-border: rgba(78,151,255,0.25);
+      --ws-input-focus: rgba(78,151,255,0.6);
+      --ws-answer-bg: rgba(45,212,191,0.07);
+      --ws-answer-border: rgba(45,212,191,0.35);
+      --ws-done-bg: rgba(52,211,153,0.07);
+      --ws-done-border: rgba(52,211,153,0.35);
+      --ws-num-bg: rgba(78,151,255,0.15);
+      --progress-track: rgba(255,255,255,0.07);
+      --progress-fill: linear-gradient(90deg, #4e97ff, #2dd4bf);
+    }
+    :root[data-theme="light"] {
+      --bg-primary: #f4f6fc;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f4ff;
+      --border-color: rgba(0,0,0,0.08);
+      --border-accent: rgba(59,100,200,0.3);
+      --text-primary: #1a1f35;
+      --text-secondary: #4a5068;
+      --text-muted: #8b93a8;
+      --accent-primary: #2563eb;
+      --accent-teal: #0d9488;
+      --accent-purple: #7c3aed;
+      --accent-amber: #d97706;
+      --accent-rose: #e11d48;
+      --accent-green: #059669;
+      --code-bg: #f0f4f8;
+      --code-border: rgba(59,100,200,0.15);
+      --callout-tip-bg: rgba(13,148,136,0.06);
+      --callout-tip-border: rgba(13,148,136,0.35);
+      --callout-warn-bg: rgba(217,119,6,0.07);
+      --callout-warn-border: rgba(217,119,6,0.35);
+      --callout-info-bg: rgba(37,99,235,0.06);
+      --callout-info-border: rgba(37,99,235,0.3);
+      --nav-bg: rgba(244,246,252,0.95);
+      --sidebar-bg: #eef1f9;
+      --table-head-bg: rgba(37,99,235,0.08);
+      --table-stripe: rgba(0,0,0,0.02);
+      --shadow-glow: 0 4px 24px rgba(0,0,0,0.08);
+      --ws-task-bg: #f8faff;
+      --ws-task-border: rgba(37,99,235,0.18);
+      --ws-input-bg: #ffffff;
+      --ws-input-border: rgba(37,99,235,0.25);
+      --ws-input-focus: rgba(37,99,235,0.5);
+      --ws-answer-bg: rgba(13,148,136,0.06);
+      --ws-answer-border: rgba(13,148,136,0.3);
+      --ws-done-bg: rgba(5,150,105,0.06);
+      --ws-done-border: rgba(5,150,105,0.3);
+      --ws-num-bg: rgba(37,99,235,0.1);
+      --progress-track: rgba(0,0,0,0.08);
+      --progress-fill: linear-gradient(90deg, #2563eb, #0d9488);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 15px; line-height: 1.7;
+      background: var(--bg-primary); color: var(--text-primary);
+      transition: background 0.3s, color 0.3s;
+      min-height: 100vh;
+    }
+
+    /* ─── Starfield ─── */
+    #starfield { position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0; transition: opacity 0.5s; }
+    [data-theme="dark"] #starfield { opacity: 1; }
+    .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--dur,3s) ease-in-out infinite; }
+    @keyframes twinkle { 0%,100%{opacity:var(--min,.2)} 50%{opacity:var(--max,.8)} }
+
+    /* ─── Nav ─── */
+    #main-nav { position: sticky; top: 0; z-index: 100; background: var(--nav-bg); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-color); }
+    .nav-inner { max-width: 1400px; margin: 0 auto; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo { width: 36px; height: 36px; flex-shrink: 0; }
+    .nav-title { font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+    .nav-title span { display: block; font-size: 10px; color: var(--accent-teal); font-weight: 400; letter-spacing: 0.05em; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .theme-toggle { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-secondary); cursor: pointer; font-size: 13px; font-family: 'IBM Plex Sans', sans-serif; transition: all 0.2s; }
+    .theme-toggle:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+    /* ─── Progress Bar (sticky below nav) ─── */
+    #progress-bar-wrap {
+      position: sticky; top: 60px; z-index: 90;
+      background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);
+      padding: 10px 24px; display: flex; align-items: center; gap: 16px;
+    }
+    .progress-label { font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.07em; white-space: nowrap; }
+    .progress-track { flex: 1; height: 6px; border-radius: 3px; background: var(--progress-track); overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 3px; background: var(--progress-fill); width: 0%; transition: width 0.4s cubic-bezier(.4,0,.2,1); }
+    .progress-count { font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 700; color: var(--accent-teal); white-space: nowrap; }
+    .save-btn { display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--accent-green); color: var(--accent-green); background: transparent; font-size: 12px; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; transition: all 0.2s; }
+    .save-btn:hover { background: rgba(52,211,153,0.1); }
+    .save-btn.saved { border-color: var(--accent-teal); color: var(--accent-teal); }
+
+    /* ─── Layout ─── */
+    #app { position: relative; z-index: 1; }
+    .content-area { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 60px); }
+
+    /* ─── Sidebar ─── */
+    .sidebar { background: var(--sidebar-bg); border-right: 1px solid var(--border-color); padding: 28px 0; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border-color) transparent; }
+    .sidebar-back { display: block; padding: 0 20px 16px; color: var(--accent-primary); text-decoration: none; font-size: 13px; font-weight: 500; }
+    .sidebar-back:hover { color: var(--accent-teal); }
+    .sidebar-section { padding: 0 20px 20px; }
+    .sidebar-session-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 6px; }
+    .sidebar-session-title { font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
+    .sidebar-section-title { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+    .sidebar-toc { list-style: none; }
+    .sidebar-toc li { margin-bottom: 2px; }
+    .sidebar-toc a { display: block; padding: 5px 10px; color: var(--text-secondary); text-decoration: none; font-size: 12px; border-radius: 6px; border-left: 2px solid transparent; transition: all 0.15s; }
+    .sidebar-toc a.toc-sub { padding-left: 20px; font-size: 11.5px; }
+    .sidebar-toc a:hover, .sidebar-toc a.active { color: var(--accent-primary); background: var(--bg-card); border-left-color: var(--accent-primary); }
+    /* Task status dots in sidebar */
+    .sidebar-toc a { display: flex; align-items: center; gap: 6px; }
+    .toc-dot { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--text-muted); flex-shrink: 0; transition: all 0.3s; }
+    .toc-dot.done { background: var(--accent-green); border-color: var(--accent-green); }
+    .sidebar-divider { height: 1px; background: var(--border-color); margin: 8px 20px 20px; }
+
+    /* ─── Main ─── */
+    .content-main { padding: 36px 48px 100px; max-width: 820px; }
+
+    /* ─── Hero ─── */
+    .session-hero { margin-bottom: 28px; }
+    .session-badge { display: inline-block; font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-amber); background: var(--callout-warn-bg); border: 1px solid var(--callout-warn-border); border-radius: 20px; padding: 4px 12px; margin-bottom: 12px; }
+    .ws-badge { display: inline-block; font-family: 'Orbitron', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-green); background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.35); border-radius: 20px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; }
+    .session-main-title { font-family: 'Orbitron', monospace; font-size: clamp(20px, 2.5vw, 28px); font-weight: 700; line-height: 1.2; margin-bottom: 12px; background: linear-gradient(135deg, var(--text-primary) 60%, var(--accent-primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .session-topic-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .topic-pill { font-size: 12px; padding: 3px 10px; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-secondary); font-family: 'IBM Plex Mono', monospace; }
+
+    /* ─── Intro box ─── */
+    .intro-box { background: var(--bg-card); border: 1px solid var(--border-accent); border-radius: 12px; padding: 22px 26px; margin-bottom: 32px; box-shadow: var(--shadow-glow); }
+    .intro-box h3 { font-size: 14px; font-weight: 600; color: var(--accent-primary); margin-bottom: 10px; }
+    .intro-box p { font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; }
+    .intro-box p:last-child { margin-bottom: 0; }
+
+    /* ─── Section headers ─── */
+    .ws-section-title {
+      font-family: 'Orbitron', monospace; font-size: 15px; font-weight: 700;
+      color: var(--text-primary); margin: 44px 0 20px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color); scroll-margin-top: 120px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .ws-section-icon { font-size: 18px; }
+
+    /* ─── TASK CARD ─── */
+    .task-card {
+      background: var(--ws-task-bg); border: 1px solid var(--ws-task-border);
+      border-radius: 12px; margin-bottom: 20px; overflow: hidden;
+      transition: border-color 0.2s; scroll-margin-top: 120px;
+    }
+    .task-card.completed { border-color: var(--ws-done-border); }
+    .task-header {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 18px 20px 14px; border-bottom: 1px solid var(--border-color);
+      cursor: pointer; user-select: none;
+    }
+    .task-num {
+      min-width: 32px; height: 32px; border-radius: 50%;
+      background: var(--ws-num-bg); border: 2px solid var(--accent-primary);
+      color: var(--accent-primary); font-family: 'Orbitron', monospace;
+      font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.25s;
+    }
+    .task-card.completed .task-num { background: var(--accent-green); border-color: var(--accent-green); color: #0a0d14; }
+    .task-card.completed .task-num::after { content: '✓'; }
+    .task-card:not(.completed) .task-num-inner { display: block; }
+    .task-card.completed .task-num-inner { display: none; }
+    .task-meta { flex: 1; }
+    .task-type {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      font-family: 'IBM Plex Mono', monospace; padding: 2px 8px; border-radius: 8px;
+      display: inline-block; margin-bottom: 6px;
+    }
+    .type-navigate { background: var(--callout-info-bg); color: var(--accent-primary); border: 1px solid var(--callout-info-border); }
+    .type-find { background: rgba(167,139,250,0.08); color: var(--accent-purple); border: 1px solid rgba(167,139,250,0.3); }
+    .type-record { background: var(--callout-warn-bg); color: var(--accent-amber); border: 1px solid var(--callout-warn-border); }
+    .type-analyze { background: var(--callout-tip-bg); color: var(--accent-teal); border: 1px solid var(--callout-tip-border); }
+    .type-reflect { background: rgba(251,113,133,0.08); color: var(--accent-rose); border: 1px solid rgba(251,113,133,0.35); }
+    .type-compare { background: rgba(52,211,153,0.08); color: var(--accent-green); border: 1px solid rgba(52,211,153,0.35); }
+    .task-title { font-size: 14px; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
+    .task-pts { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+    .task-check-wrap { display: flex; align-items: center; }
+    .task-check {
+      width: 22px; height: 22px; border-radius: 6px;
+      border: 2px solid var(--ws-input-border); background: var(--ws-input-bg);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+    }
+    .task-check:hover { border-color: var(--accent-green); }
+    .task-check.checked { background: var(--accent-green); border-color: var(--accent-green); }
+    .task-check.checked::after { content: '✓'; color: #0a0d14; font-size: 13px; font-weight: 700; }
+
+    /* ─── Task body ─── */
+    .task-body { padding: 18px 20px 20px; }
+    .task-body p { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.65; }
+    .task-body strong { color: var(--text-primary); }
+    .task-body em { color: var(--accent-teal); }
+    .task-body code { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; background: var(--code-bg); border: 1px solid var(--code-border); border-radius: 4px; padding: 1px 5px; color: var(--accent-purple); }
+    .task-body a { color: var(--accent-primary); text-underline-offset: 3px; }
+    .task-body a:hover { color: var(--accent-teal); }
+
+    /* ─── Answer inputs ─── */
+    .answer-label { font-size: 12px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 5px; margin-top: 14px; }
+    .answer-input {
+      width: 100%; background: var(--ws-input-bg); border: 1px solid var(--ws-input-border);
+      border-radius: 8px; padding: 10px 14px; color: var(--text-primary);
+      font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.5;
+      resize: vertical; min-height: 44px; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .answer-input:focus { border-color: var(--ws-input-focus); box-shadow: 0 0 0 3px rgba(78,151,255,0.1); }
+    .answer-input.has-content { border-color: var(--ws-answer-border); background: var(--ws-answer-bg); }
+    .answer-input[type="text"] { min-height: unset; height: 42px; resize: none; }
+    textarea.answer-input { min-height: 90px; }
+
+    /* ─── Answer grid (two-column short answers) ─── */
+    .answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .answer-item { display: flex; flex-direction: column; }
+    .answer-item .answer-label { margin-top: 0; }
+
+    /* ─── Hint / reveal ─── */
+    .hint-wrap { margin-top: 12px; }
+    .hint-btn { background: none; border: 1px dashed var(--text-muted); border-radius: 6px; padding: 5px 12px; color: var(--text-muted); font-size: 12px; cursor: pointer; transition: all 0.2s; font-family: 'IBM Plex Sans', sans-serif; }
+    .hint-btn:hover { border-color: var(--accent-amber); color: var(--accent-amber); }
+    .hint-content { display: none; margin-top: 10px; background: var(--callout-warn-bg); border-left: 3px solid var(--callout-warn-border); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: var(--text-secondary); }
+    .hint-content.visible { display: block; }
+
+    /* ─── URL chip ─── */
+    .url-chip { display: inline-flex; align-items: center; gap: 5px; background: var(--code-bg); border: 1px solid var(--code-border); border-radius: 6px; padding: 5px 11px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--accent-teal); text-decoration: none; transition: border-color 0.2s; }
+    .url-chip:hover { border-color: var(--accent-teal); }
+
+    /* ─── Inline table inside task ─── */
+    .task-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); }
+    .task-table th { background: var(--table-head-bg); padding: 8px 12px; text-align: left; font-size: 11px; font-weight: 600; color: var(--accent-primary); letter-spacing: 0.04em; border-bottom: 1px solid var(--border-color); }
+    .task-table td { padding: 8px 12px; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); }
+    .task-table tr:last-child td { border-bottom: none; }
+    .task-table td input.answer-input { margin: 0; font-size: 13px; height: 34px; padding: 6px 10px; }
+
+    /* ─── Callouts inside tasks ─── */
+    .callout { border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 13.5px; }
+    .callout-title { font-weight: 600; margin-bottom: 5px; font-size: 13.5px; }
+    .callout p { margin: 0; font-size: 13.5px; }
+    .callout-tip { background: var(--callout-tip-bg); border-left: 3px solid var(--callout-tip-border); }
+    .callout-tip .callout-title { color: var(--accent-teal); }
+    .callout-info { background: var(--callout-info-bg); border-left: 3px solid var(--callout-info-border); }
+    .callout-info .callout-title { color: var(--accent-primary); }
+
+    /* ─── Section progress chip ─── */
+    .section-progress { display: inline-flex; align-items: center; gap: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-muted); background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 2px 8px; margin-left: 8px; }
+    .section-progress.complete { color: var(--accent-green); border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.07); }
+
+    /* ─── Reflection box ─── */
+    .reflection-box { background: rgba(251,113,133,0.06); border: 1px solid rgba(251,113,133,0.25); border-radius: 12px; padding: 20px 24px; margin: 20px 0; }
+    .reflection-box h4 { font-size: 13px; font-weight: 600; color: var(--accent-rose); margin-bottom: 10px; }
+
+    /* ─── Summary / completion card ─── */
+    .completion-card { background: var(--bg-card); border: 1px solid var(--border-accent); border-radius: 14px; padding: 32px; margin-top: 48px; text-align: center; box-shadow: var(--shadow-glow); }
+    .completion-icon { font-size: 48px; margin-bottom: 12px; }
+    .completion-title { font-family: 'Orbitron', monospace; font-size: 18px; font-weight: 700; color: var(--accent-primary); margin-bottom: 8px; }
+    .completion-sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+    .completion-stats { display: flex; justify-content: center; gap: 32px; margin-bottom: 24px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: 'Orbitron', monospace; font-size: 28px; font-weight: 700; color: var(--accent-teal); }
+    .stat-label { font-size: 12px; color: var(--text-muted); }
+    .next-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; background: var(--accent-primary); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; transition: opacity 0.2s; }
+    .next-btn:hover { opacity: 0.85; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 900px) {
+      .content-area { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
+      .content-main { padding: 20px 16px 80px; }
+      .answer-grid { grid-template-columns: 1fr; }
+      #progress-bar-wrap { padding: 8px 16px; gap: 10px; }
+      .save-btn span { display: none; }
+    }
+
+    /* ─── Export PDF button ─── */
+    .export-btn { display: flex; align-items: center; gap: 5px; padding: 5px 14px; border-radius: 6px; border: 1px solid var(--accent-purple); color: var(--accent-purple); background: transparent; font-size: 12px; font-weight: 600; font-family: 'IBM Plex Sans', sans-serif; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .export-btn:hover { background: rgba(167,139,250,0.12); }
+
+    /* ─── PRINT / PDF styles ─── */
+    @media print {
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      #starfield, #main-nav, #progress-bar-wrap, .sidebar, .task-check-wrap,
+      .hint-btn, .hint-content, .next-btn, .export-btn, .save-btn,
+      .completion-card { display: none !important; }
+      body { background: #ffffff !important; color: #1a1f35 !important; font-size: 12pt; line-height: 1.6; }
+      .content-area { display: block !important; }
+      .content-main { padding: 0 !important; max-width: 100% !important; }
+      #app { position: static !important; }
+      .pdf-cover { display: block !important; }
+      /* Task cards */
+      .task-card { border: 1px solid #d1d5db !important; background: #ffffff !important; margin-bottom: 24pt !important; break-inside: avoid; page-break-inside: avoid; }
+      .task-card.completed { border-color: #059669 !important; }
+      .task-header { background: #f8faff !important; border-bottom: 1px solid #e5e7eb !important; padding: 10pt 14pt !important; }
+      .task-num { background: #dbeafe !important; border-color: #2563eb !important; color: #2563eb !important; width: 28px !important; height: 28px !important; font-size: 11pt !important; }
+      .task-card.completed .task-num { background: #059669 !important; border-color: #059669 !important; color: #fff !important; }
+      .task-type { font-size: 9pt !important; }
+      .task-title { font-size: 12pt !important; color: #1a1f35 !important; }
+      .task-pts { font-size: 9pt !important; color: #6b7280 !important; }
+      .task-body { padding: 10pt 14pt !important; }
+      .task-body p { color: #374151 !important; font-size: 11pt !important; }
+      /* Hide interactive inputs — replaced by .pdf-answer divs */
+      .answer-input, .answer-grid .answer-input { display: none !important; }
+      .pdf-answer { display: block !important; background: #f0fdf4 !important; border: 1px solid #a7f3d0 !important; border-radius: 6px !important; padding: 8pt 12pt !important; font-size: 11pt !important; color: #1a1f35 !important; min-height: 28pt !important; margin-top: 4pt !important; margin-bottom: 8pt !important; white-space: pre-wrap !important; word-break: break-word !important; }
+      .pdf-answer.empty { background: #fafafa !important; border-color: #e5e7eb !important; color: #9ca3af !important; font-style: italic !important; }
+      .answer-label { display: block !important; font-size: 9pt !important; color: #6b7280 !important; margin-top: 10pt !important; margin-bottom: 3pt !important; font-weight: 600 !important; text-transform: uppercase !important; letter-spacing: 0.05em !important; }
+      /* Tables */
+      .task-table { font-size: 10pt !important; }
+      .task-table th { background: #dbeafe !important; color: #1d4ed8 !important; }
+      .task-table td { color: #374151 !important; }
+      /* Callouts */
+      .callout-tip { background: #f0fdfa !important; border-left-color: #0d9488 !important; }
+      .callout-info { background: #eff6ff !important; border-left-color: #2563eb !important; }
+      .callout-title { font-size: 11pt !important; }
+      .callout p { color: #374151 !important; font-size: 10pt !important; }
+      /* Section titles */
+      .ws-section-title { color: #1a1f35 !important; font-size: 14pt !important; border-bottom-color: #d1d5db !important; margin-top: 28pt !important; page-break-before: auto; }
+      .section-progress { display: none !important; }
+      .session-main-title { background: none !important; -webkit-text-fill-color: #1a1f35 !important; font-size: 20pt !important; }
+      .session-badge { background: #fef3c7 !important; border-color: #d97706 !important; color: #92400e !important; }
+      .ws-badge { display: none !important; }
+      .session-topic-pills { display: none !important; }
+      .intro-box { background: #eff6ff !important; border-color: #93c5fd !important; }
+      .intro-box h3 { color: #1d4ed8 !important; }
+      .intro-box p { color: #374151 !important; }
+      /* answer-grid in print */
+      .answer-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8pt !important; }
+      /* URL chips */
+      .url-chip { background: #f0f4f8 !important; color: #0d9488 !important; border-color: #a7f3d0 !important; font-size: 9pt !important; }
+    }
+    /* pdf-answer is hidden during normal browsing */
+    .pdf-answer { display: none; }
+    .pdf-cover { display: none; }
+  
+    /* Clear cache button */
+    .clear-btn { display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 6px; border: 1px solid var(--accent-red, #ff6060); color: var(--accent-red, #ff6060); background: transparent; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .clear-btn:hover { background: rgba(255,96,96,0.12); }
+
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div id="starfield" aria-hidden="true"></div>
+
+<div id="app">
+
+  <!-- ─── Nav ─── -->
+  <nav id="main-nav"><div class="nav-inner">
+    <a href="../index.html" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/>
+        <circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/>
+        <circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/>
+        <circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/>
+      </svg>
+      <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+    </a>
+    <div class="nav-right">
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span class="theme-icon" id="theme-icon">☀️</span>
+        <span id="theme-label">Light Mode</span>
+      </button>
+    </div>
+  </div></nav>
+
+  <!-- ─── Progress Bar ─── -->
+  <div id="progress-bar-wrap">
+    <span class="progress-label">Progress</span>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <span class="progress-count" id="progress-count">0 / 16</span>
+    <button class="save-btn" id="save-btn" onclick="saveProgress()">💾 <span>Save</span></button>
+    <button class="export-btn" onclick="exportToPDF()">📄 Export PDF</button>
+  <button class="clear-btn" onclick="clearProgress()" title="Clear all saved answers">🗑 Clear</button>
+  </div>
+
+  <div class="content-area">
+
+    <!-- ─── Sidebar ─── -->
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 3 · Session 11</div>
+        <div class="sidebar-session-title">NASA OSDR Mouse Transcriptomics Worksheet</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Exercises</div>
+        <ul class="sidebar-toc">
+          <li><a href="#part-a"><span class="toc-dot" id="dot-a"></span>Part A · OSDR Orientation</a></li>
+          <li><a href="#t1" class="toc-sub"><span class="toc-dot" id="dot-t1"></span>Task 1 – Explore the Repository</a></li>
+          <li><a href="#t2" class="toc-sub"><span class="toc-dot" id="dot-t2"></span>Task 2 – Decode OSD-525</a></li>
+          <li><a href="#t3" class="toc-sub"><span class="toc-dot" id="dot-t3"></span>Task 3 – Read the Assay Table</a></li>
+          <li><a href="#part-b"><span class="toc-dot" id="dot-b"></span>Part B · Search & Filter</a></li>
+          <li><a href="#t4" class="toc-sub"><span class="toc-dot" id="dot-t4"></span>Task 4 – Filter by Tissue</a></li>
+          <li><a href="#t5" class="toc-sub"><span class="toc-dot" id="dot-t5"></span>Task 5 – Boolean Search</a></li>
+          <li><a href="#t6" class="toc-sub"><span class="toc-dot" id="dot-t6"></span>Task 6 – Mission Tissue Panels</a></li>
+          <li><a href="#part-c"><span class="toc-dot" id="dot-c"></span>Part C · Deep Dive</a></li>
+          <li><a href="#t7" class="toc-sub"><span class="toc-dot" id="dot-t7"></span>Task 7 – Select Your Dataset</a></li>
+          <li><a href="#t8" class="toc-sub"><span class="toc-dot" id="dot-t8"></span>Task 8 – Runsheet Inspection</a></li>
+          <li><a href="#t9" class="toc-sub"><span class="toc-dot" id="dot-t9"></span>Task 9 – Readiness Checklist</a></li>
+          <li><a href="#part-d"><span class="toc-dot" id="dot-d"></span>Part D · Visualization Portal</a></li>
+          <li><a href="#t10" class="toc-sub"><span class="toc-dot" id="dot-t10"></span>Task 10 – Single-Study PCA</a></li>
+          <li><a href="#t11" class="toc-sub"><span class="toc-dot" id="dot-t11"></span>Task 11 – DEG Table Explorer</a></li>
+          <li><a href="#t12" class="toc-sub"><span class="toc-dot" id="dot-t12"></span>Task 12 – Multi-Study Compare</a></li>
+          <li><a href="#part-e"><span class="toc-dot" id="dot-e"></span>Part E · Reflection</a></li>
+          <li><a href="#t13" class="toc-sub"><span class="toc-dot" id="dot-t13"></span>Task 13 – Propose a Study</a></li>
+          <li><a href="#t14" class="toc-sub"><span class="toc-dot" id="dot-t14"></span>Task 14 – Bioinformatics Pitfalls</a></li>
+          <li><a href="#t15" class="toc-sub"><span class="toc-dot" id="dot-t15"></span>Task 15 – Multi-Tissue Hypothesis</a></li>
+          <li><a href="#t16" class="toc-sub"><span class="toc-dot" id="dot-t16"></span>Task 16 – Cite Your Dataset</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">All Sessions</div><div id="all-sessions-nav"></div></div>
+    </aside>
+
+    <!-- ─── Main Content ─── -->
+    <main class="content-main">
+
+      <!-- Hero -->
+      <div class="session-hero">
+        <div class="session-badge">Module 3 · Session 11 <span class="ws-badge">Worksheet</span></div>
+        <h1 class="session-main-title">NASA OSDR Mouse Transcriptomics<br>Guided Practice</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">Hands-on</span>
+          <span class="topic-pill">NASA OSDR</span>
+          <span class="topic-pill">Mus musculus</span>
+          <span class="topic-pill">Dataset Search</span>
+          <span class="topic-pill">Visualization Portal</span>
+          <span class="topic-pill">Critical Thinking</span>
+        </div>
+      </div>
+
+      <!-- Intro -->
+      <div class="intro-box">
+        <h3>📋 About This Worksheet</h3>
+        <p>This guided practice session takes you through the NASA Open Science Data Repository (OSDR) using <strong>real mouse transcriptomic datasets</strong>. You will navigate the live database, inspect metadata, evaluate datasets for pipeline compatibility, and explore processed results through the Visualization Portal — all without writing a single line of pipeline code.</p>
+        <p>Complete all 16 tasks across five parts. Your answers are saved locally in your browser — click <strong>Save</strong> at any time. Tasks are marked complete when you tick the checkbox on each card. Some tasks have hints if you get stuck.</p>
+        <p><strong>Estimated time:</strong> 90 – 120 minutes &nbsp;·&nbsp; <strong>You will need:</strong> A web browser and access to <a href="https://osdr.nasa.gov" target="_blank" rel="noopener">osdr.nasa.gov</a></p>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PART A — OSDR ORIENTATION
+      ══════════════════════════════════════ -->
+      <h2 class="ws-section-title" id="part-a">
+        <span class="ws-section-icon">🛰️</span> Part A — OSDR Orientation
+        <span class="section-progress" id="sp-a">0/3</span>
+      </h2>
+
+      <!-- Task 1 -->
+      <div class="task-card" id="t1">
+        <div class="task-header" onclick="toggleCheck('t1')">
+          <div class="task-num"><span class="task-num-inner">1</span></div>
+          <div class="task-meta">
+            <span class="task-type type-navigate">Navigate</span>
+            <div class="task-title">Explore the OSDR Repository Homepage</div>
+            <div class="task-pts">Orientation · 5 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t1"></div></div>
+        </div>
+        <div class="task-body">
+          <p>Go to <a href="https://osdr.nasa.gov/bio/repo/" target="_blank" rel="noopener" class="url-chip">🌐 osdr.nasa.gov/bio/repo/</a> and take a few minutes to explore the homepage. Look at the total dataset count, the organism breakdown bar chart, and the assay type filters.</p>
+
+          <div class="callout callout-info">
+            <div class="callout-title">💡 Tip</div>
+            <p>The bar charts on the search page are clickable filters. Clicking "RNA Sequencing (RNA-Seq)" will instantly narrow the results to only sequencing datasets.</p>
+          </div>
+
+          <div class="answer-label">1a. How many total datasets are currently listed in OSDR? (Check the dataset count at the top of the results page)</div>
+          <input type="text" class="answer-input" id="ans-1a" placeholder="e.g. 412 datasets" oninput="handleInput(this)">
+
+          <div class="answer-label">1b. What is the difference between a GLDS- and an OSD- accession number? Write in your own words.</div>
+          <textarea class="answer-input" id="ans-1b" placeholder="GLDS- stands for..." oninput="handleInput(this)"></textarea>
+
+          <div class="answer-label">1c. Name two organisms other than Mus musculus that appear in the organism bar chart.</div>
+          <div class="answer-grid">
+            <div class="answer-item">
+              <div class="answer-label">Organism 1</div>
+              <input type="text" class="answer-input" id="ans-1c1" placeholder="e.g. Homo sapiens" oninput="handleInput(this)">
+            </div>
+            <div class="answer-item">
+              <div class="answer-label">Organism 2</div>
+              <input type="text" class="answer-input" id="ans-1c2" placeholder="e.g. Arabidopsis thaliana" oninput="handleInput(this)">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 2 -->
+      <div class="task-card" id="t2">
+        <div class="task-header" onclick="toggleCheck('t2')">
+          <div class="task-num"><span class="task-num-inner">2</span></div>
+          <div class="task-meta">
+            <span class="task-type type-find">Find</span>
+            <div class="task-title">Decode the OSD-525 Dataset Page</div>
+            <div class="task-pts">Metadata reading · 10 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t2"></div></div>
+        </div>
+        <div class="task-body">
+          <p>Navigate directly to the dataset you analyzed in Sessions 9–10: <a href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-525" target="_blank" rel="noopener" class="url-chip">🌐 OSD-525</a>. Read the Study Description and Experiment panels carefully.</p>
+
+          <table class="task-table">
+            <thead><tr><th>Field</th><th>Your Answer (fill in from the dataset page)</th></tr></thead>
+            <tbody>
+              <tr><td>Full study title</td><td><input type="text" class="answer-input" id="ans-2a" placeholder="RR-23..." oninput="handleInput(this)"></td></tr>
+              <tr><td>Organism (full scientific name)</td><td><input type="text" class="answer-input" id="ans-2b" placeholder="Mus musculus..." oninput="handleInput(this)"></td></tr>
+              <tr><td>ISS mission name</td><td><input type="text" class="answer-input" id="ans-2c" placeholder="Rodent Research..." oninput="handleInput(this)"></td></tr>
+              <tr><td>Number of experimental groups</td><td><input type="text" class="answer-input" id="ans-2d" placeholder="e.g. 3" oninput="handleInput(this)"></td></tr>
+              <tr><td>Tissue type</td><td><input type="text" class="answer-input" id="ans-2e" placeholder="e.g. liver" oninput="handleInput(this)"></td></tr>
+              <tr><td>Any linked publications?</td><td><input type="text" class="answer-input" id="ans-2f" placeholder="Yes/No and title if yes" oninput="handleInput(this)"></td></tr>
+            </tbody>
+          </table>
+
+          <div class="hint-wrap">
+            <button class="hint-btn" onclick="toggleHint('hint-2')">💡 Show Hint</button>
+            <div class="hint-content" id="hint-2">Look in the left panel under <strong>Study Description</strong> for the title, organism, and mission. Experimental groups are listed under <strong>Experiment(s)</strong>. Publications appear at the bottom of the Study Description panel if any are linked.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 3 -->
+      <div class="task-card" id="t3">
+        <div class="task-header" onclick="toggleCheck('t3')">
+          <div class="task-num"><span class="task-num-inner">3</span></div>
+          <div class="task-meta">
+            <span class="task-type type-record">Record</span>
+            <div class="task-title">Read the Assay Table — Pipeline-Critical Parameters</div>
+            <div class="task-pts">Metadata extraction · 10 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t3"></div></div>
+        </div>
+        <div class="task-body">
+          <p>Still on OSD-525, click <strong>Assays</strong> in the left panel. These parameters directly control how you would configure the pipeline notebooks if you were running a new dataset.</p>
+
+          <table class="task-table">
+            <thead><tr><th>Pipeline Parameter</th><th>Value from OSD-525 Assay Table</th></tr></thead>
+            <tbody>
+              <tr><td>Library strategy (assay type)</td><td><input type="text" class="answer-input" id="ans-3a" placeholder="e.g. RNA-Seq" oninput="handleInput(this)"></td></tr>
+              <tr><td>Sequencing platform</td><td><input type="text" class="answer-input" id="ans-3b" placeholder="e.g. Illumina HiSeq..." oninput="handleInput(this)"></td></tr>
+              <tr><td>Paired-end or single-end?</td><td><input type="text" class="answer-input" id="ans-3c" placeholder="paired / single" oninput="handleInput(this)"></td></tr>
+              <tr><td>Read length (bp)</td><td><input type="text" class="answer-input" id="ans-3d" placeholder="e.g. 150" oninput="handleInput(this)"></td></tr>
+              <tr><td>Library strand orientation</td><td><input type="text" class="answer-input" id="ans-3e" placeholder="forward / reverse / unstranded" oninput="handleInput(this)"></td></tr>
+            </tbody>
+          </table>
+
+          <div class="answer-label">3f. If you were running the Session 9 pipeline on a <em>new</em> dataset with a read length of 100 bp, what value would you set for STAR's <code>--sjdbOverhang</code> parameter, and why?</div>
+          <textarea class="answer-input" id="ans-3f" placeholder="--sjdbOverhang should be set to..." oninput="handleInput(this)"></textarea>
+
+          <div class="hint-wrap">
+            <button class="hint-btn" onclick="toggleHint('hint-3')">💡 Show Hint</button>
+            <div class="hint-content" id="hint-3">The formula is: <strong>sjdbOverhang = read_length − 1</strong>. For 100 bp reads, sjdbOverhang = 99. This tells STAR the maximum possible overhang on each side of a splice junction.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PART B — SEARCH & FILTER
+      ══════════════════════════════════════ -->
+      <h2 class="ws-section-title" id="part-b">
+        <span class="ws-section-icon">🔍</span> Part B — Search &amp; Filter
+        <span class="section-progress" id="sp-b">0/3</span>
+      </h2>
+
+      <!-- Task 4 -->
+      <div class="task-card" id="t4">
+        <div class="task-header" onclick="toggleCheck('t4')">
+          <div class="task-num"><span class="task-num-inner">4</span></div>
+          <div class="task-meta">
+            <span class="task-type type-find">Find</span>
+            <div class="task-title">Filter by Tissue — Liver Datasets</div>
+            <div class="task-pts">Search skills · 10 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t4"></div></div>
+        </div>
+        <div class="task-body">
+          <p>Go to the OSDR Data &amp; Visualization portal: <a href="https://visualization.genelab.nasa.gov/data/" target="_blank" rel="noopener" class="url-chip">🌐 visualization.genelab.nasa.gov/data/</a>. Apply these filters: <strong>Organism = Mus musculus</strong> and <strong>Assay = RNA Sequencing (RNA-Seq)</strong>.</p>
+          <p>Then use the sidebar or search bar to further narrow results to <strong>liver</strong> tissue datasets.</p>
+
+          <div class="answer-label">4a. How many mouse RNA-seq datasets did you find involving liver tissue?</div>
+          <input type="text" class="answer-input" id="ans-4a" placeholder="e.g. 5 datasets" oninput="handleInput(this)">
+
+          <div class="answer-label">4b. List two liver dataset accession numbers you found and their associated missions.</div>
+          <div class="answer-grid">
+            <div class="answer-item">
+              <div class="answer-label">Dataset 1 (accession + mission)</div>
+              <input type="text" class="answer-input" id="ans-4b1" placeholder="e.g. OSD-245, RR-6" oninput="handleInput(this)">
+            </div>
+            <div class="answer-item">
+              <div class="answer-label">Dataset 2 (accession + mission)</div>
+              <input type="text" class="answer-input" id="ans-4b2" placeholder="e.g. OSD-173, STS-135" oninput="handleInput(this)">
+            </div>
+          </div>
+
+          <div class="answer-label">4c. Why might a researcher want to compare gene expression in liver across <em>multiple</em> spaceflight missions rather than analyzing just one dataset?</div>
+          <textarea class="answer-input" id="ans-4c" placeholder="Comparing across missions allows..." oninput="handleInput(this)"></textarea>
+        </div>
+      </div>
+
+      <!-- Task 5 -->
+      <div class="task-card" id="t5">
+        <div class="task-header" onclick="toggleCheck('t5')">
+          <div class="task-num"><span class="task-num-inner">5</span></div>
+          <div class="task-meta">
+            <span class="task-type type-navigate">Navigate</span>
+            <div class="task-title">Boolean Search — Radiation &amp; Mouse Muscle</div>
+            <div class="task-pts">Advanced search · 8 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t5"></div></div>
+        </div>
+        <div class="task-body">
+          <p>The OSDR search bar supports boolean operators. Try this query in the search field on the repository or visualization page:</p>
+          <div style="background:var(--code-bg);border:1px solid var(--code-border);border-radius:8px;padding:10px 14px;margin:10px 0;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent-teal);">(radiation) and (muscle) and (Mus musculus)</div>
+
+          <div class="answer-label">5a. How many results did the boolean query return?</div>
+          <input type="text" class="answer-input" id="ans-5a" placeholder="e.g. 3 datasets" oninput="handleInput(this)">
+
+          <div class="answer-label">5b. Write a new boolean query of your own that targets a tissue and experimental factor you are personally interested in.</div>
+          <div style="background:var(--code-bg);border:1px solid var(--ws-input-border);border-radius:8px;padding:10px 14px;margin:10px 0;">
+            <input type="text" class="answer-input" id="ans-5b" placeholder="e.g. (kidney) and (microgravity) and (Mus musculus)" oninput="handleInput(this)" style="background:transparent;border:none;box-shadow:none;padding:0;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent-teal);">
+          </div>
+
+          <div class="answer-label">5c. How many results did your query return? Was it more or less than you expected? Why?</div>
+          <textarea class="answer-input" id="ans-5c" placeholder="My query returned... I expected... because..." oninput="handleInput(this)"></textarea>
+        </div>
+      </div>
+
+      <!-- Task 6 -->
+      <div class="task-card" id="t6">
+        <div class="task-header" onclick="toggleCheck('t6')">
+          <div class="task-num"><span class="task-num-inner">6</span></div>
+          <div class="task-meta">
+            <span class="task-type type-compare">Compare</span>
+            <div class="task-title">Identify the RR-6 Mission Tissue Panel</div>
+            <div class="task-pts">Cross-dataset thinking · 10 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t6"></div></div>
+        </div>
+        <div class="task-body">
+          <p>The Rodent Research-6 (RR-6) mission produced multiple mouse transcriptomics datasets, each from a different tissue — all from the <em>same animals and same mission</em>. Search OSDR for "<strong>RR-6</strong>" to find this tissue panel. Check each dataset's Study Description to confirm the tissue.</p>
+
+          <div class="answer-label">6a. Fill in the tissue for each RR-6 accession number below.</div>
+          <table class="task-table">
+            <thead><tr><th>Accession</th><th>Tissue (fill in)</th></tr></thead>
+            <tbody>
+              <tr><td>OSD-243</td><td><input type="text" class="answer-input" id="ans-6-243" placeholder="tissue name" oninput="handleInput(this)"></td></tr>
+              <tr><td>OSD-244</td><td><input type="text" class="answer-input" id="ans-6-244" placeholder="tissue name" oninput="handleInput(this)"></td></tr>
+              <tr><td>OSD-245</td><td><input type="text" class="answer-input" id="ans-6-245" placeholder="tissue name" oninput="handleInput(this)"></td></tr>
+              <tr><td>OSD-246</td><td><input type="text" class="answer-input" id="ans-6-246" placeholder="tissue name" oninput="handleInput(this)"></td></tr>
+              <tr><td>OSD-247</td><td><input type="text" class="answer-input" id="ans-6-247" placeholder="tissue name" oninput="handleInput(this)"></td></tr>
+              <tr><td>OSD-248</td><td><input type="text" class="answer-input" id="ans-6-248" placeholder="tissue name" oninput="handleInput(this)"></td></tr>
+            </tbody>
+          </table>
+
+          <div class="answer-label">6b. What makes this RR-6 panel scientifically valuable compared to analyzing just one tissue from one mission? (2–3 sentences)</div>
+          <textarea class="answer-input" id="ans-6b" placeholder="Having the same animals across six tissues allows..." oninput="handleInput(this)"></textarea>
+
+          <div class="hint-wrap">
+            <button class="hint-btn" onclick="toggleHint('hint-6')">💡 Show Hint</button>
+            <div class="hint-content" id="hint-6">Think about confounding variables. If you use the same mice across tissues, any differences you see between tissues are truly due to <em>tissue biology</em>, not animal-to-animal variation or differences in mission conditions.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PART C — DEEP DIVE
+      ══════════════════════════════════════ -->
+      <h2 class="ws-section-title" id="part-c">
+        <span class="ws-section-icon">🧬</span> Part C — Deep Dive Into a Dataset
+        <span class="section-progress" id="sp-c">0/3</span>
+      </h2>
+
+      <!-- Task 7 -->
+      <div class="task-card" id="t7">
+        <div class="task-header" onclick="toggleCheck('t7')">
+          <div class="task-num"><span class="task-num-inner">7</span></div>
+          <div class="task-meta">
+            <span class="task-type type-find">Find</span>
+            <div class="task-title">Select Your Own Dataset to Investigate</div>
+            <div class="task-pts">Independent search · 10 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t7"></div></div>
+        </div>
+        <div class="task-body">
+          <p>Using what you have learned about OSDR search filters, find a mouse RNA-seq dataset that is <strong>not OSD-525</strong> and that interests you personally. It must be a dataset with GeneLab-processed files available (look for the "Processed ✓" badge or a "GeneLab Processed RNA-Seq Files" folder in the Files panel).</p>
+
+          <div class="answer-label">7a. Dataset you chose</div>
+          <div class="answer-grid">
+            <div class="answer-item">
+              <div class="answer-label">Accession number</div>
+              <input type="text" class="answer-input" id="ans-7a-acc" placeholder="OSD-XXX" oninput="handleInput(this)">
+            </div>
+            <div class="answer-item">
+              <div class="answer-label">Mission</div>
+              <input type="text" class="answer-input" id="ans-7a-mission" placeholder="e.g. RR-6, MHU-2, STS-135" oninput="handleInput(this)">
+            </div>
+          </div>
+
+          <div class="answer-label">7b. Tissue and experimental groups in your chosen dataset</div>
+          <div class="answer-grid">
+            <div class="answer-item">
+              <div class="answer-label">Tissue</div>
+              <input type="text" class="answer-input" id="ans-7b-tissue" placeholder="e.g. liver" oninput="handleInput(this)">
+            </div>
+            <div class="answer-item">
+              <div class="answer-label">Groups (e.g. FLT vs GC)</div>
+              <input type="text" class="answer-input" id="ans-7b-groups" placeholder="e.g. FLT vs GC" oninput="handleInput(this)">
+            </div>
+          </div>
+
+          <div class="answer-label">7c. In 2–3 sentences, explain why you chose this particular dataset. What biological question could it help answer?</div>
+          <textarea class="answer-input" id="ans-7c" placeholder="I chose this dataset because..." oninput="handleInput(this)"></textarea>
+        </div>
+      </div>
+
+      <!-- Task 8 -->
+      <div class="task-card" id="t8">
+        <div class="task-header" onclick="toggleCheck('t8')">
+          <div class="task-num"><span class="task-num-inner">8</span></div>
+          <div class="task-meta">
+            <span class="task-type type-record">Record</span>
+            <div class="task-title">Inspect the Runsheet of Your Chosen Dataset</div>
+            <div class="task-pts">File navigation · 12 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t8"></div></div>
+        </div>
+        <div class="task-body">
+          <p>On your chosen dataset's OSD page, click <strong>Files</strong> in the left panel, then expand the <strong>Study Metadata Files</strong> folder. Download the metadata ZIP file, unzip it, and open the runsheet CSV (the file ending in <code>_runsheet.csv</code>) in a spreadsheet application or text editor.</p>
+
+          <div class="callout callout-tip">
+            <div class="callout-title">💡 Can't find the runsheet?</div>
+            <p>The runsheet is inside the metadata ZIP (e.g. <code>OSD-XXX_metadata_GLDS-XXX-ISA.zip</code>). After unzipping, look for the file named <code>*_runsheet.csv</code> — it's the key file that Notebook 1 reads to drive automated downloads.</p>
+          </div>
+
+          <div class="answer-label">8a. How many rows (samples) does the runsheet have? (Excluding the header row)</div>
+          <input type="text" class="answer-input" id="ans-8a" placeholder="e.g. 29 rows" oninput="handleInput(this)">
+
+          <div class="answer-label">8b. List the column names that contain the download URLs for the FASTQ files.</div>
+          <input type="text" class="answer-input" id="ans-8b" placeholder="e.g. Read1 URI, Read2 URI" oninput="handleInput(this)">
+
+          <div class="answer-label">8c. What column in the runsheet tells you which experimental group each sample belongs to?</div>
+          <input type="text" class="answer-input" id="ans-8c" placeholder='e.g. Factor Value[Spaceflight]' oninput="handleInput(this)">
+
+          <div class="answer-label">8d. Are there any technical replicates in this dataset? (Look for samples with similar names ending in _techrep1, _techrep2, or similar.) How would you handle them in the pipeline?</div>
+          <textarea class="answer-input" id="ans-8d" placeholder="Yes/No. If yes, I would handle them by..." oninput="handleInput(this)"></textarea>
+        </div>
+      </div>
+
+      <!-- Task 9 -->
+      <div class="task-card" id="t9">
+        <div class="task-header" onclick="toggleCheck('t9')">
+          <div class="task-num"><span class="task-num-inner">9</span></div>
+          <div class="task-meta">
+            <span class="task-type type-analyze">Analyze</span>
+            <div class="task-title">Complete the Dataset Readiness Checklist</div>
+            <div class="task-pts">Critical evaluation · 10 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t9"></div></div>
+        </div>
+        <div class="task-body">
+          <p>Evaluate whether your chosen dataset from Task 7 is ready to run through the Sessions 9–10 DEG pipeline. Fill in each row of the checklist based on what you found in the Assay Table and runsheet.</p>
+
+          <table class="task-table">
+            <thead><tr><th>Criterion</th><th>Your dataset's value</th><th>Pass / Fail / N/A</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>Organism is Mus musculus</td>
+                <td><input type="text" class="answer-input" id="ans-9-org" placeholder="Mus musculus" oninput="handleInput(this)"></td>
+                <td><input type="text" class="answer-input" id="ans-9-org-pf" placeholder="Pass" oninput="handleInput(this)"></td>
+              </tr>
+              <tr>
+                <td>Assay type is bulk RNA-Seq</td>
+                <td><input type="text" class="answer-input" id="ans-9-assay" placeholder="RNA-Seq" oninput="handleInput(this)"></td>
+                <td><input type="text" class="answer-input" id="ans-9-assay-pf" placeholder="Pass" oninput="handleInput(this)"></td>
+              </tr>
+              <tr>
+                <td>≥ 3 biological replicates per group</td>
+                <td><input type="text" class="answer-input" id="ans-9-reps" placeholder="e.g. n=5 per group" oninput="handleInput(this)"></td>
+                <td><input type="text" class="answer-input" id="ans-9-reps-pf" placeholder="Pass / Fail" oninput="handleInput(this)"></td>
+              </tr>
+              <tr>
+                <td>Strandedness documented</td>
+                <td><input type="text" class="answer-input" id="ans-9-strand" placeholder="e.g. forward" oninput="handleInput(this)"></td>
+                <td><input type="text" class="answer-input" id="ans-9-strand-pf" placeholder="Pass / Fail" oninput="handleInput(this)"></td>
+              </tr>
+              <tr>
+                <td>Read length noted</td>
+                <td><input type="text" class="answer-input" id="ans-9-rl" placeholder="e.g. 150 bp" oninput="handleInput(this)"></td>
+                <td><input type="text" class="answer-input" id="ans-9-rl-pf" placeholder="Pass" oninput="handleInput(this)"></td>
+              </tr>
+              <tr>
+                <td>ERCC spike-ins present?</td>
+                <td><input type="text" class="answer-input" id="ans-9-ercc" placeholder="Yes / No" oninput="handleInput(this)"></td>
+                <td><input type="text" class="answer-input" id="ans-9-ercc-pf" placeholder="N/A if No" oninput="handleInput(this)"></td>
+              </tr>
+              <tr>
+                <td>Processed count files available</td>
+                <td><input type="text" class="answer-input" id="ans-9-proc" placeholder="Yes / No" oninput="handleInput(this)"></td>
+                <td><input type="text" class="answer-input" id="ans-9-proc-pf" placeholder="Pass / Fail" oninput="handleInput(this)"></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="answer-label">9b. Overall verdict: Is this dataset suitable for the DEG pipeline? Note any concerns.</div>
+          <textarea class="answer-input" id="ans-9b" placeholder="This dataset is suitable / not suitable because..." oninput="handleInput(this)"></textarea>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PART D — VISUALIZATION PORTAL
+      ══════════════════════════════════════ -->
+      <h2 class="ws-section-title" id="part-d">
+        <span class="ws-section-icon">📊</span> Part D — Visualization Portal
+        <span class="section-progress" id="sp-d">0/3</span>
+      </h2>
+
+      <!-- Task 10 -->
+      <div class="task-card" id="t10">
+        <div class="task-header" onclick="toggleCheck('t10')">
+          <div class="task-num"><span class="task-num-inner">10</span></div>
+          <div class="task-meta">
+            <span class="task-type type-analyze">Analyze</span>
+            <div class="task-title">Explore the PCA Plot for OSD-525</div>
+            <div class="task-pts">Data interpretation · 12 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t10"></div></div>
+        </div>
+        <div class="task-body">
+          <p>Go to <a href="https://visualization.genelab.nasa.gov/data/" target="_blank" rel="noopener" class="url-chip">🌐 visualization.genelab.nasa.gov/data/</a>, search for <strong>OSD-525</strong>, and open its Visualization. Navigate to the <strong>PCA Plot</strong> tab.</p>
+
+          <div class="answer-label">10a. How many principal components are shown by default? What percentage of variance do PC1 and PC2 explain?</div>
+          <div class="answer-grid">
+            <div class="answer-item">
+              <div class="answer-label">PC1 variance (%)</div>
+              <input type="text" class="answer-input" id="ans-10a-pc1" placeholder="e.g. 42%" oninput="handleInput(this)">
+            </div>
+            <div class="answer-item">
+              <div class="answer-label">PC2 variance (%)</div>
+              <input type="text" class="answer-input" id="ans-10a-pc2" placeholder="e.g. 18%" oninput="handleInput(this)">
+            </div>
+          </div>
+
+          <div class="answer-label">10b. Describe the clustering pattern you observe. Do the three experimental groups (FLT, GC, VIV) cluster clearly apart from each other?</div>
+          <textarea class="answer-input" id="ans-10b" placeholder="In the PCA plot, I can see that..." oninput="handleInput(this)"></textarea>
+
+          <div class="answer-label">10c. Are there any visible outlier samples (points far from their group's cluster)? If so, what might explain this?</div>
+          <textarea class="answer-input" id="ans-10c" placeholder="Sample outliers could indicate..." oninput="handleInput(this)"></textarea>
+
+          <div class="answer-label">10d. What does good group separation on a PCA plot tell you about the dataset before running DESeq2?</div>
+          <textarea class="answer-input" id="ans-10d" placeholder="Good group separation suggests..." oninput="handleInput(this)"></textarea>
+        </div>
+      </div>
+
+      <!-- Task 11 -->
+      <div class="task-card" id="t11">
+        <div class="task-header" onclick="toggleCheck('t11')">
+          <div class="task-num"><span class="task-num-inner">11</span></div>
+          <div class="task-meta">
+            <span class="task-type type-find">Find</span>
+            <div class="task-title">Explore the DEG Table and Volcano Plot</div>
+            <div class="task-pts">Results interpretation · 12 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t11"></div></div>
+        </div>
+        <div class="task-body">
+          <p>Still in the OSD-525 Visualization Portal, navigate to the <strong>DEG Table</strong> (or Volcano Plot) for the <strong>Space Flight vs. Ground Control</strong> contrast.</p>
+
+          <div class="answer-label">11a. How many genes are statistically significant (padj &lt; 0.05) in the FLT vs. GC comparison?</div>
+          <input type="text" class="answer-input" id="ans-11a" placeholder="e.g. 312 genes" oninput="handleInput(this)">
+
+          <div class="answer-label">11b. Find the top upregulated gene in FLT vs. GC (highest positive log₂FC with padj &lt; 0.05). Record its name and log₂FC.</div>
+          <div class="answer-grid">
+            <div class="answer-item">
+              <div class="answer-label">Gene name</div>
+              <input type="text" class="answer-input" id="ans-11b-gene" placeholder="e.g. Cdkn1a" oninput="handleInput(this)">
+            </div>
+            <div class="answer-item">
+              <div class="answer-label">log₂ Fold Change</div>
+              <input type="text" class="answer-input" id="ans-11b-fc" placeholder="e.g. +3.2" oninput="handleInput(this)">
+            </div>
+          </div>
+
+          <div class="answer-label">11c. Find the top downregulated gene (most negative log₂FC). Record its name and log₂FC.</div>
+          <div class="answer-grid">
+            <div class="answer-item">
+              <div class="answer-label">Gene name</div>
+              <input type="text" class="answer-input" id="ans-11c-gene" placeholder="e.g. Myh7" oninput="handleInput(this)">
+            </div>
+            <div class="answer-item">
+              <div class="answer-label">log₂ Fold Change</div>
+              <input type="text" class="answer-input" id="ans-11c-fc" placeholder="e.g. -4.1" oninput="handleInput(this)">
+            </div>
+          </div>
+
+          <div class="answer-label">11d. Does the FLT vs. VIV contrast have more or fewer DEGs than FLT vs. GC? What might explain the difference?</div>
+          <textarea class="answer-input" id="ans-11d" placeholder="FLT vs VIV has... This makes sense because..." oninput="handleInput(this)"></textarea>
+        </div>
+      </div>
+
+      <!-- Task 12 -->
+      <div class="task-card" id="t12">
+        <div class="task-header" onclick="toggleCheck('t12')">
+          <div class="task-num"><span class="task-num-inner">12</span></div>
+          <div class="task-meta">
+            <span class="task-type type-compare">Compare</span>
+            <div class="task-title">Multi-Study Visualization — Cross-Tissue Compare</div>
+            <div class="task-pts">Advanced visualization · 15 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t12"></div></div>
+        </div>
+        <div class="task-body">
+          <p>In the OSDR Visualization Portal, select <strong>two datasets</strong> from the RR-6 tissue panel (e.g. OSD-245 liver and OSD-246 spleen) and combine them using the multi-study visualization feature. Observe the combined PCA plot.</p>
+
+          <div class="answer-label">12a. Which two datasets did you combine?</div>
+          <div class="answer-grid">
+            <div class="answer-item">
+              <div class="answer-label">Dataset 1</div>
+              <input type="text" class="answer-input" id="ans-12a1" placeholder="OSD-XXX (tissue)" oninput="handleInput(this)">
+            </div>
+            <div class="answer-item">
+              <div class="answer-label">Dataset 2</div>
+              <input type="text" class="answer-input" id="ans-12a2" placeholder="OSD-XXX (tissue)" oninput="handleInput(this)">
+            </div>
+          </div>
+
+          <div class="answer-label">12b. In the combined PCA plot, what appears to drive the most variance — tissue type or spaceflight status? How can you tell?</div>
+          <textarea class="answer-input" id="ans-12b" placeholder="The samples cluster primarily by... which means the dominant source of variance is..." oninput="handleInput(this)"></textarea>
+
+          <div class="answer-label">12c. What does this result imply for multi-tissue studies? Should you always analyze different tissues together in one DESeq2 run?</div>
+          <textarea class="answer-input" id="ans-12c" placeholder="This suggests that when combining tissues... Therefore you should/should not..." oninput="handleInput(this)"></textarea>
+
+          <div class="hint-wrap">
+            <button class="hint-btn" onclick="toggleHint('hint-12')">💡 Show Hint</button>
+            <div class="hint-content" id="hint-12">When tissue dominates the PCA, it means the gene expression differences between liver and spleen are <em>much larger</em> than the differences between FLT and GC within any single tissue. Mixing tissues in one DESeq2 run would confound the analysis — it's almost always better to analyze each tissue separately.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════
+           PART E — REFLECTION
+      ══════════════════════════════════════ -->
+      <h2 class="ws-section-title" id="part-e">
+        <span class="ws-section-icon">🪐</span> Part E — Reflection &amp; Critical Thinking
+        <span class="section-progress" id="sp-e">0/4</span>
+      </h2>
+
+      <!-- Task 13 -->
+      <div class="task-card" id="t13">
+        <div class="task-header" onclick="toggleCheck('t13')">
+          <div class="task-num"><span class="task-num-inner">13</span></div>
+          <div class="task-meta">
+            <span class="task-type type-reflect">Reflect</span>
+            <div class="task-title">Propose a New Analysis Using OSDR Data</div>
+            <div class="task-pts">Scientific thinking · 10 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t13"></div></div>
+        </div>
+        <div class="task-body">
+          <p>You now know how to find, evaluate, and download mouse transcriptomic datasets from OSDR. Imagine you are designing a new analysis project using <em>only existing OSDR data</em> — no new experiments needed.</p>
+
+          <div class="answer-label">13a. State your biological question in one sentence.</div>
+          <textarea class="answer-input" id="ans-13a" placeholder="How does long-duration spaceflight affect..." oninput="handleInput(this)" style="min-height:60px;"></textarea>
+
+          <div class="answer-label">13b. Which specific OSDR dataset(s) would you use? List the accession numbers and tissues.</div>
+          <textarea class="answer-input" id="ans-13b" placeholder="I would use OSD-XXX (tissue) and OSD-YYY (tissue) because..." oninput="handleInput(this)"></textarea>
+
+          <div class="answer-label">13c. What experimental contrast would you test in DESeq2?</div>
+          <input type="text" class="answer-input" id="ans-13c" placeholder="e.g. Space Flight vs. Ground Control in kidney tissue" oninput="handleInput(this)">
+
+          <div class="answer-label">13d. What is one limitation of using existing archived data rather than designing a new experiment?</div>
+          <textarea class="answer-input" id="ans-13d" placeholder="One limitation is that I cannot control..." oninput="handleInput(this)" style="min-height:60px;"></textarea>
+        </div>
+      </div>
+
+      <!-- Task 14 -->
+      <div class="task-card" id="t14">
+        <div class="task-header" onclick="toggleCheck('t14')">
+          <div class="task-num"><span class="task-num-inner">14</span></div>
+          <div class="task-meta">
+            <span class="task-type type-reflect">Reflect</span>
+            <div class="task-title">Bioinformatics Pitfalls — Spot the Problem</div>
+            <div class="task-pts">Critical evaluation · 8 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t14"></div></div>
+        </div>
+        <div class="task-body">
+          <p>Each scenario below describes a researcher making a mistake when working with OSDR datasets. Identify the problem and explain how you would fix it.</p>
+
+          <div class="answer-label">Scenario A: A researcher downloads a dataset with n = 2 samples per group and proceeds to run DESeq2. The results show 8,000 differentially expressed genes with padj &lt; 0.05.</div>
+          <textarea class="answer-input" id="ans-14a" placeholder="The problem is... A better approach would be..." oninput="handleInput(this)"></textarea>
+
+          <div class="answer-label">Scenario B: A researcher wants to compare spaceflight effects across liver and spleen simultaneously. They merge all samples from OSD-245 and OSD-246 into one DESeq2 run with a simple FLT vs. GC design.</div>
+          <textarea class="answer-input" id="ans-14b" placeholder="The problem is... A better approach would be..." oninput="handleInput(this)"></textarea>
+
+          <div class="answer-label">Scenario C: A researcher re-processes raw FASTQs from OSD-173 using STAR version 2.7.11a, but the original GeneLab processing used STAR 2.7.6a. They report that their counts differ significantly from the official GeneLab counts.</div>
+          <textarea class="answer-input" id="ans-14c" placeholder="The problem is... A better approach would be..." oninput="handleInput(this)"></textarea>
+        </div>
+      </div>
+
+      <!-- Task 15 -->
+      <div class="task-card" id="t15">
+        <div class="task-header" onclick="toggleCheck('t15')">
+          <div class="task-num"><span class="task-num-inner">15</span></div>
+          <div class="task-meta">
+            <span class="task-type type-reflect">Reflect</span>
+            <div class="task-title">Multi-Tissue Hypothesis — Systemic vs. Tissue-Specific Response</div>
+            <div class="task-pts">Scientific synthesis · 10 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t15"></div></div>
+        </div>
+        <div class="task-body">
+          <p>One of the most important questions in spaceflight biology is whether the transcriptional response to microgravity is <strong>systemic</strong> (the same genes change in every tissue) or <strong>tissue-specific</strong> (different genes change in different tissues). OSDR datasets like the RR-6 panel make this comparison possible.</p>
+
+          <div class="answer-label">15a. What genes or biological processes would you expect to respond systemically to microgravity, regardless of tissue? Give at least two examples with your reasoning.</div>
+          <textarea class="answer-input" id="ans-15a" placeholder="I would expect... to be systemic because these processes are universal..." oninput="handleInput(this)"></textarea>
+
+          <div class="answer-label">15b. What genes or processes would you expect to be tissue-specific? Give at least one example each for liver and skeletal muscle.</div>
+          <textarea class="answer-input" id="ans-15b" placeholder="In liver, I would expect tissue-specific changes in... In skeletal muscle, I would expect..." oninput="handleInput(this)"></textarea>
+
+          <div class="answer-label">15c. If you were to test this hypothesis using OSDR data, describe your analysis strategy in 3–4 sentences. Which datasets would you use and what would you look for?</div>
+          <textarea class="answer-input" id="ans-15c" placeholder="To test this, I would use... I would then look for genes that appear in the DEG lists of all tissues (systemic) versus genes that appear in only one tissue (tissue-specific)..." oninput="handleInput(this)"></textarea>
+        </div>
+      </div>
+
+      <!-- Task 16 -->
+      <div class="task-card" id="t16">
+        <div class="task-header" onclick="toggleCheck('t16')">
+          <div class="task-num"><span class="task-num-inner">16</span></div>
+          <div class="task-meta">
+            <span class="task-type type-record">Record</span>
+            <div class="task-title">Cite Your Dataset Properly</div>
+            <div class="task-pts">Open science practice · 5 min</div>
+          </div>
+          <div class="task-check-wrap"><div class="task-check" id="check-t16"></div></div>
+        </div>
+        <div class="task-body">
+          <p>Open science requires citing data sources just as you would cite a published paper. Write a proper citation for the dataset you chose in Task 7, following the format: <em>Author(s) (Year). Dataset Title. NASA Open Science Data Repository. Accession: OSD-XXX. doi:XXX</em>.</p>
+          <p>Find the author(s), year, and DOI from the Study Description panel on your dataset's OSD page. If no DOI is listed, note "No DOI assigned" and provide the OSDR URL instead.</p>
+
+          <div class="answer-label">Your full dataset citation</div>
+          <textarea class="answer-input" id="ans-16" placeholder="Author(s) (Year). Dataset Title. NASA Open Science Data Repository. Accession: OSD-XXX." oninput="handleInput(this)"></textarea>
+
+          <div class="answer-label">Also write the citation for OSDR itself (the repository platform):</div>
+          <textarea class="answer-input" id="ans-16b" placeholder="Gebre S G, et al. (2024). NASA Open Science Data Repository..." oninput="handleInput(this)"></textarea>
+
+          <div class="hint-wrap">
+            <button class="hint-btn" onclick="toggleHint('hint-16')">💡 Show Hint</button>
+            <div class="hint-content" id="hint-16">The OSDR platform citation is: Gebre S G, Scott R T, Saravia-Butler A M, Lopez D K, Sanders L M, and Costes S V (2024). "NASA Open Science Data Repository: Open Science for Life in Space." <em>Nucleic Acids Research</em>, 53(D1): D1697–D1710. https://doi.org/10.1093/nar/gkae1116</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── Completion Card ─── -->
+      <div class="completion-card" id="completion-card">
+        <div class="completion-icon">🛸</div>
+        <div class="completion-title">Worksheet Complete!</div>
+        <div class="completion-sub">You have navigated NASA OSDR, evaluated real spaceflight transcriptomics datasets, and applied critical thinking to open science data.</div>
+        <div class="completion-stats">
+          <div class="stat-item"><div class="stat-num" id="final-complete">0</div><div class="stat-label">Tasks Done</div></div>
+          <div class="stat-item"><div class="stat-num">16</div><div class="stat-label">Total Tasks</div></div>
+          <div class="stat-item"><div class="stat-num" id="final-pct">0%</div><div class="stat-label">Complete</div></div>
+        </div>
+        <a href="session-s12.html" class="next-btn">Next Session →</a>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+/* ─── Starfield ─── */
+(function(){
+  const sf = document.getElementById('starfield');
+  for(let i=0;i<100;i++){
+    const s=document.createElement('div'); s.className='star';
+    const sz=Math.random()*2+0.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*4}s;--min:${0.1+Math.random()*0.2};--max:${0.5+Math.random()*0.4};animation-delay:${Math.random()*4}s;`;
+    sf.appendChild(s);
+  }
+})();
+
+/* ─── Theme ─── */
+function toggleTheme(){
+  const html=document.documentElement, isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  document.getElementById('theme-icon').textContent=isDark?'🌙':'☀️';
+  document.getElementById('theme-label').textContent=isDark?'Dark Mode':'Light Mode';
+  localStorage.setItem('theme',isDark?'light':'dark');
+}
+(function(){
+  const t=localStorage.getItem('theme');
+  if(t&&t!=='dark'){
+    document.documentElement.setAttribute('data-theme',t);
+    document.getElementById('theme-icon').textContent='🌙';
+    document.getElementById('theme-label').textContent='Dark Mode';
+  }
+})();
+
+/* ─── Task IDs & section mapping ─── */
+const ALL_TASKS = ['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13','t14','t15','t16'];
+const SECTIONS = {
+  a: ['t1','t2','t3'],
+  b: ['t4','t5','t6'],
+  c: ['t7','t8','t9'],
+  d: ['t10','t11','t12'],
+  e: ['t13','t14','t15','t16']
+};
+let completed = new Set();
+
+/* ─── Toggle task completion ─── */
+function toggleCheck(id){
+  const card  = document.getElementById(id);
+  const check = document.getElementById('check-'+id);
+  const dot   = document.getElementById('dot-'+id);
+  if(completed.has(id)){
+    completed.delete(id);
+    card.classList.remove('completed');
+    check.classList.remove('checked');
+    if(dot) dot.classList.remove('done');
+  } else {
+    completed.add(id);
+    card.classList.add('completed');
+    check.classList.add('checked');
+    if(dot) dot.classList.add('done');
+  }
+  updateProgress();
+  autosave();
+}
+
+/* ─── Progress ─── */
+function updateProgress(){
+  const n = completed.size, total = ALL_TASKS.length;
+  const pct = Math.round(n/total*100);
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-count').textContent = n+' / '+total;
+  document.getElementById('final-complete').textContent = n;
+  document.getElementById('final-pct').textContent = pct+'%';
+  // section progress
+  for(const [sec, tasks] of Object.entries(SECTIONS)){
+    const done  = tasks.filter(t=>completed.has(t)).length;
+    const sp    = document.getElementById('sp-'+sec);
+    if(!sp) continue;
+    sp.textContent = done+'/'+tasks.length;
+    sp.classList.toggle('complete', done===tasks.length);
+  }
+}
+
+/* ─── Input handler — marks input as has-content ─── */
+function handleInput(el){
+  el.classList.toggle('has-content', el.value.trim().length > 0);
+  autosave();
+}
+
+/* ─── Hint toggle ─── */
+function toggleHint(id){
+  const c=document.getElementById(id);
+  c.classList.toggle('visible');
+  const btn=c.previousElementSibling;
+  btn.textContent=c.classList.contains('visible')?'🙈 Hide Hint':'💡 Show Hint';
+}
+
+/* ─── Save / Load ─── */
+const SAVE_KEY = 'osdr-worksheet-s12';
+
+function gatherState(){
+  const inputs={};
+  document.querySelectorAll('.answer-input').forEach(el=>{ if(el.id) inputs[el.id]=el.value; });
+  return { completed:[...completed], inputs };
+}
+
+function applyState(state){
+  if(!state) return;
+  for(const [id,val] of Object.entries(state.inputs||{})){
+    const el=document.getElementById(id);
+    if(el){ el.value=val; el.classList.toggle('has-content',val.trim().length>0); }
+  }
+  (state.completed||[]).forEach(id=>{
+    completed.add(id);
+    const card=document.getElementById(id);
+    const check=document.getElementById('check-'+id);
+    const dot=document.getElementById('dot-'+id);
+    if(card) card.classList.add('completed');
+    if(check) check.classList.add('checked');
+    if(dot) dot.classList.add('done');
+  });
+  updateProgress();
+}
+
+function saveProgress(){
+  localStorage.setItem(SAVE_KEY, JSON.stringify(gatherState()));
+  const btn=document.getElementById('save-btn');
+  btn.classList.add('saved');
+  btn.querySelector('span').textContent='Saved ✓';
+  setTimeout(()=>{ btn.classList.remove('saved'); btn.querySelector('span').textContent='Save'; }, 2000);
+}
+
+let autosaveTimer;
+function autosave(){
+  clearTimeout(autosaveTimer);
+  autosaveTimer=setTimeout(()=>localStorage.setItem(SAVE_KEY,JSON.stringify(gatherState())),1200);
+}
+
+/* ─── Export to PDF ─── */
+function exportToPDF(){
+  // 1. Save current state first
+  saveProgress();
+
+  // 2. Force light mode for printing
+  const html = document.documentElement;
+  const prevTheme = html.getAttribute('data-theme');
+  html.setAttribute('data-theme','light');
+
+  // 3. Build pdf-answer mirror divs next to every input/textarea
+  const inputs = document.querySelectorAll('.answer-input');
+  const mirrors = [];
+  inputs.forEach(el => {
+    const mirror = document.createElement('div');
+    mirror.className = 'pdf-answer' + (el.value.trim() ? '' : ' empty');
+    mirror.textContent = el.value.trim() || '(no answer provided)';
+    // insert right after the input
+    el.parentNode.insertBefore(mirror, el.nextSibling);
+    mirrors.push(mirror);
+  });
+
+  // 4. Inject a cover block at top of content-main
+  const main = document.querySelector('.content-main');
+  const cover = document.createElement('div');
+  cover.className = 'pdf-cover';
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'});
+  const done = completed.size, total = ALL_TASKS.length;
+  cover.innerHTML = `
+    <div style="border-bottom:3px solid #2563eb;padding-bottom:16pt;margin-bottom:24pt;">
+      <div style="font-size:10pt;color:#6b7280;letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-bottom:6pt;">
+        Philippine Space Agency · ISMDD · Bioinformatics for Space Biology
+      </div>
+      <div style="font-size:22pt;font-weight:700;color:#1a1f35;margin-bottom:4pt;">
+        Session 11 · NASA OSDR Mouse Transcriptomics Worksheet
+      </div>
+      <div style="font-size:11pt;color:#4a5068;">
+        Exported: ${dateStr} &nbsp;·&nbsp; Tasks completed: ${done} / ${total} (${Math.round(done/total*100)}%)
+      </div>
+    </div>`;
+  main.insertBefore(cover, main.firstChild);
+
+  // 5. Print
+  window.print();
+
+  // 6. Clean up after dialog closes
+  setTimeout(()=>{
+    html.setAttribute('data-theme', prevTheme);
+    mirrors.forEach(m => m.remove());
+    cover.remove();
+  }, 1000);
+}
+
+/* ─── Load on page open ─── */
+(function(){
+  try{ const s=localStorage.getItem(SAVE_KEY); if(s) applyState(JSON.parse(s)); }
+  catch(e){ console.warn('Could not restore worksheet state',e); }
+  updateProgress();
+})();
+
+/* ─── Active TOC ─── */
+const tocLinks=document.querySelectorAll('.sidebar-toc a[href^="#"]');
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      tocLinks.forEach(l=>l.classList.remove('active'));
+      const a=document.querySelector(`.sidebar-toc a[href="#${e.target.id}"]`);
+      if(a) a.classList.add('active');
+    }
+  });
+},{rootMargin:'-15% 0px -70% 0px'});
+document.querySelectorAll('[id]').forEach(el=>{
+  if(['part-a','part-b','part-c','part-d','part-e','t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13','t14','t15','t16'].includes(el.id))
+    io.observe(el);
+});
+
+/* ─── Session nav ─── */,{id:'s2',label:'Session 2'},
+    {id:'s3',label:'Session 3'},{id:'s4',label:'Session 4'},
+    {id:'s5',label:'Session 5'},{id:'s6',label:'Session 6'},
+    {id:'s7',label:'Session 7'},{id:'s8',label:'Session 8 · Conda & Git'},
+    {id:'s9', label:'Session 9 · DEG Pipeline'},
+    {id:'s10',label:'Session 10 · DEG Worksheet'},
+    {id:'s11',label:'Session 11 · NASA OSDR'},
+  ];
+  nav.innerHTML=sessions.map(s=>{
+    const c=s.id===current;
+    return `<a href="session-${s.id}.html" style="display:flex;align-items:center;gap:6px;padding:5px 12px;font-size:12px;color:${c?'var(--accent-primary)':'var(--text-muted)'};text-decoration:none;border-radius:6px;background:${c?'var(--bg-card)':'transparent'};border-left:2px solid ${c?'var(--accent-primary)':'transparent'};">${s.label}</a>`;
+  }).join('');
+}
+buildSessionNav('s12');
+</script>
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s12');</script>
+</body>
+</html>

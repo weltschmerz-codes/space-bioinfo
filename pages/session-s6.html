@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 6 · DEG Identification · PhilSA-ISMDD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="starfield" aria-hidden="true"></div>
+<div id="app">
+  <nav id="main-nav"><div class="nav-inner">
+    <a href="../index.html" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/><circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/><circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/></svg>
+      <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+    </a>
+    <div class="nav-right"><button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon" id="theme-icon">☀️</span><span id="theme-label">Light Mode</span></button></div>
+  </div></nav>
+  <div class="content-area">
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 1 · Session 6</div>
+        <div class="sidebar-session-title">DEG Identification: Concepts &amp; Workflows</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s6-what">5.1 What Is DGE?</a></li>
+          <li><a href="#s6-pipeline">5.2 RNA-seq Processing Pipeline</a></li>
+          <li><a href="#s6-norm">5.3 Normalization</a></li>
+          <li><a href="#s6-stats">5.4 Statistical Framework</a></li>
+          <li><a href="#s6-output">5.5 DESeq2 Output</a></li>
+          <li><a href="#s6-viz">5.6 Visualization</a></li>
+          <li><a href="#s6-case">5.7 Case Study</a></li>
+          <li><a href="#s6-summary">Session Summary</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">All Sessions</div><div id="all-sessions-nav"></div></div>
+    </aside>
+    <main class="content-main">
+      <div class="session-hero">
+        <div class="session-badge">Module 1 · Session 6</div>
+        <h1 class="session-main-title">DEG Identification: Concepts & Workflows</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">Differential gene expression</span>
+          <span class="topic-pill">FASTQ → count matrix pipeline</span>
+          <span class="topic-pill">Normalization methods</span>
+          <span class="topic-pill">DESeq2 statistical model</span>
+          <span class="topic-pill">Volcano plots · PCA</span>
+        </div>
+      </div>
+      <div class="objectives-box">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Define differential gene expression and explain what the fold change and p-value measure</li>
+          <li>Trace the complete pipeline from FASTQ files to a DESeq2 results table</li>
+          <li>Explain why RNA-seq count data requires normalization before comparison</li>
+          <li>Describe the negative binomial model and why it is appropriate for count data</li>
+          <li>Interpret a DESeq2 results table: log2FoldChange, pvalue, padj, baseMean</li>
+          <li>Generate and interpret volcano plots and PCA plots from DESeq2 output</li>
+        </ul>
+      </div>
+      <div class="content-body">
+        <h2 id="s6-what">5.1 What Is Differential Gene Expression?</h2>
+        <p>Differential gene expression (DGE) analysis identifies genes whose expression levels differ significantly between two or more biological conditions. In spaceflight research, the typical comparison is: <strong>spaceflight samples vs. ground control samples</strong>. A gene is called <strong>differentially expressed</strong> if its expression level is statistically significantly higher or lower in one condition compared to another, after accounting for biological variability.</p>
+        <div class="callout callout-info">
+          <div class="callout-title">💡 Key Metrics</div>
+          <ul>
+            <li><strong>log2 Fold Change (log2FC):</strong> The ratio of expression between conditions on a log2 scale. log2FC = 1 means 2× upregulation; log2FC = -1 means 2× downregulation; log2FC = 2 means 4× upregulation.</li>
+            <li><strong>p-value:</strong> Probability of observing the measured difference by chance. Must be corrected for multiple testing.</li>
+            <li><strong>Adjusted p-value (padj):</strong> The p-value after Benjamini-Hochberg (BH) correction for false discovery rate (FDR). This is the value to use for filtering significant DEGs.</li>
+          </ul>
+        </div>
+
+        <h2 id="s6-pipeline">5.2 The RNA-seq Processing Pipeline</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Step</th><th>Input</th><th>Output</th><th>Tool</th></tr></thead>
+          <tbody>
+            <tr><td>1. Quality Control</td><td>Raw FASTQ files</td><td>QC report; trimmed FASTQ files</td><td>FastQC, Trim Galore, MultiQC</td></tr>
+            <tr><td>2. Alignment</td><td>Trimmed FASTQ + reference genome (FASTA) + annotation (GTF)</td><td>Aligned BAM files; alignment statistics</td><td>STAR or HISAT2</td></tr>
+            <tr><td>3. Alignment QC</td><td>BAM files</td><td>Alignment quality metrics</td><td>RSeQC, samtools flagstat</td></tr>
+            <tr><td>4. Quantification</td><td>BAM files + GTF annotation</td><td>Count matrix (genes × samples)</td><td>featureCounts or STARsolo</td></tr>
+            <tr><td>5. DGE Analysis</td><td>Count matrix + sample metadata</td><td>DEG results table (all genes with log2FC, p-value, padj)</td><td>DESeq2 (R)</td></tr>
+            <tr><td>6. Visualization</td><td>DESeq2 results + normalized counts</td><td>Volcano plots, PCA, heatmaps</td><td>ggplot2, pheatmap, EnhancedVolcano</td></tr>
+            <tr><td>7. Enrichment Analysis</td><td>Filtered DEG list (padj &lt; 0.05, |log2FC| &gt; 1)</td><td>GO terms, pathways enriched in DEG list</td><td>clusterProfiler, g:Profiler</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s6-norm">5.3 Normalization</h2>
+        <p>Raw RNA-seq count data cannot be directly compared between samples because: libraries may differ in total sequencing depth (one sample may have 30M reads, another 50M); longer genes produce more reads simply due to their length; and batch effects may introduce systematic differences. Normalization corrects for these technical factors.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Method</th><th>Full Name</th><th>Use Case</th></tr></thead>
+          <tbody>
+            <tr><td>DESeq2 size factors</td><td>Median ratio normalization</td><td>Standard normalization in DESeq2; robust to outliers; used for DGE analysis</td></tr>
+            <tr><td>TPM</td><td>Transcripts Per Million</td><td>Corrects for library size and gene length; useful for comparing expression across genes within a sample</td></tr>
+            <tr><td>RPKM / FPKM</td><td>Reads/Fragments Per Kilobase per Million</td><td>Older method; similar to TPM but does not sum to constant across samples; avoid for cross-sample comparison</td></tr>
+            <tr><td>TMM (edgeR)</td><td>Trimmed Mean of M-values</td><td>edgeR's normalization method; very similar to DESeq2 in practice</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s6-stats">5.4 The Statistical Framework: Negative Binomial Model</h2>
+        <p>RNA-seq counts are not normally distributed — they are discrete, non-negative integers that show <strong>overdispersion</strong> (the variance is greater than the mean). DESeq2 uses the <strong>negative binomial distribution</strong> to model count data, which accounts for this overdispersion.</p>
+        <p>DESeq2's key innovations are: <strong>empirical Bayes shrinkage</strong> of dispersion estimates (borrows information across genes to improve estimates for genes with few counts) and <strong>apeglm/normal/ashr shrinkage</strong> of fold change estimates (prevents inflated fold changes for low-count genes).</p>
+        <div class="callout callout-warning">
+          <div class="callout-title">⚠️ Always Use padj, Not p-value</div>
+          <p>When testing 20,000 genes, you expect ~1,000 false positives at p &lt; 0.05 by chance alone. The Benjamini-Hochberg adjusted p-value (padj) controls the false discovery rate to 5% across all tests. Always filter DEGs using padj &lt; 0.05, never just p-value. DESeq2 reports NA for padj when a gene has all-zero counts or extreme outliers — these are not significant.</p>
+        </div>
+
+        <h2 id="s6-output">5.5 Interpreting DESeq2 Output</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Column</th><th>Meaning</th><th>How to Use It</th></tr></thead>
+          <tbody>
+            <tr><td>baseMean</td><td>Average normalized count across all samples</td><td>Filter out very low-count genes (baseMean &lt; 10) before interpreting results</td></tr>
+            <tr><td>log2FoldChange</td><td>log2(spaceflight / ground). Positive = upregulated in spaceflight; negative = downregulated</td><td>Primary effect size metric. Use |log2FC| &gt; 1 (2-fold change) as biological significance cutoff</td></tr>
+            <tr><td>lfcSE</td><td>Standard error of the log2FC estimate</td><td>Larger SE = less precise estimate (usually low-count genes)</td></tr>
+            <tr><td>stat</td><td>Wald statistic (log2FC / lfcSE)</td><td>Used internally; positive = upregulated direction</td></tr>
+            <tr><td>pvalue</td><td>Raw p-value from the Wald test</td><td>Do NOT use for filtering — use padj instead</td></tr>
+            <tr><td>padj</td><td>Benjamini-Hochberg adjusted p-value (FDR)</td><td>Primary significance filter: padj &lt; 0.05 to define significant DEGs</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s6-viz">5.6 Standard Visualizations</h2>
+        <p><strong>PCA Plot (Principal Component Analysis):</strong> The first check after normalization. Projects samples into a low-dimensional space to reveal overall structure. Biological replicates should cluster together; spaceflight and ground control samples should separate. If one sample clusters with the wrong group, it may be a mislabeled or failed sample.</p>
+        <p><strong>Volcano Plot:</strong> Plots -log10(padj) on the y-axis vs log2FC on the x-axis. Genes in the upper-right quadrant are significantly upregulated; genes in the upper-left quadrant are significantly downregulated. The x-axis threshold is typically |log2FC| &gt; 1; the y-axis threshold is padj &lt; 0.05 (i.e., -log10(0.05) ≈ 1.3).</p>
+        <p><strong>Heatmap:</strong> Shows the expression of selected genes (e.g., top 50 DEGs by padj) across all samples. Reveals whether sample groups cluster by expression pattern, confirms expected direction of changes, and identifies co-regulated gene clusters.</p>
+
+        <h2 id="s6-case">5.7 Case Study: DEG Analysis of Mouse Muscle Spaceflight Data</h2>
+        <p>Using GeneLab dataset GLDS-242 (mice aboard ISS for 35 days, gastrocnemius muscle RNA-seq), a typical DESeq2 analysis would produce approximately: 800–1200 significant DEGs at padj &lt; 0.05 and |log2FC| &gt; 1; enrichment of downregulated genes in myofibril assembly, sarcomere organization, and muscle contraction pathways; enrichment of upregulated genes in protein catabolism, ubiquitin-proteasome pathway, and oxidative stress response. These findings are consistent with the known biology of muscle atrophy in microgravity.</p>
+
+        <div class="summary-box" id="s6-summary">
+          <h3>Session Summary</h3>
+          <ul>
+            <li>DGE analysis identifies genes with statistically significant expression differences between conditions using log2FC and adjusted p-value</li>
+            <li>The standard pipeline: FASTQ → QC → alignment (STAR) → quantification (featureCounts) → normalization → DESeq2 → visualization</li>
+            <li>DESeq2 uses the negative binomial model and empirical Bayes shrinkage to handle small sample sizes</li>
+            <li>Key thresholds: |log2FC| &gt; 1 AND padj &lt; 0.05 define biologically meaningful DEGs</li>
+            <li>Always use padj (not p-value), check PCA first, and filter by baseMean before interpreting results</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s6');</script>
+</body></html>

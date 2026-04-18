@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 8 · Linux &amp; VS Code via SSH · PhilSA-ISMDD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="starfield" aria-hidden="true"></div>
+<div id="app">
+  <nav id="main-nav"><div class="nav-inner">
+    <a href="../index.html" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/><circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/><circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/></svg>
+      <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+    </a>
+    <div class="nav-right"><button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon" id="theme-icon">☀️</span><span id="theme-label">Light Mode</span></button></div>
+  </div></nav>
+  <div class="content-area">
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 2 · Session 8</div>
+        <div class="sidebar-session-title">Working with Linux &amp; VS Code via SSH</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s8-why">7.1 Why Remote Servers &amp; SSH?</a></li>
+          <li><a href="#s8-ssh" class="toc-sub">7.1.1 What is SSH?</a></li>
+          <li><a href="#s8-vscode">7.2 Setting Up VS Code</a></li>
+          <li><a href="#s8-linux">7.3 Essential Linux Navigation</a></li>
+          <li><a href="#s8-nav" class="toc-sub">7.3.2 Core Navigation Commands</a></li>
+          <li><a href="#s8-files" class="toc-sub">7.3.3 File Management Commands</a></li>
+          <li><a href="#s8-view" class="toc-sub">7.3.4 Viewing File Contents</a></li>
+          <li><a href="#s8-specs">7.4 Checking Workstation Specs</a></li>
+          <li><a href="#s8-summary">Session Summary</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">All Sessions</div><div id="all-sessions-nav"></div></div>
+    </aside>
+    <main class="content-main">
+      <div class="session-hero">
+        <div class="session-badge">Module 2 · Session 8</div>
+        <h1 class="session-main-title">Working with Linux &amp; VS Code via SSH</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">SSH remote connections</span>
+          <span class="topic-pill">VS Code Remote extension</span>
+          <span class="topic-pill">Linux command line</span>
+          <span class="topic-pill">File management</span>
+          <span class="topic-pill">Server specs</span>
+        </div>
+      </div>
+      <div class="objectives-box">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Explain what SSH is and why remote servers are used in bioinformatics workflows</li>
+          <li>Install VS Code and configure the Remote - SSH extension for server access</li>
+          <li>Connect to and navigate a remote server using VS Code's integrated terminal</li>
+          <li>Use core Linux commands (pwd, ls, cd, mkdir, cp, mv, rm) to manage files and directories</li>
+          <li>Retrieve workstation hardware specifications using command-line tools</li>
+          <li>Recognize and avoid common beginner mistakes when working on a remote server</li>
+        </ul>
+      </div>
+      <div class="content-body">
+        <h2 id="s8-why">7.1 Why Remote Servers and SSH?</h2>
+        <p>Bioinformatics pipelines routinely process gigabytes to terabytes of sequencing data. A typical RNA-seq dataset may occupy 50–200 GB of raw storage and require many hours of computation. Running such analyses on a personal laptop is impractical; local machines typically lack the RAM, CPU cores, and storage capacity required.</p>
+        <p>Instead, bioinformaticians connect to dedicated remote servers or high-performance computing (HPC) clusters — machines that may have hundreds of CPU cores, terabytes of RAM, and petabytes of storage, all accessible from any location over the internet.</p>
+
+        <h3 id="s8-ssh">7.1.1 What is SSH?</h3>
+        <p>SSH (Secure Shell) is a network protocol that creates an encrypted connection between your local computer and a remote server. Think of it as a secure tunnel — all commands you type travel encrypted to the server, and all output travels back encrypted to your screen. The basic SSH command is:</p>
+        <pre><code>ssh username@server_ip_address
+# Example:
+ssh jdelacruz@192.168.1.100</code></pre>
+        <div class="callout callout-info">
+          <div class="callout-title">💡 SSH Key Authentication</div>
+          <p>Rather than typing a password every time, SSH supports key-based authentication: you generate a key pair (public + private), place the public key on the server, and your private key authenticates you silently. This is more secure than passwords and required for GitHub connections. Session 8 covers SSH key setup in detail.</p>
+        </div>
+
+        <h2 id="s8-vscode">7.2 Setting Up VS Code for Remote Development</h2>
+        <p>Visual Studio Code (VS Code) with the <strong>Remote - SSH</strong> extension transforms remote server access. Instead of typing commands blindly into a terminal, you get a full IDE experience — file explorer, syntax highlighting, integrated terminal, and extensions — all running on the remote server.</p>
+        <ol>
+          <li>Install VS Code from <a href="https://code.visualstudio.com" target="_blank" rel="noopener">code.visualstudio.com</a></li>
+          <li>Open Extensions panel (Ctrl+Shift+X) → search "Remote - SSH" → Install</li>
+          <li>Press F1 → "Remote-SSH: Connect to Host" → enter <code>username@server_ip</code></li>
+          <li>VS Code opens a new window connected to the remote server</li>
+          <li>Open a terminal: Terminal → New Terminal — this is a shell on the remote server</li>
+        </ol>
+        <div class="callout callout-tip">
+          <div class="callout-title">💡 SSH Config File</div>
+          <p>Save server connection details in <code>~/.ssh/config</code> to avoid typing the full address each time:</p>
+          <pre><code>Host philsa-server
+    HostName 192.168.1.100
+    User jdelacruz
+    IdentityFile ~/.ssh/id_ed25519</code></pre>
+          <p>Then connect with simply: <code>ssh philsa-server</code></p>
+        </div>
+
+        <h2 id="s8-linux">7.3 Essential Linux Navigation</h2>
+        <p>Linux uses a hierarchical file system starting from the root directory <code>/</code>. Your home directory is typically <code>/home/username</code>, abbreviated as <code>~</code>. All bioinformatics data and scripts will live somewhere under this structure.</p>
+
+        <h3 id="s8-nav">7.3.2 Core Navigation Commands</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Command</th><th>Description</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td><code>pwd</code></td><td>Print Working Directory — shows where you are</td><td><code>pwd</code> → <code>/home/jdelacruz</code></td></tr>
+            <tr><td><code>ls</code></td><td>List directory contents</td><td><code>ls -lh</code> (detailed, human-readable sizes)</td></tr>
+            <tr><td><code>cd</code></td><td>Change Directory</td><td><code>cd ~/data</code> or <code>cd ..</code> (go up one level)</td></tr>
+            <tr><td><code>mkdir</code></td><td>Make Directory</td><td><code>mkdir -p project/data/raw</code></td></tr>
+            <tr><td><code>tree</code></td><td>Display directory structure as a tree</td><td><code>tree -L 2</code> (2 levels deep)</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3 id="s8-files">7.3.3 File Management Commands</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Command</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>cp source destination</code></td><td>Copy a file. Use <code>cp -r</code> for directories.</td></tr>
+            <tr><td><code>mv source destination</code></td><td>Move or rename a file or directory</td></tr>
+            <tr><td><code>rm filename</code></td><td>Delete a file permanently (no trash/undo). Use with extreme care.</td></tr>
+            <tr><td><code>rm -r directory</code></td><td>Delete a directory and all its contents recursively. Very dangerous.</td></tr>
+            <tr><td><code>ln -s target linkname</code></td><td>Create a symbolic link (shortcut) to a file or directory</td></tr>
+            <tr><td><code>chmod +x script.sh</code></td><td>Make a script executable</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout callout-warning">
+          <div class="callout-title">⚠️ rm Has No Undo</div>
+          <p>The Linux <code>rm</code> command permanently deletes files — there is no Recycle Bin, no undo. Before running any <code>rm</code> command, especially with <code>-r</code> (recursive), always double-check the path with <code>ls</code> first. A common safe practice: use <code>rm -i</code> (interactive mode) to confirm each deletion.</p>
+        </div>
+
+        <h3 id="s8-view">7.3.4 Viewing File Contents</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Command</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>cat filename.txt</code></td><td>Display the entire contents of a text file</td></tr>
+            <tr><td><code>less filename.txt</code></td><td>View file page by page (press q to exit, space for next page)</td></tr>
+            <tr><td><code>head filename.txt</code></td><td>Show the first 10 lines</td></tr>
+            <tr><td><code>head -n 20 filename.txt</code></td><td>Show the first 20 lines</td></tr>
+            <tr><td><code>tail filename.txt</code></td><td>Show the last 10 lines</td></tr>
+            <tr><td><code>tail -f logfile.txt</code></td><td>Follow a file in real time (useful for monitoring running jobs)</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s8-specs">7.4 Checking Workstation Specifications</h2>
+        <p>Before running computationally intensive pipelines, check the resources available on the server. STAR requires ~32 GB of RAM for human genome indexing, so it's critical to verify resources first.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Command</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>lscpu</code></td><td>Detailed CPU information: cores, threads, architecture, speed</td></tr>
+            <tr><td><code>nproc</code></td><td>Quick count of available CPU cores/threads</td></tr>
+            <tr><td><code>htop</code></td><td>Interactive real-time process viewer (press q to exit)</td></tr>
+            <tr><td><code>free -h</code></td><td>Total, used, and available RAM in human-readable format</td></tr>
+            <tr><td><code>df -h</code></td><td>Disk space usage for all mounted filesystems</td></tr>
+            <tr><td><code>du -sh .</code></td><td>Total size of the current directory</td></tr>
+            <tr><td><code>nvidia-smi</code></td><td>NVIDIA GPU model, memory usage, utilization (if GPU present)</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="summary-box" id="s8-summary">
+          <h3>Session Summary</h3>
+          <ul>
+            <li>SSH creates an encrypted connection to remote servers; VS Code's Remote - SSH extension enables full remote development</li>
+            <li>Core Linux commands: pwd, ls, cd, mkdir, cp, mv, rm — essential for all pipeline sessions</li>
+            <li>The rm command is permanent with no undo — always verify paths before deleting files</li>
+            <li>lscpu, free -h, and df -h reveal CPU, RAM, and disk resources before starting pipelines</li>
+            <li>Check workstation specifications before running any computationally intensive pipeline</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s8');</script>
+</body></html>

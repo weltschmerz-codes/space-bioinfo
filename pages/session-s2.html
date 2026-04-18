@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 2 · Introduction to Bioinformatics · PhilSA-ISMDD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+
+<div id="starfield" aria-hidden="true"></div>
+<div id="app">
+
+  <nav id="main-nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-brand">
+        <svg class="nav-logo" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/>
+          <circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/>
+          <circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/>
+          <circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/>
+          <circle cx="30" cy="22" r="2" fill="var(--accent-primary)" opacity="0.7"/>
+        </svg>
+        <div class="nav-title">
+          Bioinformatics for Space Biology
+          <span>Philippine Space Agency · ISMDD</span>
+        </div>
+      </a>
+      <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+          <span class="theme-icon" id="theme-icon">☀️</span>
+          <span id="theme-label">Light Mode</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="content-area">
+    <!-- ─── SIDEBAR ─────────────────────────────────────────────── -->
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 1 · Session 2</div>
+        <div class="sidebar-session-title">Introduction to Bioinformatics</div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s2-what">1.1 What Is Bioinformatics?</a></li>
+          <li><a href="#s2-def" class="toc-sub">1.1.1 A Working Definition</a></li>
+          <li><a href="#s2-dogma">1.2 The Central Dogma</a></li>
+          <li><a href="#s2-omics">1.3 The Omics Landscape</a></li>
+          <li><a href="#s2-multiomics" class="toc-sub">1.3.1 Multi-Omics Integration</a></li>
+          <li><a href="#s2-history">1.4 A Brief History</a></li>
+          <li><a href="#s2-why">1.5 Why Computation Is Essential</a></li>
+          <li><a href="#s2-terms">Key Terms</a></li>
+          <li><a href="#s2-summary">Session Summary</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">All Sessions</div>
+        <div id="all-sessions-nav"></div>
+      </div>
+    </aside>
+
+    <!-- ─── CONTENT ──────────────────────────────────────────────── -->
+    <main class="content-main">
+      <div class="session-hero">
+        <div class="session-badge">Module 1 · Session 2</div>
+        <h1 class="session-main-title">Introduction to Bioinformatics</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">What is bioinformatics?</span>
+          <span class="topic-pill">Central dogma</span>
+          <span class="topic-pill">Omics landscape</span>
+          <span class="topic-pill">History of sequencing</span>
+          <span class="topic-pill">Why computation matters</span>
+        </div>
+      </div>
+
+      <div class="objectives-box">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Define bioinformatics and explain its scope within life sciences</li>
+          <li>Describe the central dogma and relate it to different omic data types</li>
+          <li>Distinguish between genomics, transcriptomics, proteomics, and metabolomics</li>
+          <li>Explain why high-throughput biological data requires computational analysis</li>
+          <li>Appreciate the historical development that made modern bioinformatics possible</li>
+        </ul>
+      </div>
+
+      <div class="content-body">
+        <h2 id="s2-what">1.1 What Is Bioinformatics?</h2>
+        <p>Bioinformatics is an interdisciplinary field that combines biology, computer science, mathematics, and statistics to develop methods and tools for understanding biological data. At its core, bioinformatics answers a simple but profound question: <strong>how do we make sense of the enormous amounts of data that modern biology generates?</strong></p>
+        <p>To put this in perspective: a single human genome contains approximately 3.2 billion base pairs. Sequencing that genome costs less than a thousand dollars today and can be done in a matter of days. But generating the data is only the beginning; interpreting it requires sophisticated algorithms, large databases, and advanced statistical frameworks. This is where bioinformatics becomes indispensable.</p>
+        <p>Bioinformatics sits at the intersection of several disciplines:</p>
+        <ul>
+          <li><strong>Biology:</strong> provides the scientific questions and biological context</li>
+          <li><strong>Computer Science:</strong> provides algorithms, software, and data structures</li>
+          <li><strong>Statistics & Mathematics:</strong> provides the analytical frameworks</li>
+          <li><strong>Chemistry & Biochemistry:</strong> provides mechanistic understanding</li>
+        </ul>
+
+        <h3 id="s2-def">1.1.1 A Working Definition</h3>
+        <p>The National Institutes of Health (NIH) defines bioinformatics as <em>the research, development, or application of computational tools and approaches for expanding the use of biological, medical, behavioral, or health data, including those used to acquire, store, organize, archive, analyze, or visualize such data.</em></p>
+        <p>In these lecture notes, the focus is on bioinformatics applied to molecular biology, specifically in the context of how organisms respond to the extreme environment of spaceflight.</p>
+
+        <h2 id="s2-dogma">1.2 The Central Dogma Revisited</h2>
+        <p>Before diving into bioinformatics tools, we need a clear picture of the biological information flow that bioinformatics aims to analyze. The central dogma of molecular biology, originally proposed by Francis Crick in 1958, describes how genetic information flows within a biological system:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Level</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><strong>DNA → RNA (Transcription)</strong></td><td>Genetic sequence is copied into messenger RNA</td></tr>
+              <tr><td><strong>RNA → Protein (Translation)</strong></td><td>mRNA is decoded to produce a functional protein</td></tr>
+              <tr><td><strong>Protein → Function</strong></td><td>Proteins carry out biological processes in the cell</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Each step in this flow corresponds to a distinct layer of biological information, and each layer can be studied by a different omics discipline. Importantly, bioinformatics provides the tools to analyze data at every single one of these levels.</p>
+        <div class="callout callout-info">
+          <div class="callout-title">💡 Note</div>
+          <p>It is worth noting that the central dogma is not as rigid as it was once thought. Regulatory RNAs, epigenetic modifications, and post-translational protein modifications add additional layers of complexity that bioinformatics must also address.</p>
+        </div>
+
+        <h2 id="s2-omics">1.3 The Omics Landscape</h2>
+        <p>The suffix "-omics" refers to the comprehensive study of a class of molecules. Rather than studying individual genes or proteins in isolation, omics approaches aim to measure all molecules of a given type simultaneously. This holistic view is what makes omics data particularly powerful — and particularly challenging to analyze.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Omics Discipline</th><th>What It Measures</th><th>Key Technique</th></tr></thead>
+            <tbody>
+              <tr><td>Genomics</td><td>All DNA sequences in an organism</td><td>Whole-genome sequencing (WGS), SNP arrays</td></tr>
+              <tr><td>Epigenomics</td><td>Chemical modifications of DNA and histones that alter gene expression</td><td>WGBS, ChIP-seq, ATAC-seq</td></tr>
+              <tr><td>Transcriptomics</td><td>All RNA transcripts expressed at a given time</td><td>RNA-seq, microarray, single-cell RNA-seq</td></tr>
+              <tr><td>Proteomics</td><td>All proteins expressed: the proteome</td><td>Mass spectrometry, 2D gel electrophoresis</td></tr>
+              <tr><td>Metabolomics</td><td>Small molecule metabolites: the metabolome</td><td>LC-MS, GC-MS, NMR spectroscopy</td></tr>
+              <tr><td>Metagenomics</td><td>Genetic material from an entire microbial community</td><td>Shotgun metagenomics, 16S rRNA sequencing</td></tr>
+              <tr><td>Lipidomics</td><td>All lipid molecules: the lipidome</td><td>LC-MS/MS</td></tr>
+              <tr><td>Glycomics</td><td>All carbohydrates and glycoconjugates</td><td>Mass spectrometry, lectin arrays</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>In spaceflight research, <strong>transcriptomics</strong> and <strong>proteomics</strong> have been the most widely applied omics disciplines, largely because they capture the dynamic response of cells to their environment rather than just the static genetic blueprint.</p>
+
+        <h3 id="s2-multiomics">1.3.1 Multi-Omics Integration</h3>
+        <p>No single omics layer tells the whole story. A gene may be transcribed into mRNA but the protein may never be made. A protein may be produced but inhibited by a metabolite. Modern spaceflight biology increasingly relies on multi-omics studies that measure several layers simultaneously and integrate them computationally. This concept is explored further in Session 6 on network analysis.</p>
+
+        <h2 id="s2-history">1.4 A Brief History of Bioinformatics</h2>
+        <p>Understanding how bioinformatics developed helps explain both its current capabilities and its limitations.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Era / Milestone</th><th>Significance for Bioinformatics</th></tr></thead>
+            <tbody>
+              <tr><td>1953: Watson & Crick describe DNA double helix</td><td>Establishes the molecular basis of heredity; creates need for sequence-based analysis</td></tr>
+              <tr><td>1965: Margaret Dayhoff creates first protein sequence database (PIR)</td><td>First bioinformatics database; introduces scoring matrices for sequence alignment</td></tr>
+              <tr><td>1970: Needleman-Wunsch algorithm</td><td>First algorithm for global sequence alignment; foundation of comparative genomics</td></tr>
+              <tr><td>1977: Sanger sequencing developed</td><td>Makes DNA sequencing practical; first complete genome (phage φX174) sequenced</td></tr>
+              <tr><td>1982: GenBank established</td><td>First major nucleotide sequence database; international data sharing begins</td></tr>
+              <tr><td>1990: Human Genome Project begins (completed 2003)</td><td>13-year, $3 billion project; transforms bioinformatics from niche to essential field</td></tr>
+              <tr><td>1994: BLAST algorithm published</td><td>Rapid sequence similarity search; makes large-scale comparative genomics feasible</td></tr>
+              <tr><td>2001: First human genome draft published</td><td>~3.2 billion base pairs; reveals ~20,000 protein-coding genes</td></tr>
+              <tr><td>2005–2008: Next-generation sequencing platforms emerge</td><td>Cost drops from $1B to &lt;$1K per genome; data generation outpaces computation</td></tr>
+              <tr><td>2010s: RNA-seq becomes standard</td><td>Replaces microarrays; enables transcriptome-wide expression profiling</td></tr>
+              <tr><td>2016: NASA GeneLab launches</td><td>First comprehensive open omics database specifically for spaceflight experiments</td></tr>
+              <tr><td>2020s: Single-cell omics, AI/ML integration</td><td>Cell-level resolution; deep learning transforms sequence analysis and structure prediction</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="s2-why">1.5 Why Is Computation Essential?</h2>
+        <p>Consider what happens when an RNA-seq experiment is performed. A tissue sample is collected, RNA is extracted, converted to cDNA, and sequenced. A modern Illumina sequencer can generate over 10 billion base pairs of sequence data in a single run — equivalent to approximately three human genomes. This data arrives as billions of short reads (typically 75–150 nucleotides each), stored in FASTQ format.</p>
+        <p>To make biological sense of this data, the researcher must:</p>
+        <ul>
+          <li>Remove low-quality reads and sequencing artifacts (quality control)</li>
+          <li>Align billions of short reads to a reference genome (alignment)</li>
+          <li>Count how many reads map to each gene (quantification)</li>
+          <li>Statistically test which genes are differentially expressed (statistical modeling)</li>
+          <li>Interpret the results in biological context (downstream analysis)</li>
+        </ul>
+        <div class="callout callout-info">
+          <div class="callout-title">📊 The Data Challenge of Modern Biology</div>
+          <ul>
+            <li>One RNA-seq run: ~50 GB of raw data</li>
+            <li>One whole-genome sequencing run: ~200 GB of raw data</li>
+            <li>GenBank (as of 2024): over 250 billion nucleotide bases in &gt;300 million sequences</li>
+            <li>A typical multi-omics spaceflight study: TB-scale raw data, months of computational analysis</li>
+          </ul>
+          <p><strong>→ No human could analyze this by hand. Algorithms, pipelines, and databases are not optional; they are fundamental to the science.</strong></p>
+        </div>
+
+        <h2 id="s2-terms">Key Terms</h2>
+        <div class="key-terms-grid">
+          <div class="term-card"><div class="term-word">Bioinformatics</div><div class="term-def">Interdisciplinary field applying computation to biological data analysis</div></div>
+          <div class="term-card"><div class="term-word">Omics</div><div class="term-def">Comprehensive study of all molecules of a given type (-ome = complete set)</div></div>
+          <div class="term-card"><div class="term-word">Transcriptome</div><div class="term-def">The complete set of RNA transcripts in a cell at a given moment</div></div>
+          <div class="term-card"><div class="term-word">FASTQ</div><div class="term-def">File format storing sequencing reads with quality scores</div></div>
+          <div class="term-card"><div class="term-word">Pipeline</div><div class="term-def">A series of computational steps applied sequentially to process biological data</div></div>
+          <div class="term-card"><div class="term-word">Algorithm</div><div class="term-def">A step-by-step computational procedure for solving a defined problem</div></div>
+        </div>
+
+        <div class="summary-box" id="s2-summary">
+          <h3>Session Summary</h3>
+          <ul>
+            <li>Bioinformatics integrates biology, computer science, and statistics to analyze large-scale biological datasets</li>
+            <li>The central dogma (DNA → RNA → Protein) defines the layers of omics data</li>
+            <li>Each omics discipline measures a different molecular layer of biological systems</li>
+            <li>The volume and complexity of modern biological data makes computation non-optional</li>
+            <li>Spaceflight biology extensively uses transcriptomics and proteomics to capture dynamic responses</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+
+</div><!-- #app -->
+
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s2');</script>
+</body>
+</html>

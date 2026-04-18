@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 10 · DEG Pipeline: Setup, QC &amp; Alignment · PhilSA-ISMDD</title>
+  
+  
+  
+
+  <style>
+    /* ── CSS Variables (matching session-s8 dark/light theme pattern) ── */
+    :root[data-theme="dark"] {
+      --bg-primary: #0a0d14;
+      --bg-secondary: #111520;
+      --bg-card: #141824;
+      --bg-card-hover: #1a1f2e;
+      --border-color: rgba(255,255,255,0.07);
+      --border-accent: rgba(78,151,255,0.3);
+      --text-primary: #e8eaf0;
+      --text-secondary: #8b93a8;
+      --text-muted: #555c72;
+      --accent-primary: #4e97ff;
+      --accent-teal: #2dd4bf;
+      --accent-purple: #a78bfa;
+      --accent-amber: #fbbf24;
+      --accent-rose: #fb7185;
+      --accent-green: #34d399;
+      --code-bg: #0d1117;
+      --code-border: rgba(78,151,255,0.2);
+      --callout-tip-bg: rgba(45,212,191,0.08);
+      --callout-tip-border: rgba(45,212,191,0.4);
+      --callout-warn-bg: rgba(251,191,36,0.08);
+      --callout-warn-border: rgba(251,191,36,0.4);
+      --callout-info-bg: rgba(78,151,255,0.08);
+      --callout-info-border: rgba(78,151,255,0.4);
+      --callout-download-bg: rgba(52,211,153,0.08);
+      --callout-download-border: rgba(52,211,153,0.4);
+      --nav-bg: rgba(10,13,20,0.92);
+      --sidebar-bg: #0d1019;
+      --table-head-bg: rgba(78,151,255,0.1);
+      --table-stripe: rgba(255,255,255,0.02);
+      --shadow-glow: 0 0 40px rgba(78,151,255,0.08);
+    }
+    :root[data-theme="light"] {
+      --bg-primary: #f4f6fc;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f0f4ff;
+      --border-color: rgba(0,0,0,0.08);
+      --border-accent: rgba(59,100,200,0.3);
+      --text-primary: #1a1f35;
+      --text-secondary: #4a5068;
+      --text-muted: #8b93a8;
+      --accent-primary: #2563eb;
+      --accent-teal: #0d9488;
+      --accent-purple: #7c3aed;
+      --accent-amber: #d97706;
+      --accent-rose: #e11d48;
+      --accent-green: #059669;
+      --code-bg: #f0f4f8;
+      --code-border: rgba(59,100,200,0.15);
+      --callout-tip-bg: rgba(13,148,136,0.06);
+      --callout-tip-border: rgba(13,148,136,0.35);
+      --callout-warn-bg: rgba(217,119,6,0.07);
+      --callout-warn-border: rgba(217,119,6,0.35);
+      --callout-info-bg: rgba(37,99,235,0.06);
+      --callout-info-border: rgba(37,99,235,0.3);
+      --callout-download-bg: rgba(5,150,105,0.07);
+      --callout-download-border: rgba(5,150,105,0.35);
+      --nav-bg: rgba(244,246,252,0.95);
+      --sidebar-bg: #eef1f9;
+      --table-head-bg: rgba(37,99,235,0.08);
+      --table-stripe: rgba(0,0,0,0.02);
+      --shadow-glow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background 0.3s, color 0.3s;
+      min-height: 100vh;
+    }
+
+    /* ── Starfield (dark mode) ── */
+    #starfield {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      opacity: 0; transition: opacity 0.5s;
+    }
+    [data-theme="dark"] #starfield { opacity: 1; }
+    .star {
+      position: absolute; border-radius: 50%;
+      background: white; animation: twinkle var(--dur, 3s) ease-in-out infinite;
+    }
+    @keyframes twinkle { 0%,100%{opacity:var(--min,0.2)} 50%{opacity:var(--max,0.8)} }
+
+    /* ── Navigation ── */
+    #main-nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--nav-bg);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .nav-inner {
+      max-width: 1400px; margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo { width: 36px; height: 36px; flex-shrink: 0; }
+    .nav-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 13px; font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+    .nav-title span {
+      display: block; font-size: 10px;
+      color: var(--accent-teal); font-weight: 400;
+      letter-spacing: 0.05em;
+    }
+    .theme-toggle {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 20px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer; font-size: 13px;
+      font-family: 'IBM Plex Sans', sans-serif;
+      transition: all 0.2s;
+    }
+    .theme-toggle:hover { border-color: var(--accent-primary); color: var(--accent-primary); }
+
+    /* ── Layout ── */
+    #app { position: relative; z-index: 1; }
+    .content-area {
+      max-width: 1400px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 0;
+      min-height: calc(100vh - 60px);
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border-color);
+      padding: 28px 0;
+      position: sticky; top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-color) transparent;
+    }
+    .sidebar-back {
+      display: block; padding: 0 20px 16px;
+      color: var(--accent-primary); text-decoration: none;
+      font-size: 13px; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .sidebar-back:hover { color: var(--accent-teal); }
+    .sidebar-section { padding: 0 20px 20px; }
+    .sidebar-session-label {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent-teal); margin-bottom: 6px;
+    }
+    .sidebar-session-title {
+      font-size: 14px; font-weight: 600;
+      color: var(--text-primary); line-height: 1.4;
+    }
+    .sidebar-section-title {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 10px;
+    }
+    .sidebar-toc { list-style: none; }
+    .sidebar-toc li { margin-bottom: 2px; }
+    .sidebar-toc a {
+      display: block; padding: 5px 12px;
+      color: var(--text-secondary); text-decoration: none;
+      font-size: 13px; border-radius: 6px;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .sidebar-toc a.toc-sub { padding-left: 24px; font-size: 12px; }
+    .sidebar-toc a:hover, .sidebar-toc a.active {
+      color: var(--accent-primary);
+      background: var(--bg-card);
+      border-left-color: var(--accent-primary);
+    }
+    .sidebar-divider { height: 1px; background: var(--border-color); margin: 8px 20px 20px; }
+
+    /* ── Sub-session tabs ── */
+    .session-tabs {
+      display: flex; gap: 8px; margin-bottom: 32px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0;
+    }
+    .session-tab {
+      padding: 10px 20px;
+      font-family: 'Orbitron', monospace;
+      font-size: 12px; font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: none; background: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+    .session-tab:hover { color: var(--accent-primary); }
+    .session-tab.active {
+      color: var(--accent-primary);
+      border-bottom-color: var(--accent-primary);
+    }
+    .session-panel { display: none; }
+    .session-panel.active { display: block; }
+
+    /* ── Main Content ── */
+    .content-main {
+      padding: 40px 48px 80px;
+      max-width: 860px;
+    }
+
+    /* ── Hero ── */
+    .session-hero { margin-bottom: 32px; }
+    .session-badge {
+      display: inline-block;
+      font-family: 'Orbitron', monospace;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent-teal);
+      background: var(--callout-tip-bg);
+      border: 1px solid var(--callout-tip-border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      margin-bottom: 16px;
+    }
+    .session-main-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--text-primary) 60%, var(--accent-primary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .session-topic-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .topic-pill {
+      font-size: 12px; padding: 4px 12px; border-radius: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    /* ── Objectives Box ── */
+    .objectives-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 36px;
+      box-shadow: var(--shadow-glow);
+    }
+    .objectives-box h3 {
+      font-size: 15px; font-weight: 600;
+      color: var(--accent-primary);
+      margin-bottom: 14px;
+    }
+    .objectives-box ul { list-style: none; }
+    .objectives-box li {
+      padding: 5px 0 5px 22px;
+      position: relative; color: var(--text-secondary);
+      font-size: 14px;
+    }
+    .objectives-box li::before {
+      content: '▸';
+      position: absolute; left: 0;
+      color: var(--accent-teal);
+    }
+
+    /* ── Typography ── */
+    .content-body h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: 18px; font-weight: 700;
+      color: var(--text-primary);
+      margin: 40px 0 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      scroll-margin-top: 80px;
+    }
+    .content-body h3 {
+      font-size: 15px; font-weight: 600;
+      color: var(--accent-primary);
+      margin: 28px 0 12px;
+      scroll-margin-top: 80px;
+    }
+    .content-body p { color: var(--text-secondary); margin-bottom: 16px; }
+    .content-body strong { color: var(--text-primary); font-weight: 600; }
+    .content-body em { color: var(--accent-teal); font-style: italic; }
+    .content-body a { color: var(--accent-primary); }
+
+    /* ── Code ── */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      overflow-x: auto;
+      margin: 16px 0 24px;
+      position: relative;
+    }
+    pre code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      color: var(--accent-teal);
+      line-height: 1.65;
+    }
+    code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.875em;
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      color: var(--accent-purple);
+    }
+    pre code { background: none; border: none; padding: 0; color: inherit; }
+
+    /* ── Callouts ── */
+    .callout {
+      border-radius: 10px; padding: 16px 20px;
+      margin: 20px 0; font-size: 14px;
+    }
+    .callout-title {
+      font-weight: 600; margin-bottom: 8px; font-size: 14px;
+    }
+    .callout p { margin: 0; font-size: 14px; }
+    .callout-tip { background: var(--callout-tip-bg); border-left: 3px solid var(--callout-tip-border); }
+    .callout-tip .callout-title { color: var(--accent-teal); }
+    .callout-warning { background: var(--callout-warn-bg); border-left: 3px solid var(--callout-warn-border); }
+    .callout-warning .callout-title { color: var(--accent-amber); }
+    .callout-info { background: var(--callout-info-bg); border-left: 3px solid var(--callout-info-border); }
+    .callout-info .callout-title { color: var(--accent-primary); }
+    .callout-download { background: var(--callout-download-bg); border-left: 3px solid var(--callout-download-border); }
+    .callout-download .callout-title { color: var(--accent-green); }
+
+    /* ── Download Box ── */
+    .download-box {
+      background: var(--bg-card);
+      border: 1px solid var(--callout-download-border);
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin: 28px 0;
+    }
+    .download-box h4 {
+      color: var(--accent-green);
+      font-size: 14px; font-weight: 600;
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .download-grid { display: grid; gap: 10px; }
+    .download-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      transition: border-color 0.2s;
+    }
+    .download-item:hover { border-color: var(--accent-green); }
+    .download-item-info { display: flex; align-items: center; gap: 12px; }
+    .download-item-icon {
+      width: 36px; height: 36px;
+      background: var(--callout-download-bg);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .download-item-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .download-item-desc { font-size: 12px; color: var(--text-muted); }
+    .download-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px;
+      background: var(--accent-green);
+      color: #0a0d14;
+      font-size: 12px; font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .download-btn:hover { opacity: 0.85; }
+    .download-btn.placeholder {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      cursor: default;
+    }
+    .download-btn.placeholder:hover { opacity: 1; }
+
+    /* ── Tables ── */
+    .table-wrap { overflow-x: auto; margin: 16px 0 24px; }
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    thead { background: var(--table-head-bg); }
+    th {
+      padding: 10px 14px; text-align: left;
+      font-weight: 600; color: var(--accent-primary);
+      font-size: 12px; letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border-color);
+    }
+    td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+    tr:nth-child(even) td { background: var(--table-stripe); }
+    td code { font-size: 12px; }
+
+    /* ── Pipeline Diagram ── */
+    .pipeline-flow {
+      display: flex; gap: 0; align-items: stretch;
+      margin: 24px 0; overflow-x: auto;
+      padding: 4px;
+    }
+    .pipeline-step {
+      flex: 1; min-width: 120px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 0; padding: 16px 12px;
+      text-align: center;
+      position: relative;
+      transition: background 0.2s;
+    }
+    .pipeline-step:first-child { border-radius: 8px 0 0 8px; }
+    .pipeline-step:last-child { border-radius: 0 8px 8px 0; }
+    .pipeline-step:not(:last-child)::after {
+      content: '→';
+      position: absolute; right: -14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent-primary); font-size: 18px;
+      z-index: 1;
+      background: var(--bg-primary);
+      padding: 2px;
+    }
+    .pipeline-step:not(:last-child) { margin-right: 2px; }
+    .pipeline-step:hover { background: var(--bg-card-hover); border-color: var(--accent-primary); }
+    .pipeline-step-icon { font-size: 22px; margin-bottom: 6px; }
+    .pipeline-step-name {
+      font-size: 11px; font-weight: 600;
+      color: var(--text-primary); margin-bottom: 4px;
+    }
+    .pipeline-step-tool {
+      font-size: 10px; color: var(--accent-teal);
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .pipeline-step.active { border-color: var(--accent-primary); background: var(--callout-info-bg); }
+    .pipeline-step.active .pipeline-step-name { color: var(--accent-primary); }
+
+    /* ── Summary Box ── */
+    .summary-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: 12px; padding: 28px;
+      margin-top: 48px;
+    }
+    .summary-box h3 {
+      font-family: 'Orbitron', monospace;
+      font-size: 15px; font-weight: 700;
+      color: var(--accent-primary); margin-bottom: 16px;
+    }
+    .summary-box ul { list-style: none; }
+    .summary-box li {
+      padding: 5px 0 5px 22px; position: relative;
+      color: var(--text-secondary); font-size: 14px;
+    }
+    .summary-box li::before {
+      content: '✓'; position: absolute; left: 0;
+      color: var(--accent-green); font-weight: 700;
+    }
+
+    /* ── Notebook Preview ── */
+    .notebook-preview {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      border-radius: 10px; overflow: hidden;
+      margin: 20px 0;
+    }
+    .notebook-toolbar {
+      background: var(--bg-card);
+      padding: 8px 16px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .nb-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .nb-dot.red { background: #ff5f57; }
+    .nb-dot.yellow { background: #febc2e; }
+    .nb-dot.green { background: #28c840; }
+    .nb-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-muted); margin-left: 8px; }
+    .nb-cell { padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .nb-cell:last-child { border-bottom: none; }
+    .nb-cell-md { color: var(--text-secondary); font-size: 13px; }
+    .nb-cell-md strong { color: var(--text-primary); }
+    .nb-cell-code {
+      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      color: var(--accent-teal); line-height: 1.6;
+    }
+    .nb-in { font-size: 10px; color: var(--accent-purple); margin-bottom: 4px; font-family: 'IBM Plex Mono', monospace; }
+
+    /* ── Section number badge ── */
+    .section-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--accent-primary);
+      color: white; font-weight: 700; font-size: 12px;
+      margin-right: 8px; flex-shrink: 0;
+      vertical-align: middle;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .content-area { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
+      .content-main { padding: 24px 20px 60px; }
+      .pipeline-flow { flex-direction: column; }
+      .pipeline-step { border-radius: 8px !important; }
+      .pipeline-step:not(:last-child)::after { content: '↓'; right: 50%; top: auto; bottom: -18px; transform: translateX(50%); }
+      .pipeline-step:not(:last-child) { margin-right: 0; margin-bottom: 4px; }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div id="starfield" aria-hidden="true"></div>
+
+<div id="app">
+  <!-- ── Navigation ── -->
+  <nav id="main-nav"><div class="nav-inner">
+    <a href="../index.html" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/>
+        <circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/>
+        <circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/>
+        <circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/>
+      </svg>
+      <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+    </a>
+    <div class="nav-right">
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span class="theme-icon" id="theme-icon">☀️</span>
+        <span id="theme-label">Light Mode</span>
+      </button>
+    </div>
+  </div></nav>
+
+  <div class="content-area">
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 3 · Session 10</div>
+        <div class="sidebar-session-title">DEG Pipeline Walkthrough</div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Session 9A — Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s9a-overview">9A.1 Pipeline Overview</a></li>
+          <li><a href="#s9a-setup" class="toc-sub">9A.2 Setup &amp; System Check</a></li>
+          <li><a href="#s9a-download" class="toc-sub">9A.3 Downloading FASTQs</a></li>
+          <li><a href="#s9a-fastqc" class="toc-sub">9A.4 Quality Control</a></li>
+          <li><a href="#s9a-trimming" class="toc-sub">9A.5 Adapter Trimming</a></li>
+          <li><a href="#s9a-alignment">9A.6 Genome Alignment</a></li>
+          <li><a href="#s9a-star" class="toc-sub">9A.6.1 STAR Indexing</a></li>
+          <li><a href="#s9a-bam" class="toc-sub">9A.6.2 BAM Processing</a></li>
+          <li><a href="#s9a-notebooks">9A Notebooks</a></li>
+          <li><a href="#s9a-summary">9A Summary</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Session 9B — Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s9b-rsem">9B.1 RSEM Quantification</a></li>
+          <li><a href="#s9b-counts" class="toc-sub">9B.1.2 Count Matrices</a></li>
+          <li><a href="#s9b-deseq2">9B.2 DESeq2 Analysis</a></li>
+          <li><a href="#s9b-volcano" class="toc-sub">9B.2.1 Volcano Plots</a></li>
+          <li><a href="#s9b-pca" class="toc-sub">9B.2.2 PCA</a></li>
+          <li><a href="#s9b-heatmap" class="toc-sub">9B.2.3 Heatmaps</a></li>
+          <li><a href="#s9b-pathways">9B.3 Pathway Analysis</a></li>
+          <li><a href="#s9b-notebooks">9B Notebooks</a></li>
+          <li><a href="#s9b-summary">9B Summary</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">All Sessions</div><div id="all-sessions-nav"></div></div>
+    </aside>
+
+    <!-- ── Main Content ── -->
+    <main class="content-main">
+      <!-- Hero -->
+      <div class="session-hero">
+        <div class="session-badge">Module 3 · Session 10</div>
+        <h1 class="session-main-title">DEG Pipeline Walkthrough</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">NASA GeneLab GLDS-525</span>
+          <span class="topic-pill">FastQC / TrimGalore</span>
+          <span class="topic-pill">STAR Alignment</span>
+          <span class="topic-pill">RSEM Quantification</span>
+          <span class="topic-pill">DESeq2</span>
+          <span class="topic-pill">Volcano / PCA / Heatmap</span>
+          <span class="topic-pill">ORA &amp; GSEA</span>
+        </div>
+      </div>
+
+      <!-- Full Pipeline Map -->
+      <div class="pipeline-flow">
+        <div class="pipeline-step">
+          <div class="pipeline-step-icon">📥</div>
+          <div class="pipeline-step-name">Download</div>
+          <div class="pipeline-step-tool">wget</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-icon">🔬</div>
+          <div class="pipeline-step-name">QC</div>
+          <div class="pipeline-step-tool">FastQC</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-icon">✂️</div>
+          <div class="pipeline-step-name">Trim</div>
+          <div class="pipeline-step-tool">TrimGalore</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-icon">🗺️</div>
+          <div class="pipeline-step-name">Align</div>
+          <div class="pipeline-step-tool">STAR</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-icon">🔢</div>
+          <div class="pipeline-step-name">Quantify</div>
+          <div class="pipeline-step-tool">RSEM</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-icon">📊</div>
+          <div class="pipeline-step-name">DEG</div>
+          <div class="pipeline-step-tool">DESeq2</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-icon">🧬</div>
+          <div class="pipeline-step-name">Pathways</div>
+          <div class="pipeline-step-tool">ORA / GSEA</div>
+        </div>
+      </div>
+
+      <!-- ════════════════ SESSION 9A ════════════════ -->
+      <div id="session-9a">
+        <div class="objectives-box">
+          <h3>🎯 Session 9A — Learning Objectives</h3>
+          <ul>
+            <li>Describe the end-to-end structure of a bulk RNA-seq DEG pipeline and where each notebook fits</li>
+            <li>Configure a project directory and benchmark system resources before running an RNA-seq pipeline</li>
+            <li>Download paired-end FASTQ files from NASA GeneLab using the OSD-525 runsheet</li>
+            <li>Assess raw read quality with FastQC and aggregate results with MultiQC</li>
+            <li>Trim adapter sequences with TrimGalore and verify trimming with a post-trim QC pass</li>
+            <li>Build a STAR genome index from Ensembl GRCm39 + ERCC92 references</li>
+            <li>Align trimmed reads to the genome and sort/index BAM files with SAMtools</li>
+          </ul>
+        </div>
+
+        <div class="content-body">
+
+          <!-- 9A.1 -->
+          <h2 id="s9a-overview">9A.1 Pipeline Overview &amp; Study Design</h2>
+          <p>This two-session walkthrough reproduces the <strong>NASA GeneLab GLDS-525</strong> consensus RNA-seq pipeline from raw data to biological insight. The study is RR-23: bulk RNA-sequencing of mouse cerebellum tissue from animals that spent time aboard the International Space Station, with the scientific question — <em>which genes change their expression in response to spaceflight?</em></p>
+
+          <div class="callout callout-info">
+            <div class="callout-title">💡 Study at a Glance</div>
+            <p><strong>Organism:</strong> <em>Mus musculus</em> (mouse) &nbsp;·&nbsp; <strong>Tissue:</strong> Cerebellum &nbsp;·&nbsp; <strong>Samples:</strong> 29 (Space Flight, Ground Control, Vivarium Control) &nbsp;·&nbsp; <strong>Genome:</strong> Ensembl GRCm39 release 112 + ERCC92 spike-ins &nbsp;·&nbsp; <strong>Sequencing:</strong> Paired-end, 150 bp</p>
+          </div>
+
+          <div class="table-wrap"><table>
+            <thead><tr><th>Group</th><th>Abbreviation</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td>Space Flight</td><td><code>FLT</code></td><td>Mice housed on the ISS during the mission</td></tr>
+              <tr><td>Ground Control</td><td><code>GC</code></td><td>Matched ground-based habitat controls</td></tr>
+              <tr><td>Vivarium Control</td><td><code>VIV</code></td><td>Standard vivarium housing baseline</td></tr>
+            </tbody>
+          </table></div>
+
+          <!-- 9A.2 -->
+          <h2 id="s9a-setup">9A.2 Setup, Benchmarking &amp; Tool Verification</h2>
+          <p><strong>Notebook 1</strong> begins by detecting available CPU cores and RAM so the pipeline can auto-configure parallel job counts for maximum speed. It then verifies every required tool is installed at the correct GeneLab-pinned version before investing time in downloads.</p>
+
+          <div class="table-wrap"><table>
+            <thead><tr><th>Tool</th><th>Version (GeneLab)</th><th>Role</th></tr></thead>
+            <tbody>
+              <tr><td><code>FastQC</code></td><td>0.12.1</td><td>Per-read quality metrics</td></tr>
+              <tr><td><code>TrimGalore</code></td><td>0.6.10</td><td>Adapter &amp; quality trimming</td></tr>
+              <tr><td><code>Cutadapt</code></td><td>4.9</td><td>Underlying trimming engine</td></tr>
+              <tr><td><code>STAR</code></td><td>2.7.11a</td><td>Spliced read aligner</td></tr>
+              <tr><td><code>SAMtools</code></td><td>1.21</td><td>BAM sorting &amp; indexing</td></tr>
+              <tr><td><code>RSEM</code></td><td>1.3.3</td><td>Probabilistic gene quantification</td></tr>
+              <tr><td><code>MultiQC</code></td><td>1.25.1</td><td>Aggregate QC reporting</td></tr>
+            </tbody>
+          </table></div>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">⚠️ Resource Requirements</div>
+            <p>STAR genome indexing requires approximately <strong>32 GB RAM</strong> and 1–2 hours. RSEM quantification for 29 samples requires <strong>16+ GB RAM</strong>. Ensure your compute environment meets these requirements before proceeding past Section 9A.6.</p>
+          </div>
+
+          <p>The notebook saves all directory paths to a <code>pipeline_config.json</code> file so subsequent notebooks automatically find all outputs without re-specifying paths.</p>
+
+          <!-- 9A.3 -->
+          <h2 id="s9a-download">9A.3 Downloading FASTQs from NASA GeneLab</h2>
+          <p>Raw data lives on the <strong>NASA GeneLab Open Science Data Repository (OSDR)</strong>. Each of the 29 samples has two FASTQ files (R1 and R2 for paired-end reads), for a total of 58 files. Downloads are parallelised using Python's <code>ThreadPoolExecutor</code> and use <code>wget --continue</code> for resume support.</p>
+
+          <pre><code># Files are named following GeneLab convention:
+# GLDS-525_rna-seq_{SampleName}_R1_raw.fastq.gz
+# GLDS-525_rna-seq_{SampleName}_R2_raw.fastq.gz
+
+# Download is driven by the runsheet CSV:
+RUNSHEET_PATH = DIRS['runsheet'] / 'GLDS-525_rna_seq_bulkRNASeq_v2_runsheet.csv'</code></pre>
+
+          <div class="callout callout-tip">
+            <div class="callout-title">💡 What is a FASTQ file?</div>
+            <p>A FASTQ file contains millions of short DNA sequences ("<strong>reads</strong>", typically 150 bp) from the sequencer. Each read has four lines: a header, the DNA sequence, a separator, and per-base quality scores encoded as ASCII characters. Paired-end sequencing produces two files per sample (R1 and R2) that cover both ends of each DNA fragment.</p>
+          </div>
+
+          <!-- 9A.4 -->
+          <h2 id="s9a-fastqc">9A.4 Raw Read Quality Control with FastQC &amp; MultiQC</h2>
+          <p><strong>FastQC</strong> examines each FASTQ file and generates an HTML report covering per-base quality scores, GC content, adapter content, and sequence duplication levels. <strong>MultiQC</strong> then combines all 58 individual reports into a single interactive dashboard.</p>
+
+          <div class="table-wrap"><table>
+            <thead><tr><th>FastQC Module</th><th>What to Look For</th></tr></thead>
+            <tbody>
+              <tr><td>Per-base sequence quality</td><td>Green zone (Q&gt;28) across most of the 150 bp read</td></tr>
+              <tr><td>Per-sequence GC content</td><td>Bell curve centered near 50% for mouse</td></tr>
+              <tr><td>Adapter content</td><td>Some signal expected at 3′ end — will be removed by TrimGalore</td></tr>
+              <tr><td>Sequence duplication</td><td>Some duplication normal for RNA-seq; overduplication may indicate PCR artifacts</td></tr>
+            </tbody>
+          </table></div>
+
+          <!-- 9A.5 -->
+          <h2 id="s9a-trimming">9A.5 Adapter Trimming with TrimGalore</h2>
+          <p><strong>TrimGalore</strong> (wrapping Cutadapt) removes Illumina adapter sequences and low-quality 3′ bases. The pipeline then runs a second FastQC + MultiQC pass to verify that adapter content has dropped to near zero.</p>
+
+          <pre><code># TrimGalore paired-end command (GeneLab parameters):
+trim_galore \
+  --paired \
+  --phred33 \
+  --cores 4 \
+  --gzip \
+  {R1} {R2} \
+  -o {trimmed_dir}</code></pre>
+
+          <div class="callout callout-tip">
+            <div class="callout-title">💡 Post-trim QC Checklist</div>
+            <p>Compare the before/after MultiQC reports. You should see: <strong>adapter content → near zero</strong>; per-base quality remaining high; sequence length distribution now showing a slight spread below 151 bp (trimmed reads).</p>
+          </div>
+
+          <!-- 9A.6 -->
+          <h2 id="s9a-alignment">9A.6 Genome Indexing &amp; Alignment with STAR</h2>
+          <p>Before alignment, we need a <strong>reference genome</strong>. We download the Ensembl GRCm39 FASTA and GTF annotation, then concatenate the <strong>ERCC92 spike-in sequences</strong> used by GeneLab to create a combined reference. STAR requires a pre-built index of this combined reference.</p>
+
+          <h3 id="s9a-star">9A.6.1 Building the STAR Genome Index</h3>
+          <pre><code>STAR \
+  --runMode genomeGenerate \
+  --genomeDir {star_index_dir} \
+  --genomeFastaFiles {merged_fa} \
+  --sjdbGTFfile {merged_gtf} \
+  --sjdbOverhang 150 \
+  --runThreadN {cores}
+# ⏱ Takes 1–2 hours · Requires ~32 GB RAM · Only done once</code></pre>
+
+          <div class="callout callout-info">
+            <div class="callout-title">💡 Why ERCC92 Spike-ins?</div>
+            <p>ERCC92 are synthetic RNA molecules of known concentrations added to samples before library prep. Including them in the reference allows quality checks on library preparation efficiency and can be used for normalization. GeneLab includes them in all NASA consensus pipelines.</p>
+          </div>
+
+          <h3 id="s9a-bam">9A.6.2 Alignment Output &amp; BAM Processing</h3>
+          <p>STAR produces two BAM files per sample: a <strong>coordinate-sorted BAM</strong> for genome browsers and a <strong>transcriptome-aligned BAM</strong> passed to RSEM. SAMtools sorts and indexes the coordinate BAM for fast random access.</p>
+
+          <div class="table-wrap"><table>
+            <thead><tr><th>Output File</th><th>Used By</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td><code>*_Aligned.sortedByCoord.out.bam</code></td><td>SAMtools / IGV</td><td>Genome-coordinate sorted reads</td></tr>
+              <tr><td><code>*_Aligned.toTranscriptome.out.bam</code></td><td>RSEM</td><td>Transcriptome-space alignments for quantification</td></tr>
+              <tr><td><code>*_Log.final.out</code></td><td>MultiQC</td><td>Alignment rate statistics</td></tr>
+            </tbody>
+          </table></div>
+
+          <!-- Notebook Downloads 9A -->
+          <h2 id="s9a-notebooks">📓 Session 9A Notebooks</h2>
+          <p>Download the Jupyter notebooks to run the full upstream pipeline (Setup → QC → Trimming → Alignment) on your own machine or cluster.</p>
+
+          <div class="download-box">
+            <h4>📥 Session 9A — Notebook Downloads</h4>
+            <div class="download-grid">
+              <div class="download-item">
+                <div class="download-item-info">
+                  <div class="download-item-icon">📓</div>
+                  <div>
+                    <div class="download-item-name">Notebook 1 · Setup, Download &amp; QC</div>
+                    <div class="download-item-desc">System benchmark · Tool check · Download FASTQs · FastQC · TrimGalore</div>
+                  </div>
+                </div>
+                <!-- PLACEHOLDER: Replace href with the actual path to your notebook file -->
+                <!-- e.g. href="../notebooks/01_Setup_Download_QC.ipynb" -->
+                <a href="../notebooks/01_Setup_Download_QC.ipynb" class="download-btn placeholder" title="Add notebook to ../notebooks/ folder">⬇ .ipynb</a>
+              </div>
+              <div class="download-item">
+                <div class="download-item-info">
+                  <div class="download-item-icon">📓</div>
+                  <div>
+                    <div class="download-item-name">Notebook 2 · Genome Index &amp; Alignment</div>
+                    <div class="download-item-desc">Download references · Merge ERCC92 · STAR index · STAR align · SAMtools</div>
+                  </div>
+                </div>
+                <!-- PLACEHOLDER: Replace href with the actual path to your notebook file -->
+                <a href="../notebooks/02_Genome_Index_Alignment.ipynb" class="download-btn placeholder" title="Add notebook to ../notebooks/ folder">⬇ .ipynb</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout-tip">
+            <div class="callout-title">📁 How to set up the notebook download links</div>
+            <p>Create a <code>notebooks/</code> folder in the root of your website (sibling to the <code>sessions/</code> folder) and place the <code>.ipynb</code> files there. The download buttons above already point to <code>../notebooks/01_Setup_Download_QC.ipynb</code> and <code>../notebooks/02_Genome_Index_Alignment.ipynb</code> — simply remove the <code>placeholder</code> CSS class from each button once the files are in place.</p>
+          </div>
+
+          <!-- 9A Summary -->
+          <div class="summary-box" id="s9a-summary">
+            <h3>Session 9A Summary</h3>
+            <ul>
+              <li>The GLDS-525 pipeline processes 29 mouse cerebellum RNA-seq samples from three experimental groups (FLT, GC, VIV)</li>
+              <li>Notebook 1 benchmarks hardware, verifies tool versions, creates directory structure, and downloads all 58 raw FASTQs from NASA GeneLab</li>
+              <li>FastQC → MultiQC reveals raw read quality; TrimGalore removes Illumina adapters and low-quality 3′ bases; a second QC pass confirms clean reads</li>
+              <li>The reference genome combines Ensembl GRCm39 + ERCC92 spike-ins into a single merged FASTA and GTF</li>
+              <li>STAR genome indexing (~1–2 h, ~32 GB RAM) is a one-time step; STAR alignment runs once per sample and outputs both genome-coordinate and transcriptome BAMs</li>
+              <li>SAMtools sorts and indexes coordinate BAMs for downstream visualization and QC</li>
+            </ul>
+          </div>
+
+        </div><!-- /content-body 9A -->
+      </div><!-- /session-9a -->
+
+      <!-- ════════════════ SESSION 9B ════════════════ -->
+      <div id="session-9b" style="margin-top: 64px; padding-top: 32px; border-top: 2px solid var(--border-color);">
+
+        <div style="margin-bottom: 24px;">
+          <div class="session-badge" style="background: var(--callout-info-bg); border-color: var(--callout-info-border); color: var(--accent-primary);">Module 3 · Session 10</div>
+          <h1 class="session-main-title" style="margin-top: 12px;">DEG Pipeline Walkthrough · Part B</h1>
+          <div class="session-topic-pills">
+            <span class="topic-pill">RSEM Quantification</span>
+            <span class="topic-pill">Count Matrices</span>
+            <span class="topic-pill">DESeq2</span>
+            <span class="topic-pill">Volcano Plots</span>
+            <span class="topic-pill">PCA</span>
+            <span class="topic-pill">Heatmaps</span>
+            <span class="topic-pill">ORA &amp; GSEA</span>
+          </div>
+        </div>
+
+        <div class="objectives-box">
+          <h3>🎯 Session 9B — Learning Objectives</h3>
+          <ul>
+            <li>Explain how RSEM uses an EM algorithm to resolve multi-mapping reads and produce probabilistic gene counts</li>
+            <li>Assemble per-sample RSEM outputs into a raw count matrix and a TPM matrix</li>
+            <li>Filter rRNA genes and merge technical replicates before DESeq2 analysis</li>
+            <li>Run DESeq2 (PyDESeq2) to identify differentially expressed genes across three pairwise contrasts</li>
+            <li>Interpret volcano plots, PCA, and heatmaps in the context of spaceflight biology</li>
+            <li>Perform Over-Representation Analysis (ORA) and Gene Set Enrichment Analysis (GSEA) on DEG results</li>
+            <li>Validate pipeline outputs against NASA GeneLab pre-computed reference results</li>
+          </ul>
+        </div>
+
+        <div class="content-body">
+
+          <!-- 9B.1 -->
+          <h2 id="s9b-rsem">9B.1 RSEM Gene Quantification</h2>
+          <p>Alignment (Session 9A) tells us <em>where</em> each read maps. <strong>RSEM</strong> answers the harder question: <em>how many reads came from each gene?</em> This is tricky because some reads map equally well to multiple locations (multi-mapping). RSEM uses an <strong>Expectation-Maximization (EM) algorithm</strong> to probabilistically assign these reads.</p>
+
+          <div class="callout callout-info">
+            <div class="callout-title">💡 RSEM vs. featureCounts</div>
+            <p>Simple counting tools (featureCounts, HTSeq) <strong>discard</strong> multi-mapping reads. RSEM instead assigns them fractionally according to their estimated likelihood, recovering more information — especially important for genes in families with paralogues. NASA GeneLab consensus pipelines use RSEM for this reason.</p>
+          </div>
+
+          <pre><code># Step 1: Build RSEM reference index (once, ~30–60 min)
+rsem-prepare-reference \
+  --gtf {merged_gtf} \
+  {merged_fa} \
+  {rsem_ref_prefix}
+
+# Step 2: Quantify each sample
+rsem-calculate-expression \
+  --bam \
+  --paired-end \
+  --strandedness forward \
+  --estimate-rspd \
+  --append-names \
+  --no-bam-output \
+  -p {threads} \
+  {toTranscriptome_bam} \
+  {rsem_ref_prefix} \
+  {output_prefix}</code></pre>
+
+          <h3 id="s9b-counts">9B.1.2 Assembling Count Matrices</h3>
+          <p>Each sample produces a <code>.genes.results</code> file. The pipeline extracts the <code>expected_count</code> column from each file and assembles them into a single matrix (rows = genes, columns = samples). A separate <strong>TPM matrix</strong> is built for visualization.</p>
+
+          <div class="table-wrap"><table>
+            <thead><tr><th>Matrix</th><th>Column Used</th><th>Used For</th></tr></thead>
+            <tbody>
+              <tr><td>Raw count matrix</td><td><code>expected_count</code></td><td>DESeq2 differential expression</td></tr>
+              <tr><td>TPM matrix</td><td><code>TPM</code></td><td>Visualization, cross-sample comparison</td></tr>
+            </tbody>
+          </table></div>
+
+          <p>Before running DESeq2, the pipeline performs two cleaning steps: removing <strong>rRNA genes</strong> (which can overwhelm normalization) and <strong>merging technical replicates</strong> by summing counts from the same biological sample sequenced twice.</p>
+
+          <!-- 9B.2 -->
+          <h2 id="s9b-deseq2">9B.2 Differential Expression with DESeq2</h2>
+          <p>DESeq2 is the gold-standard method for count-based differential expression. The pipeline uses <strong>PyDESeq2</strong>, a Python implementation. Three pairwise contrasts are tested: FLT vs GC, FLT vs VIV, and GC vs VIV.</p>
+
+          <div class="table-wrap"><table>
+            <thead><tr><th>DESeq2 Step</th><th>What It Does</th></tr></thead>
+            <tbody>
+              <tr><td>Size factor normalization</td><td>Corrects for different sequencing depths between samples</td></tr>
+              <tr><td>Dispersion estimation</td><td>Models biological variability per gene; borrows information across genes</td></tr>
+              <tr><td>Negative binomial GLM</td><td>Tests whether the group effect is statistically significant per gene</td></tr>
+              <tr><td>Multiple testing correction</td><td>Benjamini-Hochberg FDR; uses adjusted p-value (padj) ≤ 0.05</td></tr>
+            </tbody>
+          </table></div>
+
+          <pre><code># Pre-filter: keep genes with ≥10 total counts across all samples
+# (GeneLab criterion — reduces tests, speeds up computation)
+filtered_counts = counts_df[counts_df.sum(axis=1) >= 10]
+
+# DESeq2 significance thresholds (matching GeneLab):
+LOG2FC_CUTOFF = 1.0     # |log₂ fold change| > 1 (2× change)
+PADJ_CUTOFF   = 0.05    # Adjusted p-value < 5%</code></pre>
+
+          <h3 id="s9b-volcano">9B.2.1 Volcano Plots</h3>
+          <p>A <strong>volcano plot</strong> shows every tested gene as a dot: x-axis = log₂ fold change, y-axis = −log₁₀(adjusted p-value). Significant DEGs appear in the upper corners of the "eruption". Genes passing both thresholds are colored red (upregulated) or blue (downregulated).</p>
+
+          <div class="callout callout-tip">
+            <div class="callout-title">💡 Reading a Volcano Plot</div>
+            <p>The horizontal dashed line marks padj = 0.05. The two vertical dashed lines mark |log₂FC| = 1. Only genes in the upper-left and upper-right quadrants are considered <strong>statistically significant with biologically meaningful effect size</strong>. Genes near the x-axis are highly significant but show small fold changes — likely artifacts of very large sample sizes.</p>
+          </div>
+
+          <h3 id="s9b-pca">9B.2.2 Principal Component Analysis (PCA)</h3>
+          <p>PCA collapses thousands of gene expression values into 2–3 dimensions. Samples from the same group should cluster together; well-separated clusters between FLT and GC indicate a strong spaceflight transcriptomic signature. The pipeline uses <strong>VST (Variance-Stabilizing Transformation)</strong> normalized counts for PCA, which prevents highly expressed genes from dominating the analysis.</p>
+
+          <h3 id="s9b-heatmap">9B.2.3 Heatmaps of Top DEGs</h3>
+          <p>Heatmaps display the top 50 DEGs per contrast as a color grid (rows = genes, columns = samples). <strong>Z-score normalization</strong> is applied per gene so expression patterns are comparable across genes of very different absolute expression levels.</p>
+
+          <!-- 9B.3 -->
+          <h2 id="s9b-pathways">9B.3 Pathway Analysis: ORA &amp; GSEA</h2>
+          <p>A list of DEGs is just the beginning. The real biology emerges when we ask whether those genes cluster into known functional categories.</p>
+
+          <div class="table-wrap"><table>
+            <thead><tr><th>Method</th><th>Input</th><th>Question Asked</th><th>Advantage</th></tr></thead>
+            <tbody>
+              <tr><td><strong>ORA</strong> (Over-Representation Analysis)</td><td>Significant DEG list</td><td>Are DEGs enriched in specific pathways vs. what random chance predicts?</td><td>Simple, intuitive, fast</td></tr>
+              <tr><td><strong>GSEA</strong> (Gene Set Enrichment Analysis)</td><td>All genes ranked by log₂FC</td><td>Do pathway genes cluster at the top or bottom of the ranked list?</td><td>Uses all genes; detects coordinated subtle shifts</td></tr>
+            </tbody>
+          </table></div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">💡 Gene Ontology (GO) and KEGG</div>
+            <p>Both ORA and GSEA are run against two databases: <strong>Gene Ontology (GO)</strong>, which classifies genes by Biological Process, Molecular Function, and Cellular Component; and <strong>KEGG</strong>, which maps genes onto metabolic and signalling pathways. Results from both are included in the Notebook 4 output.</p>
+          </div>
+
+          <pre><code># GSEA workflow:
+# 1. Rank all ~20,000 expressed genes by log₂FC (most up → most down)
+# 2. For each gene set, walk the ranked list and compute an enrichment score
+# 3. Permute sample labels to estimate statistical significance
+# 4. Report Normalized Enrichment Score (NES) and FDR q-value</code></pre>
+
+          <p>The final step validates our entire pipeline by correlating our log₂ fold changes against the official GeneLab pre-computed results. A Pearson r &gt; 0.99 confirms the analysis is fully reproducible.</p>
+
+          <!-- Notebook Downloads 9B -->
+          <h2 id="s9b-notebooks">📓 Session 9B Notebooks</h2>
+          <p>Download the Jupyter notebooks to run quantification, differential expression, visualizations, and pathway analysis.</p>
+
+          <div class="download-box">
+            <h4>📥 Session 9B — Notebook Downloads</h4>
+            <div class="download-grid">
+              <div class="download-item">
+                <div class="download-item-info">
+                  <div class="download-item-icon">📓</div>
+                  <div>
+                    <div class="download-item-name">Notebook 3 · RSEM Quantification</div>
+                    <div class="download-item-desc">RSEM reference · quantification · count matrices · rRNA removal · tech rep merging · validation</div>
+                  </div>
+                </div>
+                <!-- PLACEHOLDER: Replace href with the actual path to your notebook file -->
+                <!-- e.g. href="../notebooks/03_RSEM_Quantification.ipynb" -->
+                <a href="../notebooks/03_RSEM_Quantification.ipynb" class="download-btn placeholder" title="Add notebook to ../notebooks/ folder">⬇ .ipynb</a>
+              </div>
+              <div class="download-item">
+                <div class="download-item-info">
+                  <div class="download-item-icon">📓</div>
+                  <div>
+                    <div class="download-item-name">Notebook 4 · DEG Analysis</div>
+                    <div class="download-item-desc">DESeq2 · volcano plots · PCA · heatmaps · ORA · GSEA · GeneLab validation</div>
+                  </div>
+                </div>
+                <!-- PLACEHOLDER: Replace href with the actual path to your notebook file -->
+                <!-- e.g. href="../notebooks/04_DEG_Analysis.ipynb" -->
+                <a href="../notebooks/04_DEG_Analysis.ipynb" class="download-btn placeholder" title="Add notebook to ../notebooks/ folder">⬇ .ipynb</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout-tip">
+            <div class="callout-title">📁 How to set up the notebook download links</div>
+            <p>Place the <code>.ipynb</code> files in a <code>notebooks/</code> folder at your website root (e.g. <code>notebooks/03_RSEM_Quantification.ipynb</code>). Remove the <code>placeholder</code> class from the download buttons above once the files are in place and the links will become active green download buttons.</p>
+          </div>
+
+          <!-- 9B Summary -->
+          <div class="summary-box" id="s9b-summary">
+            <h3>Session 9B Summary</h3>
+            <ul>
+              <li>RSEM uses an EM algorithm to probabilistically assign multi-mapping reads, producing more accurate gene-level counts than simple counting tools</li>
+              <li>Per-sample <code>.genes.results</code> files are merged into a raw count matrix (for DESeq2) and TPM matrix (for visualization)</li>
+              <li>rRNA genes are filtered and technical replicates are merged by summing counts before running DESeq2</li>
+              <li>DESeq2 normalizes for sequencing depth, estimates gene-level dispersion, and performs negative binomial likelihood ratio tests for three contrasts: FLT vs GC, FLT vs VIV, GC vs VIV</li>
+              <li>Volcano plots, PCA, and heatmaps provide complementary views of the spaceflight transcriptomic response</li>
+              <li>ORA identifies pathways over-represented in the significant DEG list; GSEA uses the full ranked gene list to detect coordinated pathway shifts</li>
+              <li>Validation against GeneLab pre-computed results confirms pipeline reproducibility (Pearson r &gt; 0.99)</li>
+            </ul>
+          </div>
+
+        </div><!-- /content-body 9B -->
+      </div><!-- /session-9b -->
+
+    </main>
+  </div><!-- /content-area -->
+</div><!-- /app -->
+
+<script>
+  // ── Starfield ──
+  function initStars() {
+    const sf = document.getElementById('starfield');
+    for (let i = 0; i < 120; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const sz = Math.random() * 2.5 + 0.5;
+      s.style.cssText = `
+        width:${sz}px; height:${sz}px;
+        left:${Math.random()*100}%; top:${Math.random()*100}%;
+        --dur:${2 + Math.random()*4}s;
+        --min:${0.1 + Math.random()*0.2};
+        --max:${0.6 + Math.random()*0.4};
+        animation-delay:${Math.random()*4}s;
+      `;
+      sf.appendChild(s);
+    }
+  }
+  initStars();
+
+  // ── Theme toggle ──
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('theme-icon').textContent = isDark ? '🌙' : '☀️';
+    document.getElementById('theme-label').textContent = isDark ? 'Dark Mode' : 'Light Mode';
+    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  }
+
+  // ── Restore saved theme ──
+  (function() {
+    const saved = localStorage.getItem('theme');
+    if (saved && saved !== 'dark') {
+      document.documentElement.setAttribute('data-theme', saved);
+      document.getElementById('theme-icon').textContent = '🌙';
+      document.getElementById('theme-label').textContent = 'Dark Mode';
+    }
+  })();
+
+  // ── Active sidebar link on scroll ──
+  const tocLinks = document.querySelectorAll('.sidebar-toc a[href^="#"]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        tocLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar-toc a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('h2[id], h3[id]').forEach(el => observer.observe(el));
+
+  // ── Stub for session nav (matches sessions.js pattern from s8) ──
+  function buildSessionNav(current) {
+    const nav = document.getElementById('all-sessions-nav');
+    if (!nav) return;
+    const sessions = [
+      { id:'s1', label:'Session 1' }, { id:'s2', label:'Session 2' },
+      { id:'s3', label:'Session 3' }, { id:'s4', label:'Session 4' },
+      { id:'s5', label:'Session 5' }, { id:'s6', label:'Session 6' },
+      { id:'s7', label:'Session 7' }, { id:'s8', label:'Session 8 · Conda &amp; Git' },
+      { id:'s9', label:'Session 9 · DEG Pipeline' },
+    ];
+    nav.innerHTML = sessions.map(s => {
+      const isCurrent = s.id === current;
+      return `<a href="session-${s.id}.html"
+        style="display:block;padding:5px 12px;font-size:12px;color:${isCurrent?'var(--accent-primary)':'var(--text-muted)'};text-decoration:none;border-radius:6px;background:${isCurrent?'var(--bg-card)':'transparent'};border-left:2px solid ${isCurrent?'var(--accent-primary)':'transparent'};"
+        >${s.label}</a>`;
+    }).join('');
+  }
+  buildSessionNav('s10');
+</script>
+
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s10');</script>
+</body>
+</html>

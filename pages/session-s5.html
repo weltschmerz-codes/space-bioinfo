@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 5 · NASA OSDR &amp; Spaceflight Databases · PhilSA-ISMDD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="starfield" aria-hidden="true"></div>
+<div id="app">
+  <nav id="main-nav"><div class="nav-inner">
+    <a href="../index.html" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/><circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/><circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/></svg>
+      <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+    </a>
+    <div class="nav-right"><button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon" id="theme-icon">☀️</span><span id="theme-label">Light Mode</span></button></div>
+  </div></nav>
+  <div class="content-area">
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 1 · Session 5</div>
+        <div class="sidebar-session-title">NASA OSDR &amp; Spaceflight Databases</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s5-background">4.1 GeneLab Background & Mission</a></li>
+          <li><a href="#s5-structure">4.2 GeneLab Data Structure</a></li>
+          <li><a href="#s5-metadata" class="toc-sub">4.2.1 Study Metadata</a></li>
+          <li><a href="#s5-files" class="toc-sub">4.2.2 Data Files</a></li>
+          <li><a href="#s5-pipelines">4.3 Consensus Pipelines</a></li>
+          <li><a href="#s5-datasets">4.4 Notable Datasets for Learning</a></li>
+          <li><a href="#s5-other">4.5 Other Spaceflight Databases</a></li>
+          <li><a href="#s5-meta">4.6 Data Reuse & Meta-Analysis</a></li>
+          <li><a href="#s5-summary">Session Summary</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">All Sessions</div><div id="all-sessions-nav"></div></div>
+    </aside>
+    <main class="content-main">
+      <div class="session-hero">
+        <div class="session-badge">Module 1 · Session 5</div>
+        <h1 class="session-main-title">NASA GeneLab & Spaceflight Databases</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">NASA OSDR</span>
+          <span class="topic-pill">Dataset structure</span>
+          <span class="topic-pill">Consensus pipelines</span>
+          <span class="topic-pill">JAXA · ESA · GEO</span>
+        </div>
+      </div>
+      <div class="objectives-box">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Navigate the NASA GeneLab portal to search and retrieve omics datasets</li>
+          <li>Distinguish between raw data, processed data, and metadata in GeneLab</li>
+          <li>Explain what study factors and assay types are in the GeneLab data model</li>
+          <li>List other major databases relevant to spaceflight biology research</li>
+          <li>Understand the GeneLab consensus pipelines and their role in reproducibility</li>
+        </ul>
+      </div>
+      <div class="content-body">
+        <h2 id="s5-background">5.1 NASA OSDR: Background and Mission</h2>
+        <p>NASA OSDR, incorporating GeneLab (<a href="https://osdr.nasa.gov" target="_blank" rel="noopener">osdr.nasa.gov</a>) was established in 2015 as the first comprehensive open-science platform for spaceflight omics data. It is now part of the <strong>NASA Open Science Data Repository (OSDR)</strong>, accessible at <a href="https://osdr.nasa.gov" target="_blank" rel="noopener">osdr.nasa.gov</a>.</p>
+        <p>Before GeneLab, spaceflight omics data existed in fragmented forms across individual laboratory repositories and published supplementary materials, often without the detailed metadata needed to properly interpret the results. GeneLab changed this by creating a single portal with rich metadata capture using standard ontologies and providing both raw and processed data for every dataset.</p>
+        <p>As of 2024, OSDR hosts over 500 studies, including close to 1,000 spaceflight or space-analog datasets, covering organisms including <em>Homo sapiens, Mus musculus, Rattus norvegicus, Arabidopsis thaliana, Drosophila melanogaster, Caenorhabditis elegans,</em> and microbial species.</p>
+
+        <h2 id="s5-structure">4.2 GeneLab Data Structure</h2>
+        <p>Every GeneLab dataset is assigned a unique GeneLab Accession Number (<strong>GLDS-XXXX</strong> or <strong>OSD-XXXX</strong>). GeneLab uses a modified version of the <strong>ISA (Investigation/Study/Assay) framework</strong>, an internationally recognized standard for organizing life science experimental data.</p>
+
+        <h3 id="s5-metadata">4.2.1 Study Metadata</h3>
+        <p>The study metadata describes: Study title, abstract, and objectives; organism(s) studied and strain/genotype information; <strong>study factors</strong> (the experimental variables, e.g., spaceflight vs. ground control); sample metadata (tissue, sex, age, treatment); assay types (what omics data was generated); and protocol references.</p>
+
+        <h3 id="s5-files">4.2.2 Data Files</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Data Level</th><th>Contents</th></tr></thead>
+          <tbody>
+            <tr><td>Raw data</td><td>FASTQ files (for RNA-seq), raw mass spectrometry files, raw microarray files — straight from the instrument</td></tr>
+            <tr><td>Processed data</td><td>Trimmed FASTQ files, aligned BAM files, gene count matrices (counts per gene per sample)</td></tr>
+            <tr><td>Differential expression results</td><td>DESeq2 or limma outputs: log2 fold changes, p-values, adjusted p-values for all genes</td></tr>
+            <tr><td>Visualization files</td><td>PCA plots, heatmaps, volcano plots generated by the GeneLab pipeline</td></tr>
+            <tr><td>Metadata files</td><td>ISA-formatted sample and assay tables; essential for correctly assigning samples to experimental groups</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s5-pipelines">4.3 GeneLab Consensus Processing Pipelines</h2>
+        <p>One of GeneLab's most important contributions is the development and publication of standardized consensus bioinformatics pipelines. These pipelines are developed by the <strong>GeneLab Analysis Working Groups (AWGs)</strong>, committees of bioinformatics experts who review and validate best practices for each data type.</p>
+        <p>For RNA-seq data, the consensus pipeline includes:</p>
+        <ol>
+          <li>Raw data quality check with FastQC and MultiQC</li>
+          <li>Adapter trimming with Trim Galore</li>
+          <li>Alignment to reference genome with STAR (using Ensembl reference genomes)</li>
+          <li>Alignment quality check with RSeQC and samtools</li>
+          <li>Gene-level count quantification with STARsolo or featureCounts</li>
+          <li>Normalization and differential expression analysis with DESeq2</li>
+          <li>GO and pathway enrichment analysis</li>
+        </ol>
+        <p>All pipeline code is publicly available on the GeneLab GitHub repository at <a href="https://github.com/nasa/GeneLab_Data_Processing" target="_blank" rel="noopener">github.com/nasa/GeneLab_Data_Processing</a>.</p>
+        <div class="callout callout-exercise">
+          <div class="callout-title">🖥️ In-Class Exercise: Exploring GeneLab</div>
+          <ol>
+            <li>Open <a href="https://osdr.nasa.gov" target="_blank" rel="noopener">osdr.nasa.gov</a> in your browser</li>
+            <li>Search for 'mouse muscle RNA-seq spaceflight' in the data repository</li>
+            <li>Open GLDS-242. Read the study abstract. What was the experimental design?</li>
+            <li>Under 'Files', identify: (a) a raw FASTQ file, (b) a DESeq2 results file, (c) a visualization</li>
+            <li>Under 'Metadata', open the sample table. How many samples are in each group?</li>
+            <li>Under 'Visualization', find the most significantly upregulated gene in the gastrocnemius muscle</li>
+          </ol>
+        </div>
+
+        <h2 id="s5-datasets">4.4 Notable GeneLab Datasets for Learning</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Accession</th><th>Description</th><th>Why It's Useful for Learning</th></tr></thead>
+          <tbody>
+            <tr><td><strong>GLDS-48</strong></td><td>Mouse hindlimb unloading: skeletal muscle transcriptomics (RNA-seq); simulated microgravity on Earth using tail-suspension model</td><td>Well-known model; large sample size; canonical muscle atrophy dataset; used in multiple pipeline tutorials</td></tr>
+            <tr><td><strong>GLDS-242 / GLDS-244</strong></td><td>Rodent Research Reference Mission (RRRM-1): mice aboard ISS for 35 days; multiple tissues (muscle, liver, kidney, brain)</td><td>Real ISS data; multiple tissues; includes 1g spaceflight centrifuge controls; published in Cell Reports (2020)</td></tr>
+            <tr><td><strong>GLDS-530</strong></td><td>NASA Twin Study transcriptomics (Scott Kelly vs. Mark Kelly); PBMCs over multiple time points</td><td>Human spaceflight; multi-omic context from the published paper; demonstrates longitudinal study design</td></tr>
+            <tr><td><strong>GLDS-173</strong></td><td><em>C. elegans</em> transcriptomics aboard ISS; wild type and daf-2 mutants</td><td>Good for understanding how simple organisms respond to spaceflight; clean experimental design</td></tr>
+            <tr><td><strong>GLDS-209</strong></td><td><em>Arabidopsis thaliana</em> root transcriptomics in space (VEGGIE facility)</td><td>Plant spaceflight biology; demonstrates omics studies extend beyond animals</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s5-other">4.5 Other Spaceflight Biology Databases</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Database / Resource</th><th>Contents & Access</th></tr></thead>
+          <tbody>
+            <tr><td>JAXA Space Environment Utilization Center</td><td>Japanese spaceflight experiment data; includes ISS Japanese Experiment Module (Kibo) data</td></tr>
+            <tr><td>ESA Life Sciences Data Archive (LSDA)</td><td>European Space Agency spaceflight and parabolic flight biology data; accessible at spaceflight.esa.int/lsda</td></tr>
+            <tr><td>NCBI GEO (Gene Expression Omnibus)</td><td>General gene expression repository; many spaceflight datasets; searchable by 'spaceflight', 'microgravity', 'ISS'</td></tr>
+            <tr><td>NCBI SRA (Sequence Read Archive)</td><td>Raw sequencing data; linked to GEO and GeneLab accessions; command-line access via SRA Toolkit</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s5-meta">4.6 Data Reuse and Meta-Analysis</h2>
+        <p>One of the most powerful aspects of open-access databases like GeneLab is the ability to perform <strong>meta-analysis</strong> — combining data from multiple independent studies to identify robust, reproducible findings. Meta-analysis in spaceflight bioinformatics has been particularly impactful because individual studies are necessarily small.</p>
+        <p>The GeneLab Data Systems platform enables users to: search for all datasets using the same organism, tissue, and study factor combination; download processed count matrices from multiple studies; re-analyze with a consistent pipeline; and use batch correction methods (e.g., ComBat, <code>limma::removeBatchEffect</code>) to harmonize data from different missions.</p>
+
+        <div class="summary-box" id="s5-summary">
+          <h3>Session Summary</h3>
+          <ul>
+            <li>NASA OSDR (incorporating GeneLab) hosts 500+ spaceflight and space-analog studies with standardized metadata, raw data, and processed results</li>
+            <li>Each OSD/GLDS accession contains raw FASTQ files, processed count matrices, DEG results, and ISA metadata tables</li>
+            <li>GeneLab consensus pipelines (GitHub) ensure reproducible, standardized data processing across all datasets</li>
+            <li>GLDS-48, GLDS-242, and GLDS-530 are particularly good starting datasets for learning</li>
+            <li>Meta-analysis across multiple GeneLab datasets increases statistical power for small-sample spaceflight studies</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s5');</script>
+</body></html>

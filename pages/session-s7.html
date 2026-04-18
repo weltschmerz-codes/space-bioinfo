@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 7 · Network Analysis · PhilSA-ISMDD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="starfield" aria-hidden="true"></div>
+<div id="app">
+  <nav id="main-nav"><div class="nav-inner">
+    <a href="../index.html" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/><circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/><circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/></svg>
+      <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+    </a>
+    <div class="nav-right"><button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon" id="theme-icon">☀️</span><span id="theme-label">Light Mode</span></button></div>
+  </div></nav>
+  <div class="content-area">
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 1 · Session 7</div>
+        <div class="sidebar-session-title">Network Analysis in Spaceflight Data</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s7-why">6.1 Why Network Analysis?</a></li>
+          <li><a href="#s7-types">6.2 Types of Biological Networks</a></li>
+          <li><a href="#s7-ppi">6.3 PPI Network Analysis</a></li>
+          <li><a href="#s7-topology" class="toc-sub">6.3.2 Network Topology</a></li>
+          <li><a href="#s7-cytoscape">6.4 Visualization with Cytoscape</a></li>
+          <li><a href="#s7-wgcna">6.5 WGCNA</a></li>
+          <li><a href="#s7-case">6.6 Case Study: Arabidopsis</a></li>
+          <li><a href="#s7-choose">6.7 Choosing the Right Approach</a></li>
+          <li><a href="#s7-summary">Session Summary</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">All Sessions</div><div id="all-sessions-nav"></div></div>
+    </aside>
+    <main class="content-main">
+      <div class="session-hero">
+        <div class="session-badge">Module 1 · Session 7</div>
+        <h1 class="session-main-title">Network Analysis in Spaceflight Data</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">PPI networks</span>
+          <span class="topic-pill">Co-expression networks</span>
+          <span class="topic-pill">STRING & Cytoscape</span>
+          <span class="topic-pill">WGCNA</span>
+          <span class="topic-pill">Hub genes & modules</span>
+        </div>
+      </div>
+      <div class="objectives-box">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Explain why network analysis extends beyond simple DEG lists</li>
+          <li>Distinguish between protein-protein interaction networks and co-expression networks</li>
+          <li>Build a PPI network from a DEG list using STRING and visualize it in Cytoscape</li>
+          <li>Define and interpret hub genes, modules, and centrality measures</li>
+          <li>Describe the WGCNA approach and when it is appropriate to use</li>
+          <li>Interpret a real spaceflight network analysis from the published literature</li>
+        </ul>
+      </div>
+      <div class="content-body">
+        <h2 id="s7-why">6.1 Why Network Analysis?</h2>
+        <p>A list of differentially expressed genes is informative, but it treats genes as independent entities. In reality, genes and proteins function as part of highly interconnected networks. A gene's function is often determined not just by its individual activity but by its relationships with other genes — its network neighbors.</p>
+        <p>Network analysis applied to spaceflight DEG data allows us to: identify <strong>hub genes</strong> (the most influential regulators); discover <strong>gene modules</strong> (clusters of co-regulated genes); prioritize candidate therapeutic targets; reveal indirect effects; and integrate multi-omics data.</p>
+
+        <h2 id="s7-types">6.2 Types of Biological Networks</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Network Type</th><th>Nodes</th><th>Edges (Connections)</th></tr></thead>
+          <tbody>
+            <tr><td>Protein-Protein Interaction (PPI)</td><td>Proteins</td><td>Physical or functional interactions between proteins (from experiments or databases like STRING)</td></tr>
+            <tr><td>Co-expression Network</td><td>Genes</td><td>High correlation in expression levels across samples (computed from count matrix)</td></tr>
+            <tr><td>Gene Regulatory Network (GRN)</td><td>Genes and transcription factors</td><td>Regulatory relationships (TF → target gene); edges are directional</td></tr>
+            <tr><td>Metabolic Network</td><td>Metabolites and enzymes</td><td>Enzymatic reactions connecting metabolites; pathway topology</td></tr>
+            <tr><td>Signaling Network</td><td>Signaling proteins, receptors, kinases</td><td>Signal transduction cascades; edges represent activation or inhibition</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s7-ppi">6.3 Protein-Protein Interaction Network Analysis</h2>
+        <p>The most common workflow for PPI network analysis of DEGs begins with <strong>STRING</strong> (string-db.org):</p>
+        <ol>
+          <li>Obtain your DEG list: typically significant DEGs (padj &lt; 0.05, |log2FC| &gt; 1) from DESeq2</li>
+          <li>Upload gene names to STRING → go to string-db.org → 'Multiple Proteins' → paste gene names → select organism → Search</li>
+          <li>Set interaction confidence threshold: STRING recommends a minimum score of 0.4 (medium confidence) or 0.7 (high confidence)</li>
+          <li>Export the network: download as a TSV interaction file (node1, node2, score) and node attribute file</li>
+          <li>Import into Cytoscape for advanced visualization and analysis</li>
+        </ol>
+
+        <h3 id="s7-topology">6.3.2 Network Topology: Key Concepts</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Topological Measure</th><th>Definition & Biological Significance</th></tr></thead>
+          <tbody>
+            <tr><td>Degree (connectivity)</td><td>Number of direct interaction partners of a node. High-degree nodes are called <strong>hubs</strong>. Hub genes tend to be essential proteins; their disruption has large phenotypic effects.</td></tr>
+            <tr><td>Betweenness Centrality</td><td>Number of shortest paths between all pairs of nodes that pass through this node. High betweenness nodes are 'bridges', critical regulators or bottlenecks.</td></tr>
+            <tr><td>Closeness Centrality</td><td>Average shortest path distance from a node to all others. High closeness = the node can quickly influence the rest of the network.</td></tr>
+            <tr><td>Clustering Coefficient</td><td>Fraction of a node's neighbors that are also connected to each other. High clustering = the node is embedded in a tight local community (module).</td></tr>
+            <tr><td>Eigenvector Centrality</td><td>A node's influence weighted by the influence of its neighbors. Similar to Google PageRank; being connected to important nodes matters more than just having many connections.</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s7-cytoscape">6.4 Visualization with Cytoscape</h2>
+        <p>Cytoscape (Shannon et al., 2003) is the standard tool for biological network visualization and analysis. It is a free, open-source desktop application with a rich plugin ecosystem. Key capabilities: import networks from STRING; map node size to degree, node color to log2FC, edge width to interaction confidence; plugins include NetworkAnalyzer (topological measures), MCODE (module detection), and CytoHubba (hub identification).</p>
+        <div class="callout callout-exercise">
+          <div class="callout-title">🖥️ Cytoscape Workflow for Spaceflight DEG Networks</div>
+          <ol>
+            <li>Get DEG list from DESeq2 results (gene names + log2FC values)</li>
+            <li>Upload DEG names to STRING → export network TSV</li>
+            <li>In Cytoscape: File → Import → Network → select STRING TSV</li>
+            <li>Import node attributes: map gene names to log2FC, padj values</li>
+            <li>Apply visual style: map node color to log2FC (red = up, blue = down), node size to degree</li>
+            <li>Run NetworkAnalyzer to compute degree, betweenness, closeness</li>
+            <li>Sort node table by Degree or Betweenness to identify hub genes</li>
+            <li>Run MCODE to identify modules; annotate modules using clusterProfiler or g:Profiler</li>
+          </ol>
+        </div>
+
+        <h2 id="s7-wgcna">6.5 Weighted Gene Co-expression Network Analysis (WGCNA)</h2>
+        <p>WGCNA (Langfelder & Horvath, 2008) is a systems biology method for finding clusters (modules) of genes with highly correlated expression patterns across samples. Unlike PPI networks (which use curated databases), WGCNA is data-driven — it discovers relationships directly from your expression data.</p>
+        <p>WGCNA works by: computing pairwise Pearson correlations between all genes; constructing a soft-thresholded adjacency matrix; computing the Topological Overlap Matrix (TOM); clustering genes hierarchically; cutting the dendrogram into modules; summarizing each module by its Module Eigengene (ME); and correlating module eigengenes with external traits to identify biologically relevant modules.</p>
+        <div class="callout callout-warning">
+          <div class="callout-title">⚠️ WGCNA and Small Spaceflight Sample Sizes</div>
+          <p>WGCNA was designed for large sample sizes (n=20+). Most individual spaceflight experiments have n=3–6. Applying WGCNA to n&lt;10 datasets produces highly unreliable modules. <strong>Solutions:</strong> combine multiple datasets (meta-analysis) to increase n; use consensus WGCNA across multiple experiments; or stick to STRING-based PPI networks for small n.</p>
+        </div>
+
+        <h2 id="s7-case">6.6 Case Study: Arabidopsis thaliana in Spaceflight Microgravity</h2>
+        <p>Manian et al. (2021) published network analysis of <em>Arabidopsis thaliana</em> grown aboard the ISS using GeneLab datasets GLDS-7 and GLDS-120. Rather than PPI database approaches, they constructed Gene Regulatory Networks (GRNs) directly from expression data using three algorithms: <strong>LASSO</strong> (penalized regression for sparse regulatory connections), <strong>Pearson Correlation GRN</strong>, and the <strong>HITS algorithm</strong>.</p>
+        <p>Network analysis identified five key root growth-regulating hub genes in spaceflight microgravity GRNs, including genes involved in cell wall synthesis and remodeling, protein transport, and response to auxin. Notably, the phyD mutant adapted to the spaceflight light environment with the lowest transcriptional cost — demonstrating that network analysis can reveal the structural efficiency of a regulatory response, not just the number of genes involved.</p>
+
+        <h2 id="s7-choose">6.7 Summary: Choosing the Right Network Approach</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Situation</th><th>Recommended Approach</th><th>Tool</th></tr></thead>
+          <tbody>
+            <tr><td>Small n (3–6 samples), focused DEG list</td><td>PPI network from STRING, topological analysis</td><td>STRING + Cytoscape + NetworkAnalyzer</td></tr>
+            <tr><td>Medium n (10–20 samples), hypothesis-driven</td><td>PPI network + GSEA + module detection with MCODE</td><td>STRING + Cytoscape + MCODE + clusterProfiler</td></tr>
+            <tr><td>Large n (≥15–30 samples), discovery-driven</td><td>WGCNA co-expression network + module-trait correlation</td><td>WGCNA (R) + clusterProfiler + Cytoscape</td></tr>
+            <tr><td>Multi-omics integration</td><td>Heterogeneous multi-layer network</td><td>NetworkX (Python) / igraph (R) + custom scripts</td></tr>
+            <tr><td>Comparing networks across conditions/species</td><td>Differential network analysis</td><td>DiffCoEx (R) / DINGO / custom approaches</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="summary-box" id="s7-summary">
+          <h3>Session Summary</h3>
+          <ul>
+            <li>Network analysis extends beyond DEG lists by revealing how genes interact in coordinated functional modules</li>
+            <li>PPI networks (from STRING) are best for small spaceflight sample sizes; WGCNA requires n≥15–20</li>
+            <li>Hub genes identified by degree and betweenness centrality are the most functionally significant network nodes</li>
+            <li>Cytoscape enables interactive visualization with biological attribute mapping (color to log2FC, size to degree)</li>
+            <li>The Arabidopsis case study demonstrates that network efficiency metrics reveal biology invisible to DEG lists alone</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s7');</script>
+</body></html>

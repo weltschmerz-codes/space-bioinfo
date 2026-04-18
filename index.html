@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bioinformatics for Space Biology · PhilSA-ISMDD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+<div id="starfield" aria-hidden="true"></div>
+<div id="app">
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">
+        <svg class="nav-logo" viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/>
+          <circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/>
+          <circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/>
+          <circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/>
+          <circle cx="30" cy="22" r="2" fill="var(--accent-primary)" opacity="0.7"/>
+          <circle cx="8" cy="24" r="1.8" fill="var(--accent-bright)" opacity="0.8"/>
+        </svg>
+        <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+      </a>
+      <div class="nav-right">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+          <span class="theme-icon" id="theme-icon">☀️</span>
+          <span id="theme-label">Light Mode</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">Open · Free · Space Science</div>
+        <div class="hero-eyebrow">PhilSA-ISMDD Lecture Series</div>
+        <h1 class="hero-title">
+          Bioinformatics
+          <span class="highlight">for Space Biology</span>
+        </h1>
+        <p class="hero-subtitle">
+          A structured multi-module course bridging molecular biology and spaceflight data analysis. Learn to work with real NASA datasets from the International Space Station — no prior bioinformatics experience required.
+        </p>
+        <div class="hero-meta">
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">Sessions</span>
+            <span class="hero-meta-value">14 Sessions</span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">Modules</span>
+            <span class="hero-meta-value">4 Thematic Modules</span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">Level</span>
+            <span class="hero-meta-value">Beginner-Friendly</span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">Data</span>
+            <span class="hero-meta-value">Real ISS Datasets</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about-section">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text">
+          <h3>About This Course</h3>
+          <p><em>Bioinformatics for Space Biology</em> is a lecture series designed to equip students and early-career researchers with the computational skills needed to analyze real spaceflight omics data. The course bridges biological concepts — from the effects of microgravity on gene expression to protein interaction networks — with practical, hands-on data analysis workflows.</p>
+          <p>All datasets are real: sourced from experiments conducted aboard the International Space Station, archived in NASA's Open Science Data Repository (OSDR), and freely accessible to anyone in the world.</p>
+          <h3 style="margin-top:var(--space-lg)">Who This Is For</h3>
+          <ul class="target-list">
+            <li>Students in biology, biochemistry, or life sciences seeking computational skills</li>
+            <li>Researchers new to omics data analysis and bioinformatics pipelines</li>
+            <li>Scientists interested in spaceflight biology and NASA open science data</li>
+            <li>Anyone curious about how real ISS experiment data is analyzed</li>
+          </ul>
+        </div>
+        <div>
+          <div class="stat-cards">
+            <div class="stat-card"><div class="stat-number">500+</div><div class="stat-label">NASA OSDR Studies</div></div>
+            <div class="stat-card"><div class="stat-number">14</div><div class="stat-label">Sessions</div></div>
+            <div class="stat-card"><div class="stat-number">4</div><div class="stat-label">Thematic Modules</div></div>
+            <div class="stat-card"><div class="stat-number">0</div><div class="stat-label">Prerequisites Needed</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CURRICULUM -->
+  <section class="curriculum-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-eyebrow">Full Curriculum</div>
+        <h2 class="section-title">Course Structure</h2>
+        <p class="section-desc">Four progressive modules — from conceptual foundations to hands-on pipeline practice using real spaceflight data.</p>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="modules-grid">
+
+        <!-- Module 1 -->
+        <div class="module-card module-color-1">
+          <div class="module-header">
+            <div class="module-icon">🧬</div>
+            <div class="module-header-text">
+              <div class="module-label">Module 1 · Sessions 1–7</div>
+              <div class="module-title">Conceptual Foundations</div>
+            </div>
+          </div>
+          <div class="module-sessions">
+            <a class="session-row" href="pages/session-s1.html">
+              <span class="session-num">01</span>
+              <div class="session-info">
+                <div class="session-title">Introduction to Space Biology</div>
+                <div class="session-tags"><span class="tag tag-theory">Theory</span><span class="tag tag-data">Space Bio</span></div>
+              </div>
+            </a>
+            <a class="session-row" href="pages/session-s2.html">
+              <span class="session-num">02</span>
+              <div class="session-info">
+                <div class="session-title">Introduction to Bioinformatics</div>
+                <div class="session-tags"><span class="tag tag-theory">Theory</span><span class="tag tag-data">Omics</span></div>
+              </div>
+            </a>
+            <a class="session-row" href="pages/session-s3.html">
+              <span class="session-num">03</span>
+              <div class="session-info">
+                <div class="session-title">Bioinformatics Tools & Databases</div>
+                <div class="session-tags"><span class="tag tag-tools">Tools</span><span class="tag tag-data">Databases</span></div>
+              </div>
+            </a>
+            <a class="session-row" href="pages/session-s4.html">
+              <span class="session-num">04</span>
+              <div class="session-info">
+                <div class="session-title">Introduction to Spaceflight Omics</div>
+                <div class="session-tags"><span class="tag tag-theory">Theory</span><span class="tag tag-data">Space Bio</span></div>
+              </div>
+            </a>
+            <a class="session-row" href="pages/session-s5.html">
+              <span class="session-num">05</span>
+              <div class="session-info">
+                <div class="session-title">NASA OSDR & Spaceflight Databases</div>
+                <div class="session-tags"><span class="tag tag-data">NASA OSDR</span><span class="tag tag-tools">Databases</span></div>
+              </div>
+            </a>
+            <a class="session-row" href="pages/session-s6.html">
+              <span class="session-num">06</span>
+              <div class="session-info">
+                <div class="session-title">DEG Identification: Concepts & Workflows</div>
+                <div class="session-tags"><span class="tag tag-theory">Theory</span><span class="tag tag-tools">DESeq2</span></div>
+              </div>
+            </a>
+            <a class="session-row" href="pages/session-s7.html">
+              <span class="session-num">07</span>
+              <div class="session-info">
+                <div class="session-title">Network Analysis in Spaceflight Data</div>
+                <div class="session-tags"><span class="tag tag-tools">Networks</span><span class="tag tag-theory">Theory</span></div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Module 2 -->
+        <div class="module-card module-color-2">
+          <div class="module-header">
+            <div class="module-icon">⚙️</div>
+            <div class="module-header-text">
+              <div class="module-label">Module 2 · Sessions 8–9</div>
+              <div class="module-title">Computational Infrastructure</div>
+            </div>
+          </div>
+          <div class="module-sessions">
+            <a class="session-row" href="pages/session-s8.html">
+              <span class="session-num">08</span>
+              <div class="session-info">
+                <div class="session-title">Working with Linux & VS Code via SSH</div>
+                <div class="session-tags"><span class="tag tag-hands">Hands-on</span><span class="tag tag-tools">Linux</span></div>
+              </div>
+            </a>
+            <a class="session-row" href="pages/session-s9.html">
+              <span class="session-num">09</span>
+              <div class="session-info">
+                <div class="session-title">Conda Environments & Git Version Control</div>
+                <div class="session-tags"><span class="tag tag-hands">Hands-on</span><span class="tag tag-tools">Conda / Git</span></div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Module 3 -->
+        <div class="module-card module-color-3">
+          <div class="module-header">
+            <div class="module-icon">🔬</div>
+            <div class="module-header-text">
+              <div class="module-label">Module 3 · Sessions 10–12</div>
+              <div class="module-title">DEG Pipeline</div>
+            </div>
+          </div>
+          <div class="module-sessions">
+            <a class="session-row" href="pages/session-s10.html">
+              <span class="session-num">10</span>
+              <div class="session-info">
+                <div class="session-title">DEG Pipeline: Setup, QC & Alignment</div>
+                <div class="session-tags"><span class="tag tag-hands">Hands-on</span><span class="tag tag-tools">STAR · FastQC</span></div>
+              </div>
+            </a>
+            <a class="session-row" href="pages/session-s11.html">
+              <span class="session-num">11</span>
+              <div class="session-info">
+                <div class="session-title">DEG Pipeline: Quantification & Analysis</div>
+                <div class="session-tags"><span class="tag tag-hands">Hands-on</span><span class="tag tag-tools">RSEM · DESeq2</span></div>
+              </div>
+            </a>
+            <a class="session-row" href="pages/session-s12.html">
+              <span class="session-num">12</span>
+              <div class="session-info">
+                <div class="session-title">NASA OSDR: Navigating Mouse Transcriptomics</div>
+                <div class="session-tags"><span class="tag tag-ws">Worksheet</span><span class="tag tag-data">NASA OSDR</span></div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Module 4 -->
+        <div class="module-card module-color-4">
+          <div class="module-header">
+            <div class="module-icon">🕸️</div>
+            <div class="module-header-text">
+              <div class="module-label">Module 4 · Sessions 13–14</div>
+              <div class="module-title">Network Analysis Pipeline</div>
+            </div>
+          </div>
+          <div class="module-sessions">
+            <a class="session-row" href="pages/session-s13.html">
+              <span class="session-num">13</span>
+              <div class="session-info">
+                <div class="session-title">Network Analysis Pipeline Walkthrough</div>
+                <div class="session-tags"><span class="tag tag-hands">Hands-on</span><span class="tag tag-tools">Cytoscape</span></div>
+              </div>
+            </a>
+            <a class="session-row" href="pages/session-s14.html">
+              <span class="session-num">14</span>
+              <div class="session-info">
+                <div class="session-title">Network Analysis Worksheet / Guided Practice</div>
+                <div class="session-tags"><span class="tag tag-ws">Worksheet</span><span class="tag tag-hands">Practice</span></div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER — upgraded -->
+  <footer>
+    <div class="footer-inner">
+      <!-- Col 1: Brand -->
+      <div class="footer-col">
+        <a href="https://www.philsa.gov.ph" target="_blank" rel="noopener" class="philsa-logo-link">
+          <img src="assets/philsa-logo.svg" alt="PhilSA Logo" class="philsa-logo-img" />
+          <div class="footer-brand-name">PhilSA-ISMDD</div>
+        </a>
+        <p>Philippine Space Agency<br>Interdisciplinary Space Missions<br>Development Division</p>
+        <div style="margin-top:var(--space-sm);display:flex;flex-wrap:wrap;gap:5px;">
+          <span class="footer-badge footer-badge-oa">Open Access</span>
+          <span class="footer-badge footer-badge-nasa">NASA Data</span>
+        </div>
+        <p style="margin-top:var(--space-md);font-size:0.78rem;">Bioinformatics for Space Biology is an open educational resource freely available to anyone worldwide.</p>
+      </div>
+
+      <!-- Col 2: Database & Tools -->
+      <div class="footer-col">
+        <h4>Databases & Tools</h4>
+        <a href="https://osdr.nasa.gov" target="_blank" rel="noopener">NASA OSDR</a>
+        <a href="https://github.com/nasa/GeneLab_Data_Processing" target="_blank" rel="noopener">GeneLab Pipelines (GitHub)</a>
+        <a href="https://visualization.genelab.nasa.gov/data/" target="_blank" rel="noopener">OSDR Visualization Portal</a>
+        <a href="https://string-db.org" target="_blank" rel="noopener">STRING Database</a>
+        <a href="https://cytoscape.org" target="_blank" rel="noopener">Cytoscape</a>
+        <a href="https://uniprot.org" target="_blank" rel="noopener">UniProt</a>
+        <a href="https://ensembl.org" target="_blank" rel="noopener">Ensembl</a>
+        <a href="https://reactome.org" target="_blank" rel="noopener">Reactome Pathways</a>
+      </div>
+
+      <!-- Col 3: Analysis Tools -->
+      <div class="footer-col">
+        <h4>Analysis Tools</h4>
+        <a href="https://bioconductor.org/packages/DESeq2" target="_blank" rel="noopener">DESeq2 (Bioconductor)</a>
+        <a href="http://bioinformatics.sdstate.edu/go/" target="_blank" rel="noopener">ShinyGO — Enrichment</a>
+        <a href="https://maayanlab.cloud/Enrichr/" target="_blank" rel="noopener">Enrichr</a>
+        <a href="https://www.ncbi.nlm.nih.gov/geo/" target="_blank" rel="noopener">NCBI GEO</a>
+        <a href="https://soma.weill.cornell.edu" target="_blank" rel="noopener">SOMA — Astronaut Atlas</a>
+        <a href="https://philsa.gov.ph/research/uncovering-hub-genes-in-short-duration-spaceflight/" target="_blank" rel="noopener">PhilSA Hub Genes Paper</a>
+      </div>
+
+      <!-- Col 4: Course Info -->
+      <div class="footer-col">
+        <h4>Course Info</h4>
+        <p>Open access · No enrollment required</p>
+        <p>14 sessions across 4 thematic modules</p>
+        <p>All datasets from publicly available NASA OSDR</p>
+        <p>Worksheets include PDF export with embedded images</p>
+        <p style="margin-top:var(--space-sm);">
+          Authors:<br>
+          <em>Mervin June B. Gasatan</em><br>
+          <em>Wynn Dunn Gil D. Improso</em><br>
+          <em>Ernest P. Macalalad</em>
+        </p>
+        <p style="margin-top:var(--space-sm);">Philippine Space Agency, Philippines</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Philippine Space Agency – ISMDD · Bioinformatics for Space Biology · Open Educational Resource</span>
+      <span>All NASA data used under open access · <a href="https://osdr.nasa.gov" target="_blank" rel="noopener" style="color:var(--accent-primary);">osdr.nasa.gov</a></span>
+    </div>
+  </footer>
+
+</div><!-- /#app -->
+<script src="js/main.js"></script>
+</body>
+</html>

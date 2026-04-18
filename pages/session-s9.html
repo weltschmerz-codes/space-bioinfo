@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 9 · Conda &amp; Git · PhilSA-ISMDD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="starfield" aria-hidden="true"></div>
+<div id="app">
+  <nav id="main-nav"><div class="nav-inner">
+    <a href="../index.html" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/><circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/><circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/></svg>
+      <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+    </a>
+    <div class="nav-right"><button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon" id="theme-icon">☀️</span><span id="theme-label">Light Mode</span></button></div>
+  </div></nav>
+  <div class="content-area">
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 2 · Session 9</div>
+        <div class="sidebar-session-title">Conda Environments &amp; Git Version Control</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s9-conda">8.1 Conda: Isolated Environments</a></li>
+          <li><a href="#s9-install" class="toc-sub">8.1.2 Installing Miniconda</a></li>
+          <li><a href="#s9-manage">8.2 Managing Conda Environments</a></li>
+          <li><a href="#s9-create" class="toc-sub">8.2.1 Creating Environments</a></li>
+          <li><a href="#s9-packages" class="toc-sub">8.2.3 Installing Packages</a></li>
+          <li><a href="#s9-export" class="toc-sub">8.2.4 Exporting Environments</a></li>
+          <li><a href="#s9-git">8.3 Git &amp; GitHub</a></li>
+          <li><a href="#s9-config" class="toc-sub">8.3.2 Configuring Git</a></li>
+          <li><a href="#s9-ssh-keys" class="toc-sub">8.3.3 SSH Keys for GitHub</a></li>
+          <li><a href="#s9-workflow" class="toc-sub">Daily Git Workflow</a></li>
+          <li><a href="#s9-summary">Session Summary</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">All Sessions</div><div id="all-sessions-nav"></div></div>
+    </aside>
+    <main class="content-main">
+      <div class="session-hero">
+        <div class="session-badge">Module 2 · Session 9</div>
+        <h1 class="session-main-title">Conda Environments &amp; Git Version Control</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">Conda environments</span>
+          <span class="topic-pill">Miniconda installation</span>
+          <span class="topic-pill">Bioconda channel</span>
+          <span class="topic-pill">Git &amp; GitHub</span>
+          <span class="topic-pill">SSH key authentication</span>
+        </div>
+      </div>
+      <div class="objectives-box">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Explain why isolated Conda environments are essential for reproducible bioinformatics</li>
+          <li>Install Miniconda and verify a working Conda installation on a remote Linux server</li>
+          <li>Create and manage Conda environments with specified Python versions and packages</li>
+          <li>Install bioinformatics tools (FastQC, STAR, SAMtools) into a Conda environment using bioconda</li>
+          <li>Configure Git with identity information and connect to GitHub via SSH key authentication</li>
+          <li>Execute the core daily Git workflow: pull, modify, add, commit, push</li>
+        </ul>
+      </div>
+      <div class="content-body">
+        <h2 id="s9-conda">8.1 Conda: Isolated Environments for Reproducible Science</h2>
+        <p>Bioinformatics pipelines depend on many software packages, each with specific version requirements. A RNA-seq pipeline might require Python 3.10, STAR 2.7.11, and FastQC 0.12 — while a network analysis pipeline might require conflicting versions of the same libraries. Without environment management, installing one pipeline's dependencies can silently break another, a problem known as <strong>"dependency hell."</strong></p>
+        <p>Conda solves this by creating completely isolated environments, each with its own Python version, R version, and package set, that cannot interfere with each other.</p>
+        <div class="callout callout-tip">
+          <div class="callout-title">💡 Why This Matters for Reproducibility</div>
+          <p>A Conda environment can be exported to a single YAML file and recreated identically on any machine. Published papers increasingly require sharing environment files alongside code so others can reproduce the exact analysis. NASA OSDR consensus pipelines provide environment files for exactly this reason.</p>
+        </div>
+
+        <h3 id="s9-install">8.1.2 Installing Miniconda</h3>
+        <p>Miniconda is a minimal Conda installer for Linux servers. Install as follows:</p>
+        <pre><code># Step 1: Download the installer
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+
+# Step 2: Run the installer
+bash Miniconda3-latest-Linux-x86_64.sh
+
+# Step 3: Activate Conda in the current shell
+source ~/.bashrc
+
+# Step 4: Verify installation
+conda --version</code></pre>
+        <p>A version number such as "conda 24.x.x" confirms success. The prompt will now show "(base)".</p>
+
+        <h2 id="s9-manage">8.2 Managing Conda Environments</h2>
+
+        <h3 id="s9-create">8.2.1 Creating Environments</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Command</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>conda create -n myenv python=3.10</code></td><td>Create an environment named "myenv" with Python 3.10</td></tr>
+            <tr><td><code>conda create -n rnaseq python=3.10 numpy pandas</code></td><td>Create with specific packages pre-installed</td></tr>
+            <tr><td><code>conda env create -f environment.yml</code></td><td>Create an environment from a shared YAML file</td></tr>
+            <tr><td><code>conda activate myenv</code></td><td>Activate an environment (prompt changes to show the environment name)</td></tr>
+            <tr><td><code>conda deactivate</code></td><td>Return to the base environment</td></tr>
+            <tr><td><code>conda env list</code></td><td>List all environments; active one marked with *</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout callout-warning">
+          <div class="callout-title">⚠️ Always Activate Before Installing</div>
+          <p>Installing packages without activating the correct environment installs them into base, causing conflicts. Always confirm the environment name is shown in your prompt before running any install command.</p>
+        </div>
+
+        <h3 id="s9-packages">8.2.3 Installing Packages</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Command</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>conda install numpy</code></td><td>Install a package into the active environment</td></tr>
+            <tr><td><code>conda install -c bioconda star=2.7.11a</code></td><td>Install from the bioconda channel (for bioinformatics tools)</td></tr>
+            <tr><td><code>conda install -c conda-forge -c bioconda fastqc</code></td><td>Install with multiple channels specified</td></tr>
+            <tr><td><code>pip install package_name</code></td><td>Install packages from PyPI (for tools not in conda channels)</td></tr>
+            <tr><td><code>conda list</code></td><td>List all packages in the active environment</td></tr>
+            <tr><td><code>conda env remove -n myenv</code></td><td>Completely delete an environment</td></tr>
+          </tbody>
+        </table></div>
+        <div class="callout callout-tip">
+          <div class="callout-title">💡 Bioconda Channel for Bioinformatics</div>
+          <p>The bioconda channel hosts thousands of bioinformatics tools: FastQC, STAR, HISAT2, SAMtools, featureCounts, and more. Always add conda-forge alongside bioconda: <code>conda install -c conda-forge -c bioconda &lt;tool&gt;</code>. Search for available tools at <a href="https://anaconda.org/bioconda" target="_blank" rel="noopener">anaconda.org/bioconda</a>.</p>
+        </div>
+
+        <h3 id="s9-export">8.2.4 Exporting and Sharing Environments</h3>
+        <pre><code># Export the active environment to a YAML file
+conda env export > environment.yml
+
+# Recreate an environment from the YAML file on any machine with Conda
+conda env create -f environment.yml</code></pre>
+
+        <h2 id="s9-git">8.3 Git and GitHub: Version Control for Science</h2>
+        <p>Version control tracks every change made to analysis scripts, with a complete history of who changed what and when. For bioinformatics this enables: experimenting with new analysis parameters without fear of losing working code; rolling back to any previous version; collaborating with lab members without overwriting each other's work; and sharing the exact analysis pipeline alongside a published paper.</p>
+        <div class="callout callout-info">
+          <div class="callout-title">💡 Git vs. GitHub</div>
+          <p><strong>Git</strong> is the version control system — it runs locally on any machine and tracks changes to files. <strong>GitHub</strong> is a cloud platform that hosts Git repositories online, enabling backup, sharing, and collaboration. Git can be used without GitHub (local only), but using both together is the standard scientific workflow.</p>
+        </div>
+
+        <h3 id="s9-config">8.3.2 Installing and Configuring Git</h3>
+        <pre><code># Install Git
+sudo apt update && sudo apt install git
+git --version  # verify installation
+
+# Configure identity
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+git config --list  # verify settings</code></pre>
+
+        <h3 id="s9-ssh-keys">8.3.3 Connecting to GitHub via SSH Keys</h3>
+        <pre><code># Step 1: Generate an SSH key pair
+ssh-keygen -t ed25519 -C "your.email@example.com"
+
+# Step 2: Start the SSH agent and add your key
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+# Step 3: Copy your public key (then add it to GitHub Settings → SSH Keys)
+cat ~/.ssh/id_ed25519.pub
+
+# Step 4: Test the connection
+ssh -T git@github.com</code></pre>
+
+        <h3 id="s9-workflow">The Daily Git Workflow</h3>
+        <pre><code># Pull latest changes before starting work
+git pull
+
+# Make your changes to files, then stage them
+git add script.R  # stage a specific file
+git add .         # stage all changed files
+
+# Commit with a descriptive message
+git commit -m "Add DESeq2 normalization step to pipeline"
+
+# Push to GitHub
+git push</code></pre>
+
+        <div class="summary-box" id="s9-summary">
+          <h3>Session Summary</h3>
+          <ul>
+            <li>Conda creates isolated environments that prevent "dependency hell" and enable reproducible bioinformatics</li>
+            <li>The bioconda channel provides pre-compiled bioinformatics tools: FastQC, STAR, SAMtools, and many more</li>
+            <li>Always activate the correct environment before installing packages; export to YAML for sharing</li>
+            <li>Git tracks every change to analysis scripts; GitHub hosts repositories for backup and collaboration</li>
+            <li>The daily workflow: pull → modify → add → commit → push</li>
+            <li>NASA OSDR consensus pipelines provide environment YAML files — always include environment files with published code</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s9');</script>
+</body></html>

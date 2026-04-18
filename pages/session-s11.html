@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 11 · DEG Pipeline: Quantification &amp; Analysis · PhilSA-ISMDD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="starfield" aria-hidden="true"></div>
+<div id="app">
+  <nav id="main-nav"><div class="nav-inner">
+    <a href="../index.html" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/><circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/><circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/></svg>
+      <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+    </a>
+    <div class="nav-right"><button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon" id="theme-icon">☀️</span><span id="theme-label">Light Mode</span></button></div>
+  </div></nav>
+
+  <div class="content-area">
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 3 · Session 11</div>
+        <div class="sidebar-session-title">DEG Pipeline: Quantification &amp; Analysis</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s11-recap">11.1 Where We Left Off</a></li>
+          <li><a href="#s11-rsem">11.2 RSEM Quantification</a></li>
+          <li><a href="#s11-ref" class="toc-sub">11.2.1 Building the RSEM Index</a></li>
+          <li><a href="#s11-quant" class="toc-sub">11.2.2 Running Quantification</a></li>
+          <li><a href="#s11-matrix" class="toc-sub">11.2.3 Count Matrices</a></li>
+          <li><a href="#s11-clean">11.3 Pre-DESeq2 Cleaning</a></li>
+          <li><a href="#s11-rrna" class="toc-sub">11.3.1 rRNA Removal</a></li>
+          <li><a href="#s11-techrep" class="toc-sub">11.3.2 Technical Replicates</a></li>
+          <li><a href="#s11-deseq2">11.4 DESeq2 Analysis</a></li>
+          <li><a href="#s11-contrasts" class="toc-sub">11.4.1 Contrasts</a></li>
+          <li><a href="#s11-viz">11.5 Visualization</a></li>
+          <li><a href="#s11-volcano" class="toc-sub">11.5.1 Volcano Plots</a></li>
+          <li><a href="#s11-pca" class="toc-sub">11.5.2 PCA</a></li>
+          <li><a href="#s11-heatmap" class="toc-sub">11.5.3 Heatmaps</a></li>
+          <li><a href="#s11-pathways">11.6 Pathway Analysis</a></li>
+          <li><a href="#s11-ora" class="toc-sub">11.6.1 ORA</a></li>
+          <li><a href="#s11-gsea" class="toc-sub">11.6.2 GSEA</a></li>
+          <li><a href="#s11-validation">11.7 Validation</a></li>
+          <li><a href="#s11-notebooks">Notebooks</a></li>
+          <li><a href="#s11-summary">Session Summary</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">All Sessions</div><div id="all-sessions-nav"></div></div>
+    </aside>
+
+    <main class="content-main">
+      <div class="session-hero">
+        <div class="session-badge">Module 3 · Session 11</div>
+        <h1 class="session-main-title">DEG Pipeline: Quantification &amp; Analysis</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">RSEM</span>
+          <span class="topic-pill">Count matrices</span>
+          <span class="topic-pill">DESeq2 / PyDESeq2</span>
+          <span class="topic-pill">Volcano plots</span>
+          <span class="topic-pill">PCA · Heatmaps</span>
+          <span class="topic-pill">ORA · GSEA</span>
+          <span class="topic-pill">GLDS-525</span>
+        </div>
+      </div>
+      <div class="objectives-box">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Explain how RSEM uses an expectation-maximization algorithm to resolve multi-mapping reads</li>
+          <li>Assemble per-sample RSEM outputs into a unified raw count matrix and TPM matrix</li>
+          <li>Filter rRNA genes and merge technical replicates before DESeq2 analysis</li>
+          <li>Run DESeq2 (via PyDESeq2) and correctly interpret all contrasts for the GLDS-525 dataset</li>
+          <li>Generate and interpret volcano plots, PCA plots, and heatmaps from DESeq2 output</li>
+          <li>Perform Over-Representation Analysis (ORA) and Gene Set Enrichment Analysis (GSEA)</li>
+          <li>Validate pipeline results against NASA GeneLab pre-computed outputs using Pearson correlation</li>
+        </ul>
+      </div>
+      <div class="content-body">
+
+        <h2 id="s11-recap">11.1 Where We Left Off — Pipeline Recap</h2>
+        <p>Session 10 took us from raw FASTQ files through quality control, adapter trimming, genome indexing, and STAR alignment. Each of the 29 GLDS-525 mouse samples now has two BAM files: a <strong>coordinate-sorted BAM</strong> (for visualization and QC) and a <strong>transcriptome-aligned BAM</strong> (the input to RSEM). This session picks up at quantification and carries the analysis through to biological pathway interpretation.</p>
+
+        <div class="pipeline-flow">
+          <div class="pipeline-step"><div class="pipeline-step-icon">✅</div><div class="pipeline-step-name">QC Done</div><div class="pipeline-step-tool">Session 10</div></div>
+          <div class="pipeline-step active"><div class="pipeline-step-icon">🔢</div><div class="pipeline-step-name">Quantify</div><div class="pipeline-step-tool">RSEM</div></div>
+          <div class="pipeline-step active"><div class="pipeline-step-icon">📊</div><div class="pipeline-step-name">DEG</div><div class="pipeline-step-tool">DESeq2</div></div>
+          <div class="pipeline-step active"><div class="pipeline-step-icon">🖼️</div><div class="pipeline-step-name">Visualize</div><div class="pipeline-step-tool">Python</div></div>
+          <div class="pipeline-step active"><div class="pipeline-step-icon">🧬</div><div class="pipeline-step-name">Pathways</div><div class="pipeline-step-tool">ORA/GSEA</div></div>
+          <div class="pipeline-step active"><div class="pipeline-step-icon">✅</div><div class="pipeline-step-name">Validate</div><div class="pipeline-step-tool">vs GeneLab</div></div>
+        </div>
+
+        <h2 id="s11-rsem">11.2 RSEM Gene Quantification</h2>
+        <p>STAR alignment tells us <em>where</em> each read maps. RSEM answers the harder question: <em>how many reads came from each gene?</em> This is complicated by multi-mapping reads — reads that align equally well to two or more genomic locations. Simple counting tools like featureCounts discard these reads entirely. RSEM instead uses an <strong>Expectation-Maximization (EM) algorithm</strong> to distribute them probabilistically, recovering more signal — particularly important for genes in paralogous families.</p>
+
+        <div class="callout callout-info">
+          <div class="callout-title">💡 EM Algorithm in RSEM</div>
+          <p>The EM algorithm alternates between two steps: the <strong>E-step</strong> (estimate how likely each multi-mapping read came from each transcript, given current expression estimates) and the <strong>M-step</strong> (update expression estimates based on those assignments). After convergence, the result is a set of <code>expected_count</code> values — fractional counts that sum correctly across multi-mappers. These expected counts are what DESeq2 uses.</p>
+        </div>
+
+        <h3 id="s11-ref">11.2.1 Building the RSEM Reference Index</h3>
+        <p>Just as STAR requires a genome index, RSEM requires a transcript-centric reference index built from the same FASTA and GTF files. This is a one-time step taking 30–60 minutes:</p>
+        <pre><code>rsem-prepare-reference \
+  --gtf Mus_musculus.GRCm39.112_and_ERCC92.gtf \
+  Mus_musculus.GRCm39.dna.primary_assembly_and_ERCC92.fa \
+  rsem_ref/Mus_musculus.GRCm39_and_ERCC92</code></pre>
+
+        <h3 id="s11-quant">11.2.2 Running Quantification Per Sample</h3>
+        <pre><code>rsem-calculate-expression \
+  --bam \
+  --paired-end \
+  --strandedness forward \
+  --estimate-rspd \
+  --append-names \
+  --no-bam-output \
+  -p {threads} \
+  {sample}_Aligned.toTranscriptome.out.bam \
+  rsem_ref/Mus_musculus.GRCm39_and_ERCC92 \
+  rsem_output/{sample}</code></pre>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">⚠️ Strandedness Must Match Library Protocol</div>
+          <p>The <code>--strandedness forward</code> flag tells RSEM that reads originate from the same strand as the gene. Using the wrong strandedness setting can reduce quantification accuracy by 10–30%. If unsure, run <code>infer_experiment.py</code> from RSeQC on one BAM file before running all samples. The GLDS-525 library is confirmed forward-stranded in its assay table on OSDR.</p>
+        </div>
+
+        <h3 id="s11-matrix">11.2.3 Assembling Count and TPM Matrices</h3>
+        <p>Each sample produces a <code>.genes.results</code> file. We extract two key columns and merge them across all 29 samples into two matrices:</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Matrix</th><th>Column Used</th><th>Used For</th></tr></thead>
+          <tbody>
+            <tr><td>Raw count matrix</td><td><code>expected_count</code></td><td>DESeq2 differential expression — requires integer-like counts</td></tr>
+            <tr><td>TPM matrix</td><td><code>TPM</code></td><td>Cross-sample visualization, expression level comparisons</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s11-clean">11.3 Pre-DESeq2 Data Cleaning</h2>
+
+        <h3 id="s11-rrna">11.3.1 Removing rRNA Genes</h3>
+        <p>Ribosomal RNA (rRNA) genes are extraordinarily highly expressed — they can represent 80–90% of total cellular RNA. Even after poly-A selection or rRNA depletion during library preparation, some rRNA contamination reaches the count matrix. Including rRNA genes can severely distort DESeq2 normalization and mask biologically meaningful signals. We filter them out using the list of rRNA gene IDs extracted from the GTF in Session 10.</p>
+
+        <h3 id="s11-techrep">11.3.2 Merging Technical Replicates</h3>
+        <p>In GLDS-525, samples F1, G1, and V5 were each sequenced twice (labeled <code>_techrep1</code> and <code>_techrep2</code>). Technical replicates come from the <em>same biological sample</em> sequenced at different times — they contain no additional biological information. The correct approach is to <strong>sum the counts</strong> from both runs, which is equivalent to combining the read files before alignment. After merging, the count matrix has 29 columns (one per biological sample), not 32.</p>
+
+        <h2 id="s11-deseq2">11.4 Differential Expression with DESeq2 (PyDESeq2)</h2>
+        <p>The pipeline uses <strong>PyDESeq2</strong>, a Python implementation of the DESeq2 algorithm that produces results nearly identical to the R version. DESeq2's statistical approach — negative binomial modeling with empirical Bayes shrinkage of dispersions and fold changes — is particularly well-suited to the small-n design of most spaceflight experiments.</p>
+
+        <h3 id="s11-contrasts">11.4.1 Contrasts: Three Pairwise Comparisons</h3>
+        <p>GLDS-525 has three experimental groups: Space Flight (FLT), Ground Control (GC), and Vivarium Control (VIV). DESeq2 tests all three pairwise contrasts:</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Contrast</th><th>Biological Question</th><th>Most Informative For</th></tr></thead>
+          <tbody>
+            <tr><td><strong>FLT vs. GC</strong></td><td>What changes with spaceflight compared to a habitat-matched ground control?</td><td>Pure spaceflight effect, controlling for habitat hardware</td></tr>
+            <tr><td><strong>FLT vs. VIV</strong></td><td>What changes with spaceflight compared to standard vivarium housing?</td><td>Total effect of the ISS environment vs. Earth baseline</td></tr>
+            <tr><td><strong>GC vs. VIV</strong></td><td>What changes from vivarium to the same habitat hardware on Earth?</td><td>Hardware/confinement effects independent of spaceflight</td></tr>
+          </tbody>
+        </table></div>
+        <pre><code># Pre-filtering: remove genes with < 10 total counts (GeneLab criterion)
+filtered_counts = counts_df[counts_df.sum(axis=1) >= 10]
+
+# Significance thresholds (matching GeneLab):
+LOG2FC_CUTOFF = 1.0    # |log2FC| > 1 (2× fold change)
+PADJ_CUTOFF   = 0.05   # Adjusted p-value < 5%</code></pre>
+
+        <h2 id="s11-viz">11.5 Visualization</h2>
+
+        <h3 id="s11-volcano">11.5.1 Volcano Plots</h3>
+        <p>A volcano plot displays every tested gene as a point — x-axis = log₂ fold change, y-axis = −log₁₀(padj). The "volcano" shape emerges because most genes cluster near the center (small change, uncertain significance), while significant DEGs erupt into the upper-left (downregulated) and upper-right (upregulated) quadrants.</p>
+        <div class="callout callout-tip">
+          <div class="callout-title">💡 Reading Volcano Plots</div>
+          <p>Genes that are statistically significant but have tiny fold changes (bottom of the spike) often represent real but biologically minor changes — common in large experiments. Genes in the far upper corners, with both large |log₂FC| AND very small padj, are the most confidently and dramatically changed. These are your primary candidates for biological follow-up.</p>
+        </div>
+
+        <h3 id="s11-pca">11.5.2 Principal Component Analysis</h3>
+        <p>PCA is the first plot to generate after normalization — it is your "sanity check." Samples from the same experimental group should cluster together; FLT, GC, and VIV should separate from each other. The pipeline uses <strong>VST (Variance-Stabilizing Transformation)</strong> counts for PCA, which prevents highly expressed genes from dominating the analysis. If one sample clusters with the wrong group, it may indicate mislabeling, poor RNA quality, or an outlier that should be removed.</p>
+
+        <h3 id="s11-heatmap">11.5.3 Heatmaps of Top DEGs</h3>
+        <p>Heatmaps display the top 50 DEGs per contrast as a color grid (rows = genes, columns = samples). <strong>Z-score normalization</strong> is applied row-wise so that expression patterns are comparable across genes with very different absolute expression levels. Hierarchical clustering of both rows and columns reveals co-regulated gene modules and sample groupings that emerge from the expression data independently of the experimental design.</p>
+
+        <h2 id="s11-pathways">11.6 Pathway Analysis: ORA &amp; GSEA</h2>
+
+        <h3 id="s11-ora">11.6.1 Over-Representation Analysis (ORA)</h3>
+        <p>ORA asks: are the DEGs enriched for genes in specific GO categories or KEGG pathways compared to what random chance would predict? It uses a hypergeometric test against a background of all expressed genes. ORA is fast and intuitive but has a key limitation: it only uses the binary DEG/non-DEG classification, ignoring the continuous fold change signal.</p>
+
+        <h3 id="s11-gsea">11.6.2 Gene Set Enrichment Analysis (GSEA)</h3>
+        <p>GSEA avoids the arbitrary cutoff problem of ORA by using the <em>entire ranked gene list</em>. All ~20,000 expressed genes are ranked by their log₂FC (most upregulated to most downregulated). For each gene set, GSEA walks this ranked list and calculates a running enrichment score — increasing when a pathway gene appears, decreasing otherwise. The maximum of this running score is the enrichment score (ES). GSEA detects coordinated subtle shifts in expression that ORA might miss.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Method</th><th>Input</th><th>Question</th><th>Use When</th></tr></thead>
+          <tbody>
+            <tr><td><strong>ORA</strong></td><td>Significant DEG list</td><td>Are DEGs enriched in specific pathways?</td><td>Quick hypothesis-generating exploration</td></tr>
+            <tr><td><strong>GSEA</strong></td><td>All genes ranked by log₂FC</td><td>Do pathway genes coordinately shift?</td><td>Detecting subtle but consistent pathway changes</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s11-validation">11.7 Validation Against GeneLab Pre-Computed Results</h2>
+        <p>After running the complete pipeline, we validate our results against the official GeneLab DEG tables for GLDS-525. We compute the Pearson correlation between our log₂FC values and GeneLab's for each contrast. A correlation of r > 0.99 confirms full pipeline reproducibility. Small differences arise from numerical implementation differences between PyDESeq2 and R DESeq2, but these are not biologically meaningful — the gene lists will be nearly identical.</p>
+
+        <h2 id="s11-notebooks">📓 Session 11 Notebooks</h2>
+        <div class="download-box">
+          <h4>📥 Download Notebooks</h4>
+          <div class="download-grid">
+            <div class="download-item">
+              <div class="download-item-info">
+                <div class="download-item-name">Notebook 3 · RSEM Quantification</div>
+                <div class="download-item-desc">RSEM index · quantification · count matrices · rRNA removal · tech rep merging · validation</div>
+              </div>
+              <a href="../notebooks/03_RSEM_Quantification.ipynb" class="download-btn">⬇ .ipynb</a>
+            </div>
+            <div class="download-item">
+              <div class="download-item-info">
+                <div class="download-item-name">Notebook 4 · DEG Analysis</div>
+                <div class="download-item-desc">DESeq2 · volcano plots · PCA · heatmaps · ORA · GSEA · GeneLab validation</div>
+              </div>
+              <a href="../notebooks/04_DEG_Analysis.ipynb" class="download-btn">⬇ .ipynb</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="summary-box" id="s11-summary">
+          <h3>Session Summary</h3>
+          <ul>
+            <li>RSEM uses the EM algorithm to assign multi-mapping reads probabilistically, producing <code>expected_count</code> values more accurate than simple counting tools</li>
+            <li>Per-sample RSEM outputs are merged into a raw count matrix (for DESeq2) and a TPM matrix (for visualization); rRNA genes are filtered and technical replicates summed before DESeq2</li>
+            <li>DESeq2 tests three contrasts for GLDS-525: FLT vs. GC (pure spaceflight), FLT vs. VIV (total ISS effect), and GC vs. VIV (hardware/confinement effect)</li>
+            <li>Volcano plots reveal significant DEGs; PCA plots validate sample clustering and detect outliers; heatmaps of top DEGs show co-regulated gene modules</li>
+            <li>ORA tests the DEG list against GO/KEGG databases; GSEA uses all genes ranked by log₂FC to detect coordinated pathway shifts without an arbitrary cutoff</li>
+            <li>Validation against GeneLab pre-computed results (r > 0.99) confirms full pipeline reproducibility</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s11');</script>
+</body></html>

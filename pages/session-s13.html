@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 13 · Network Analysis Pipeline Walkthrough · PhilSA-ISMDD</title>
+  
+  
+  
+  <style>
+    :root[data-theme="dark"] {
+      --bg-primary:#0a0d14; --bg-secondary:#111520; --bg-card:#141824; --bg-card-hover:#1a1f2e;
+      --border-color:rgba(255,255,255,0.07); --border-accent:rgba(78,151,255,0.3);
+      --text-primary:#e8eaf0; --text-secondary:#8b93a8; --text-muted:#555c72;
+      --accent-primary:#4e97ff; --accent-teal:#2dd4bf; --accent-purple:#a78bfa;
+      --accent-amber:#fbbf24; --accent-rose:#fb7185; --accent-green:#34d399;
+      --code-bg:#0d1117; --code-border:rgba(78,151,255,0.2);
+      --callout-tip-bg:rgba(45,212,191,0.08); --callout-tip-border:rgba(45,212,191,0.4);
+      --callout-warn-bg:rgba(251,191,36,0.08); --callout-warn-border:rgba(251,191,36,0.4);
+      --callout-info-bg:rgba(78,151,255,0.08); --callout-info-border:rgba(78,151,255,0.4);
+      --callout-rose-bg:rgba(251,113,133,0.08); --callout-rose-border:rgba(251,113,133,0.4);
+      --nav-bg:rgba(10,13,20,0.92); --sidebar-bg:#0d1019;
+      --table-head-bg:rgba(78,151,255,0.1); --table-stripe:rgba(255,255,255,0.02);
+      --shadow-glow:0 0 40px rgba(78,151,255,0.08);
+    }
+    :root[data-theme="light"] {
+      --bg-primary:#f4f6fc; --bg-secondary:#ffffff; --bg-card:#ffffff; --bg-card-hover:#f0f4ff;
+      --border-color:rgba(0,0,0,0.08); --border-accent:rgba(59,100,200,0.3);
+      --text-primary:#1a1f35; --text-secondary:#4a5068; --text-muted:#8b93a8;
+      --accent-primary:#2563eb; --accent-teal:#0d9488; --accent-purple:#7c3aed;
+      --accent-amber:#d97706; --accent-rose:#e11d48; --accent-green:#059669;
+      --code-bg:#f0f4f8; --code-border:rgba(59,100,200,0.15);
+      --callout-tip-bg:rgba(13,148,136,0.06); --callout-tip-border:rgba(13,148,136,0.35);
+      --callout-warn-bg:rgba(217,119,6,0.07); --callout-warn-border:rgba(217,119,6,0.35);
+      --callout-info-bg:rgba(37,99,235,0.06); --callout-info-border:rgba(37,99,235,0.3);
+      --callout-rose-bg:rgba(225,29,72,0.06); --callout-rose-border:rgba(225,29,72,0.3);
+      --nav-bg:rgba(244,246,252,0.95); --sidebar-bg:#eef1f9;
+      --table-head-bg:rgba(37,99,235,0.08); --table-stripe:rgba(0,0,0,0.02);
+      --shadow-glow:0 4px 24px rgba(0,0,0,0.08);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'IBM Plex Sans',sans-serif;font-size:15px;line-height:1.7;background:var(--bg-primary);color:var(--text-primary);transition:background .3s,color .3s;min-height:100vh}
+    #starfield{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0;transition:opacity .5s}
+    [data-theme="dark"] #starfield{opacity:1}
+    .star{position:absolute;border-radius:50%;background:white;animation:twinkle var(--dur,3s) ease-in-out infinite}
+    @keyframes twinkle{0%,100%{opacity:var(--min,.2)}50%{opacity:var(--max,.8)}}
+    #main-nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-color)}
+    .nav-inner{max-width:1400px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between}
+    .nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+    .nav-logo{width:36px;height:36px;flex-shrink:0}
+    .nav-title{font-family:'Orbitron',monospace;font-size:13px;font-weight:600;color:var(--text-primary);line-height:1.3}
+    .nav-title span{display:block;font-size:10px;color:var(--accent-teal);font-weight:400;letter-spacing:.05em}
+    .theme-toggle{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--text-secondary);cursor:pointer;font-size:13px;font-family:'IBM Plex Sans',sans-serif;transition:all .2s}
+    .theme-toggle:hover{border-color:var(--accent-primary);color:var(--accent-primary)}
+    #app{position:relative;z-index:1}
+    .content-area{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 60px)}
+    .sidebar{background:var(--sidebar-bg);border-right:1px solid var(--border-color);padding:28px 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border-color) transparent}
+    .sidebar-back{display:block;padding:0 20px 16px;color:var(--accent-primary);text-decoration:none;font-size:13px;font-weight:500}
+    .sidebar-back:hover{color:var(--accent-teal)}
+    .sidebar-section{padding:0 20px 20px}
+    .sidebar-session-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-teal);margin-bottom:6px}
+    .sidebar-session-title{font-size:14px;font-weight:600;color:var(--text-primary);line-height:1.4}
+    .sidebar-section-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px}
+    .sidebar-toc{list-style:none}
+    .sidebar-toc li{margin-bottom:2px}
+    .sidebar-toc a{display:block;padding:5px 12px;color:var(--text-secondary);text-decoration:none;font-size:13px;border-radius:6px;border-left:2px solid transparent;transition:all .15s}
+    .sidebar-toc a.toc-sub{padding-left:24px;font-size:12px}
+    .sidebar-toc a:hover,.sidebar-toc a.active{color:var(--accent-primary);background:var(--bg-card);border-left-color:var(--accent-primary)}
+    .sidebar-divider{height:1px;background:var(--border-color);margin:8px 20px 20px}
+    .content-main{padding:40px 48px 80px;max-width:860px}
+    .session-hero{margin-bottom:32px}
+    .session-badge{display:inline-block;font-family:'Orbitron',monospace;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-teal);background:var(--callout-tip-bg);border:1px solid var(--callout-tip-border);border-radius:20px;padding:4px 12px;margin-bottom:16px}
+    .session-main-title{font-family:'Orbitron',monospace;font-size:clamp(22px,3vw,32px);font-weight:700;line-height:1.2;margin-bottom:16px;background:linear-gradient(135deg,var(--text-primary) 60%,var(--accent-primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .session-topic-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .topic-pill{font-size:12px;padding:4px 12px;border-radius:20px;background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-secondary);font-family:'IBM Plex Mono',monospace}
+    .objectives-box{background:var(--bg-card);border:1px solid var(--border-accent);border-radius:12px;padding:24px 28px;margin-bottom:36px;box-shadow:var(--shadow-glow)}
+    .objectives-box h3{font-size:15px;font-weight:600;color:var(--accent-primary);margin-bottom:14px}
+    .objectives-box ul{list-style:none}
+    .objectives-box li{padding:5px 0 5px 22px;position:relative;color:var(--text-secondary);font-size:14px}
+    .objectives-box li::before{content:'▸';position:absolute;left:0;color:var(--accent-teal)}
+    .content-body h2{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--text-primary);margin:40px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--border-color);scroll-margin-top:80px}
+    .content-body h3{font-size:15px;font-weight:600;color:var(--accent-primary);margin:28px 0 12px;scroll-margin-top:80px}
+    .content-body p{color:var(--text-secondary);margin-bottom:16px}
+    .content-body strong{color:var(--text-primary);font-weight:600}
+    .content-body em{color:var(--accent-teal);font-style:italic}
+    .content-body a{color:var(--accent-primary);text-underline-offset:3px}
+    .content-body a:hover{color:var(--accent-teal)}
+    pre{background:var(--code-bg);border:1px solid var(--code-border);border-radius:10px;padding:20px 24px;overflow-x:auto;margin:16px 0 24px}
+    pre code{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent-teal);line-height:1.65}
+    code{font-family:'IBM Plex Mono',monospace;font-size:.875em;background:var(--code-bg);border:1px solid var(--code-border);border-radius:4px;padding:1px 6px;color:var(--accent-purple)}
+    pre code{background:none;border:none;padding:0;color:inherit}
+    .callout{border-radius:10px;padding:16px 20px;margin:20px 0;font-size:14px}
+    .callout-title{font-weight:600;margin-bottom:8px;font-size:14px}
+    .callout p,.callout ul{margin:0;font-size:14px}
+    .callout ul{padding-left:18px}
+    .callout li{margin-bottom:4px;color:var(--text-secondary)}
+    .callout-tip{background:var(--callout-tip-bg);border-left:3px solid var(--callout-tip-border)}
+    .callout-tip .callout-title{color:var(--accent-teal)}
+    .callout-warning{background:var(--callout-warn-bg);border-left:3px solid var(--callout-warn-border)}
+    .callout-warning .callout-title{color:var(--accent-amber)}
+    .callout-info{background:var(--callout-info-bg);border-left:3px solid var(--callout-info-border)}
+    .callout-info .callout-title{color:var(--accent-primary)}
+    .callout-rose{background:var(--callout-rose-bg);border-left:3px solid var(--callout-rose-border)}
+    .callout-rose .callout-title{color:var(--accent-rose)}
+    .table-wrap{overflow-x:auto;margin:16px 0 24px;border-radius:10px;border:1px solid var(--border-color)}
+    table{width:100%;border-collapse:collapse;font-size:13.5px}
+    thead{background:var(--table-head-bg)}
+    th{padding:10px 14px;text-align:left;font-weight:600;color:var(--accent-primary);font-size:12px;letter-spacing:.04em;border-bottom:1px solid var(--border-color)}
+    td{padding:9px 14px;border-bottom:1px solid var(--border-color);color:var(--text-secondary)}
+    tr:last-child td{border-bottom:none}
+    tr:nth-child(even) td{background:var(--table-stripe)}
+    td code{font-size:12px}
+
+    /* Pipeline flow */
+    .pipeline-flow{display:flex;gap:0;align-items:stretch;margin:24px 0;overflow-x:auto;padding:4px}
+    .pipeline-step{flex:1;min-width:110px;background:var(--bg-card);border:1px solid var(--border-color);padding:16px 10px;text-align:center;position:relative;transition:background .2s}
+    .pipeline-step:first-child{border-radius:8px 0 0 8px}
+    .pipeline-step:last-child{border-radius:0 8px 8px 0}
+    .pipeline-step:not(:last-child)::after{content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--accent-primary);font-size:18px;z-index:1;background:var(--bg-primary);padding:2px}
+    .pipeline-step:not(:last-child){margin-right:2px}
+    .pipeline-step:hover{background:var(--bg-card-hover);border-color:var(--accent-primary)}
+    .pipeline-step-icon{font-size:22px;margin-bottom:6px}
+    .pipeline-step-name{font-size:11px;font-weight:600;color:var(--text-primary);margin-bottom:3px}
+    .pipeline-step-tool{font-size:10px;color:var(--accent-teal);font-family:'IBM Plex Mono',monospace}
+    .pipeline-step.active{border-color:var(--accent-primary);background:var(--callout-info-bg)}
+
+    /* Tool box */
+    .tool-box{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 24px}
+    .tool-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:14px 16px;transition:border-color .2s}
+    .tool-card:hover{border-color:var(--border-accent)}
+    .tool-card-name{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+    .tool-card-name .tool-icon{font-size:16px}
+    .tool-card-desc{font-size:12px;color:var(--text-secondary);line-height:1.5}
+    .tool-card-link{display:inline-block;margin-top:6px;font-size:11px;color:var(--accent-primary);font-family:'IBM Plex Mono',monospace;text-decoration:none}
+    .tool-card-link:hover{color:var(--accent-teal)}
+
+    /* Hub gene table highlight */
+    .hub-rank-1{color:var(--accent-amber)!important;font-weight:700}
+    .hub-rank-top{color:var(--accent-green)!important;font-weight:600}
+
+    /* Cite box */
+    .cite-box{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:16px 20px;margin:20px 0;font-size:13px;color:var(--text-secondary);line-height:1.6}
+    .cite-box strong{color:var(--accent-primary);display:block;margin-bottom:4px;font-size:12px;letter-spacing:.05em;text-transform:uppercase}
+
+    /* Summary */
+    .summary-box{background:var(--bg-card);border:1px solid var(--border-accent);border-radius:12px;padding:28px;margin-top:48px}
+    .summary-box h3{font-family:'Orbitron',monospace;font-size:15px;font-weight:700;color:var(--accent-primary);margin-bottom:16px}
+    .summary-box ul{list-style:none}
+    .summary-box li{padding:5px 0 5px 22px;position:relative;color:var(--text-secondary);font-size:14px}
+    .summary-box li::before{content:'✓';position:absolute;left:0;color:var(--accent-green);font-weight:700}
+
+    @media(max-width:900px){
+      .content-area{grid-template-columns:1fr}
+      .sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border-color)}
+      .content-main{padding:24px 20px 60px}
+      .pipeline-flow{flex-direction:column}
+      .pipeline-step{border-radius:8px!important;margin-right:0!important;margin-bottom:4px}
+      .pipeline-step:not(:last-child)::after{content:'↓';right:50%;top:auto;bottom:-18px;transform:translateX(50%)}
+      .tool-box{grid-template-columns:1fr}
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+<div id="starfield" aria-hidden="true"></div>
+<div id="app">
+
+  <nav id="main-nav"><div class="nav-inner">
+    <a href="../index.html" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/>
+        <circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/>
+        <circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/>
+        <circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/>
+      </svg>
+      <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+    </a>
+    <button class="theme-toggle" onclick="toggleTheme()"><span id="theme-icon">☀️</span><span id="theme-label">Light Mode</span></button>
+  </div></nav>
+
+  <div class="content-area">
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 4 · Session 12</div>
+        <div class="sidebar-session-title">Network Analysis Pipeline Walkthrough</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s12-overview">12.1 What is Network Analysis?</a></li>
+          <li><a href="#s12-paper" class="toc-sub">12.1.2 The Reference Paper</a></li>
+          <li><a href="#s12-pipeline">12.2 Pipeline Overview</a></li>
+          <li><a href="#s12-tools" class="toc-sub">12.2.1 Tools Required</a></li>
+          <li><a href="#s12-degs">12.3 From DEGs to a PPI Network</a></li>
+          <li><a href="#s12-idmap" class="toc-sub">12.3.1 ID Mapping in UniProt</a></li>
+          <li><a href="#s12-string" class="toc-sub">12.3.2 STRING Network Construction</a></li>
+          <li><a href="#s12-cytoscape">12.4 Network Visualization in Cytoscape</a></li>
+          <li><a href="#s12-plugins" class="toc-sub">12.4.1 Essential Plugins</a></li>
+          <li><a href="#s12-hubba">12.5 Hub Gene Identification</a></li>
+          <li><a href="#s12-degree" class="toc-sub">12.5.1 Degree Centrality</a></li>
+          <li><a href="#s12-betweenness" class="toc-sub">12.5.2 Betweenness Centrality</a></li>
+          <li><a href="#s12-results" class="toc-sub">12.5.3 Hub Genes of the I4 Mission</a></li>
+          <li><a href="#s12-fea">12.6 Functional Enrichment Analysis</a></li>
+          <li><a href="#s12-go" class="toc-sub">12.6.1 Gene Ontology Terms</a></li>
+          <li><a href="#s12-kegg" class="toc-sub">12.6.2 KEGG Pathways</a></li>
+          <li><a href="#s12-validation">12.7 Cross-Validation with SOMA</a></li>
+          <li><a href="#s12-summary">Session Summary</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">All Sessions</div><div id="all-sessions-nav"></div></div>
+    </aside>
+
+    <main class="content-main">
+      <div class="session-hero">
+        <div class="session-badge">Module 4 · Session 12</div>
+        <h1 class="session-main-title">Network Analysis Pipeline Walkthrough</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">PPI Networks</span>
+          <span class="topic-pill">STRING</span>
+          <span class="topic-pill">Cytoscape</span>
+          <span class="topic-pill">cytoHubba</span>
+          <span class="topic-pill">Hub Genes</span>
+          <span class="topic-pill">Centrality Measures</span>
+          <span class="topic-pill">FEA / GO / KEGG</span>
+          <span class="topic-pill">Inspiration4</span>
+        </div>
+      </div>
+
+      <div class="objectives-box">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Explain how protein–protein interaction (PPI) networks reveal biological relationships that DEG lists alone cannot capture</li>
+          <li>Convert a DEG list from Ensembl gene IDs to UniProt/SwissProt protein identifiers using the UniProt ID mapping tool</li>
+          <li>Construct a filtered PPI network in the STRING webserver and export it to Cytoscape</li>
+          <li>Install and configure the cytoHubba, stringApp, and yFiles plugins in Cytoscape</li>
+          <li>Distinguish between degree centrality and betweenness centrality, and explain when each is most informative</li>
+          <li>Identify hub genes by intersecting the top-ranked nodes from two centrality measures</li>
+          <li>Perform functional enrichment analysis (GO and KEGG) on hub genes using ShinyGO and interpret the results in a spaceflight biology context</li>
+          <li>Validate hub gene findings by cross-referencing expression across multiple spaceflight datasets in SOMA</li>
+        </ul>
+      </div>
+
+      <div class="content-body">
+
+        <!-- 12.1 -->
+        <h2 id="s12-overview">12.1 What is Network Analysis?</h2>
+        <p>Differential expression analysis (Sessions 9–10) gives us a list of genes that change significantly between conditions. But a list of genes tells us relatively little on its own — genes do not act in isolation. They encode proteins that form physical complexes, regulate each other's transcription, and participate in multi-step biochemical pathways. <strong>Network analysis</strong> treats this web of interactions as a graph and uses mathematical measures to identify which proteins are most central to the network's structure and function.</p>
+        <p>In a <strong>protein–protein interaction (PPI) network</strong>, each node is a protein and each edge is a known or predicted interaction between two proteins. Highly connected nodes — called <strong>hub genes</strong> — correspond to proteins that participate in many interactions, making them likely to be essential to cellular function. Disrupting a hub gene has outsized consequences compared to disrupting a peripheral node, which is why hubs are particularly interesting targets for understanding disease, drug resistance, and — in our context — the physiological response to spaceflight.</p>
+
+        <div class="callout callout-info">
+          <div class="callout-title">💡 Why Network Analysis After DEG Analysis?</div>
+          <p>Multi-omics data from spaceflight are massive and complex in nature. One way of uncovering important information is analyzing them as networks. While DESeq2 tells you <em>which</em> genes change, network analysis tells you <em>which of those changes are most biologically consequential</em> — by revealing which altered proteins sit at the center of the molecular interaction landscape.</p>
+        </div>
+
+        <h3 id="s12-paper">12.1.2 The Reference Paper</h3>
+        <p>This session is structured around a study published by researchers from the Philippine Space Agency: <strong>"Uncovering Hub Genes in Short Duration Spaceflight"</strong> (Gasatan, Improso &amp; Macalalad, PhilSA). The paper analyzes transcriptomic data from civilian astronauts in the <strong>SpaceX Inspiration4 (I4) mission</strong> — the first all-civilian orbital spaceflight — to identify hub genes affected by short-duration space exposure.</p>
+
+        <div class="cite-box">
+          <strong>📄 Reference</strong>
+          Gasatan M. J. B., Improso W. D. G., &amp; Macalalad E. P. (2025). Uncovering Hub Genes in Short Duration Spaceflight. Philippine Space Agency. Available at: <a href="https://philsa.gov.ph/research/uncovering-hub-genes-in-short-duration-spaceflight/" target="_blank" rel="noopener">philsa.gov.ph/research/uncovering-hub-genes-in-short-duration-spaceflight/</a>
+        </div>
+
+        <p>The I4 mission carried four crew members on a 3-day orbital flight with no prior spaceflight experience. Their blood transcriptomes were sequenced before and after the mission, capturing the rapid molecular response to microgravity and cosmic radiation in a naive human population — making it a uniquely clean dataset for studying the immediate effects of the space environment.</p>
+
+        <!-- 12.2 Pipeline -->
+        <h2 id="s12-pipeline">12.2 Full Pipeline Overview</h2>
+        <p>The network analysis pipeline picks up exactly where Session 10's DEG analysis ends. The DEG list from DESeq2 (or an equivalent tool) is the raw input. From there, four major stages transform that list into validated biological insight:</p>
+
+        <div class="pipeline-flow">
+          <div class="pipeline-step active">
+            <div class="pipeline-step-icon">🧬</div>
+            <div class="pipeline-step-name">DEG List</div>
+            <div class="pipeline-step-tool">From S9–10</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-icon">🔁</div>
+            <div class="pipeline-step-name">ID Mapping</div>
+            <div class="pipeline-step-tool">UniProt</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-icon">🕸️</div>
+            <div class="pipeline-step-name">PPI Network</div>
+            <div class="pipeline-step-tool">STRING</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-icon">🖥️</div>
+            <div class="pipeline-step-name">Visualization</div>
+            <div class="pipeline-step-tool">Cytoscape</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-icon">🎯</div>
+            <div class="pipeline-step-name">Hub Genes</div>
+            <div class="pipeline-step-tool">cytoHubba</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-icon">📊</div>
+            <div class="pipeline-step-name">FEA</div>
+            <div class="pipeline-step-tool">ShinyGO</div>
+          </div>
+          <div class="pipeline-step">
+            <div class="pipeline-step-icon">✅</div>
+            <div class="pipeline-step-name">Validation</div>
+            <div class="pipeline-step-tool">SOMA</div>
+          </div>
+        </div>
+
+        <h3 id="s12-tools">12.2.1 Tools Required</h3>
+        <div class="tool-box">
+          <div class="tool-card">
+            <div class="tool-card-name"><span class="tool-icon">🔁</span> UniProt ID Mapping</div>
+            <div class="tool-card-desc">Converts Ensembl gene IDs to UniProt/SwissProt protein accessions. Filters out non-coding genes automatically since only coding genes have SwissProt entries.</div>
+            <a class="tool-card-link" href="https://www.uniprot.org/id-mapping/" target="_blank" rel="noopener">uniprot.org/id-mapping/</a>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-name"><span class="tool-icon">🕸️</span> STRING v12.0</div>
+            <div class="tool-card-desc">Curated protein–protein interaction database integrating physical and functional associations from experiments, co-expression, text mining, and databases.</div>
+            <a class="tool-card-link" href="https://string-db.org" target="_blank" rel="noopener">string-db.org</a>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-name"><span class="tool-icon">🖥️</span> Cytoscape v3.10+</div>
+            <div class="tool-card-desc">Desktop application for network visualization and analysis. Free and open-source. Required plugins: stringApp, cytoHubba, yFiles Layout Algorithms.</div>
+            <a class="tool-card-link" href="https://cytoscape.org/download.html" target="_blank" rel="noopener">cytoscape.org/download.html</a>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-name"><span class="tool-icon">📊</span> ShinyGO v0.82</div>
+            <div class="tool-card-desc">Web-based functional enrichment tool for Gene Ontology (BP, CC, MF) and KEGG pathway analysis. No account required. Produces publication-quality figures.</div>
+            <a class="tool-card-link" href="http://bioinformatics.sdstate.edu/go/" target="_blank" rel="noopener">bioinformatics.sdstate.edu/go/</a>
+          </div>
+        </div>
+
+        <!-- 12.3 -->
+        <h2 id="s12-degs">12.3 From DEGs to a PPI Network</h2>
+        <p>The I4 mission transcriptomic data is available on OSDR at <a href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-569" target="_blank" rel="noopener">OSD-569</a>. The DEG dataset was derived from direct RNA sequencing of astronaut blood, as reported by Grigorev et al. (2024), yielding <strong>437 differentially expressed genes</strong> across timepoints before and after the 3-day flight. These gene IDs are in Ensembl format (<code>ENSG...</code>) — but STRING and Cytoscape work with protein identifiers, so the first step is a conversion.</p>
+
+        <h3 id="s12-idmap">12.3.1 ID Mapping in UniProt</h3>
+        <p>Navigate to <a href="https://www.uniprot.org/id-mapping/" target="_blank" rel="noopener">uniprot.org/id-mapping/</a>. Paste your Ensembl gene ID list, set <strong>From: Ensembl</strong> and <strong>To: UniProtKB/Swiss-Prot</strong>, and run the mapping. Only protein-coding genes have SwissProt entries — non-coding RNAs, pseudogenes, and lncRNAs will not map and are automatically excluded.</p>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">💡 Swiss-Prot vs TrEMBL</div>
+          <p>UniProt has two sections: <strong>Swiss-Prot</strong> (manually reviewed, high quality) and <strong>TrEMBL</strong> (automatically annotated). Always map to Swiss-Prot for PPI network construction — this ensures your protein entries have been manually curated for accuracy. The PhilSA paper filtered 437 DEGs down to <strong>332 coding genes</strong> this way, discarding 105 non-coding genes.</p>
+        </div>
+
+        <h3 id="s12-string">12.3.2 Constructing the PPI Network in STRING</h3>
+        <p>With your 332 UniProt IDs ready, go to <a href="https://string-db.org" target="_blank" rel="noopener">string-db.org</a> and use <strong>Multiple Proteins → Search</strong>. Paste your protein list and set the organism to <em>Homo sapiens</em>. Apply the following three filters before exporting:</p>
+
+        <div class="table-wrap"><table>
+          <thead><tr><th>Filter</th><th>Value Used</th><th>Why It Matters</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Organism</strong></td><td>Homo sapiens</td><td>Ensures human-specific interaction data is used; prevents cross-species predictions</td></tr>
+            <tr><td><strong>Minimum interaction score</strong></td><td>High confidence (0.700)</td><td>Removes low-confidence predicted interactions; retains only well-supported edges</td></tr>
+            <tr><td><strong>FDR stringency</strong></td><td>0.05</td><td>Controls the false positive rate in the network; limits inclusion of spurious interactions</td></tr>
+          </tbody>
+        </table></div>
+
+        <p>After applying filters, remove any <strong>disconnected nodes</strong> (proteins with no edges under your score threshold) — these cannot contribute to hub analysis. Export the network using <strong>Exports → TSV format</strong> and then open it in Cytoscape via <strong>File → Import → Network from File</strong>.</p>
+
+        <div class="callout callout-info">
+          <div class="callout-title">💡 The I4 PPI Network at a Glance</div>
+          <p>After applying all filters, the PhilSA study's network retained <strong>207 nodes</strong> and <strong>1,568 edges</strong> from the original 332 coding genes. The high edge density (average ~15 edges per node) reflects the highly interconnected nature of blood transcriptome proteins, many of which are part of broad regulatory complexes.</p>
+        </div>
+
+        <!-- 12.4 -->
+        <h2 id="s12-cytoscape">12.4 Network Visualization in Cytoscape</h2>
+        <p>Cytoscape is a desktop application for network visualization and analysis. Once you import your STRING network, the raw layout will appear as an unstructured "hairball" — visually dense and difficult to interpret. Plugins and layout algorithms transform this into a readable, publication-quality figure.</p>
+
+        <h3 id="s12-plugins">12.4.1 Essential Cytoscape Plugins</h3>
+        <p>Install these three plugins from <strong>Apps → App Manager</strong> inside Cytoscape:</p>
+
+        <div class="table-wrap"><table>
+          <thead><tr><th>Plugin</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><strong>stringApp</strong></td><td>Imports STRING networks directly into Cytoscape, preserving interaction scores and edge annotations. Also enables enrichment queries within Cytoscape.</td></tr>
+            <tr><td><strong>cytoHubba</strong></td><td>Calculates centrality measures (degree, betweenness, closeness, and others) for all nodes and ranks them. Used to identify hub genes in Section 12.5.</td></tr>
+            <tr><td><strong>yFiles Layout Algorithms</strong></td><td>Provides advanced graph layout algorithms. The <strong>yFiles Circular Layout</strong> is particularly useful for visualizing hub gene subnetworks cleanly.</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">💡 Clean Visualization Tip — Display Names</div>
+          <p>When STRING imports a network, node labels default to UniProt accession numbers (e.g. <code>P62979</code>), which are not readable in a figure. Under the <strong>Style</strong> tab in Cytoscape, click the <strong>Label</strong> mapping, set the Column to <strong>display name</strong>, and the nodes will show human gene symbols (e.g. <code>UBA52</code>) instead — essential for any figure you plan to publish or present.</p>
+        </div>
+
+        <!-- 12.5 -->
+        <h2 id="s12-hubba">12.5 Hub Gene Identification with cytoHubba</h2>
+        <p>Hub genes are highly connected nodes in the PPI network. Because they participate in more interactions, they are more likely to be involved in essential biological processes — disrupting them has broader consequences than disrupting peripheral nodes. The cytoHubba plugin computes multiple centrality metrics simultaneously; we use two complementary measures to identify robust hubs.</p>
+
+        <h3 id="s12-degree">12.5.1 Degree Centrality</h3>
+        <p><strong>Degree centrality</strong> is the simplest measure: it is simply the number of edges (interactions) a node has. A protein with a high degree interacts with many other proteins in the network, suggesting it participates in diverse biological processes or acts as a scaffold in a large complex.</p>
+
+        <pre><code>Degree(v) = number of edges incident to node v
+
+# High-degree nodes in the I4 PPI network:
+# UBA52 → Degree 57 (Rank 1)
+# FAU   → Degree 55 (Rank 2, tied with RACK1)
+# RACK1 → Degree 55 (Rank 2, tied with FAU)</code></pre>
+
+        <h3 id="s12-betweenness">12.5.2 Betweenness Centrality</h3>
+        <p><strong>Betweenness centrality</strong> measures how often a node lies on the <em>shortest path</em> between any two other nodes. A protein with high betweenness acts as a critical bridge — information or signals passing through the network must flow through it. Removing a high-betweenness node can fragment the network into disconnected components, which is why these nodes are particularly important biologically.</p>
+
+        <pre><code>Betweenness(v) = Σ (σ_st(v) / σ_st)  for all pairs s≠v≠t
+
+# where σ_st = number of shortest paths from s to t
+#       σ_st(v) = number of those paths passing through v
+
+# High-betweenness nodes in the I4 PPI network:
+# UBA52 → Score 5733.13 (Rank 1)
+# RPS15 → Score 2826.23 (Rank 7)
+# FAU   → Score 2224.53 (Rank 10)</code></pre>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">💡 Why Use Two Measures?</div>
+          <p>Degree captures <em>local</em> connectivity (how many direct neighbors a node has), while betweenness captures <em>global</em> network position (how critical a node is for connecting distant parts of the network). A gene that ranks highly in <em>both</em> measures is a more confident hub than one that excels in only one. The PhilSA paper selected genes in the <strong>top 30 of both measures</strong> as the final hub gene set.</p>
+        </div>
+
+        <h3 id="s12-results">12.5.3 Hub Genes of the Inspiration4 Mission</h3>
+        <p>Applying both centrality measures to the I4 PPI network identified <strong>8 hub genes</strong> present in the top 30 rankings of both degree and betweenness. Their scores are shown below:</p>
+
+        <div class="table-wrap"><table>
+          <thead><tr><th>Hub Gene</th><th>Degree Rank</th><th>Degree Score</th><th>Betweenness Rank</th><th>Betweenness Score</th><th>Known Function</th></tr></thead>
+          <tbody>
+            <tr><td class="hub-rank-1">UBA52</td><td>1</td><td>57</td><td>1</td><td>5733.13</td><td>Ubiquitin + ribosomal protein L40 fusion; proteasome &amp; ribosome</td></tr>
+            <tr><td class="hub-rank-top">FAU</td><td>2</td><td>55</td><td>10</td><td>2224.53</td><td>Ubiquitin-like + ribosomal protein S30 fusion; 40S subunit</td></tr>
+            <tr><td class="hub-rank-top">RACK1</td><td>2</td><td>55</td><td>12</td><td>2108.15</td><td>Receptor for activated C kinase 1; ribosomal protein &amp; scaffold</td></tr>
+            <tr><td>RPS2</td><td>4</td><td>54</td><td>19</td><td>1162.47</td><td>40S ribosomal protein S2</td></tr>
+            <tr><td>RPS11</td><td>4</td><td>54</td><td>20</td><td>1156.49</td><td>40S ribosomal protein S11</td></tr>
+            <tr><td>RPS15</td><td>7</td><td>53</td><td>7</td><td>2826.23</td><td>40S ribosomal protein S15</td></tr>
+            <tr><td>RPS14</td><td>11</td><td>52</td><td>23</td><td>1013.13</td><td>40S ribosomal protein S14</td></tr>
+            <tr><td>RPL35</td><td>21</td><td>49</td><td>26</td><td>920.39</td><td>60S ribosomal protein L35</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="callout callout-rose">
+          <div class="callout-title">🔬 Biological Insight — The Ribosomal Signature</div>
+          <p>All eight hub genes encode <strong>ribosomal proteins (RPs)</strong> — components of either the 40S small subunit (RPS genes) or 60S large subunit (RPL35, UBA52, FAU). This convergence on a single functional category is striking and biologically meaningful: it suggests that short-duration spaceflight specifically disrupts the protein synthesis machinery at a molecular network level, beyond what a simple DEG count reveals.</p>
+        </div>
+
+        <!-- 12.6 -->
+        <h2 id="s12-fea">12.6 Functional Enrichment Analysis (FEA)</h2>
+        <p>With 8 hub genes identified, the next step is to ask: <em>what biological functions are overrepresented in this list compared to what we would expect by chance?</em> Functional enrichment analysis (FEA) answers this by testing whether the hub gene list contains significantly more genes associated with specific GO terms or KEGG pathways than a random sample of the same size.</p>
+        <p>The analysis is performed using <a href="http://bioinformatics.sdstate.edu/go/" target="_blank" rel="noopener">ShinyGO v0.82</a>. Paste the 8 hub gene symbols into the input box, set organism to <em>Homo sapiens</em>, and use an FDR threshold of 0.05. Only terms with FDR &lt; 0.05 are considered significant.</p>
+
+        <h3 id="s12-go">12.6.1 Gene Ontology (GO) Results</h3>
+        <p>Gene Ontology classifies genes along three orthogonal axes. The I4 hub genes produced significant enrichment in all three categories:</p>
+
+        <div class="table-wrap"><table>
+          <thead><tr><th>GO Category</th><th>Significant Terms</th><th>Interpretation</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Biological Process (BP)</strong></td><td>Translation · Peptide metabolic process · Peptide biosynthetic process · Cytoplasmic translation · Amide biosynthetic process</td><td>Hub genes collectively drive the production of proteins from mRNA — the core translation machinery is disrupted</td></tr>
+            <tr><td><strong>Cellular Component (CC)</strong></td><td>Ribosome · Ribosomal subunit · Cytosolic ribosome · Small ribosomal subunit · Cytosolic small ribosomal subunit</td><td>Hub genes physically localize to the ribosome complex, especially the 40S small subunit</td></tr>
+            <tr><td><strong>Molecular Function (MF)</strong></td><td>Structural molecule activity · Structural constituent of ribosome · RNA binding · Nucleic acid binding · mRNA binding</td><td>Hub gene products provide the structural scaffold of the ribosome and directly contact mRNA</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3 id="s12-kegg">12.6.2 KEGG Pathway Results</h3>
+        <p>The KEGG pathway analysis identified two significantly enriched pathways: <strong>Ribosome</strong> and <strong>COVID-19</strong>. The COVID-19 pathway co-enrichment is a known artifact — the SARS-CoV-2 virus hijacks host ribosomes for viral protein production, so ribosomal proteins appear in the COVID-19 pathway annotation. This result does not imply a biological connection to COVID-19 in the spaceflight context and is not interpreted further.</p>
+        <p>The dominant KEGG signal — the <strong>Ribosome pathway</strong> — powerfully corroborates the GO results: the hub genes of the I4 spaceflight transcriptome are almost exclusively ribosomal in nature.</p>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">⚠️ Interpreting COVID-19 in KEGG Enrichment Results</div>
+          <p>When you run FEA on ribosomal protein gene lists, COVID-19 will frequently appear as a significant KEGG pathway. This is because COVID-19 pathway annotations include many host ribosomal proteins that the virus co-opts. Always check the gene members of an enriched pathway before interpreting it biologically — the presence of a pathway name does not guarantee a direct biological connection to the experimental condition.</p>
+        </div>
+
+        <!-- 12.7 -->
+        <h2 id="s12-validation">12.7 Cross-Validation with SOMA</h2>
+        <p>A finding is only as strong as its replication. The PhilSA study validated the 8 hub genes by cross-referencing their expression across three independent spaceflight datasets in the <strong>Space Omics and Medical Atlas (SOMA)</strong> — a publicly available international astronaut biobank.</p>
+
+        <div class="table-wrap"><table>
+          <thead><tr><th>Dataset</th><th>Mission</th><th>Duration</th><th>Hub Gene Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>I4 Data</strong></td><td>SpaceX Inspiration4</td><td>3 days</td><td>Source dataset — all 8 hubs identified here</td></tr>
+            <tr><td><strong>NASA Twins Study</strong></td><td>ISS (OSD-530)</td><td>340 days</td><td>All 8 hub genes consistently differentially expressed</td></tr>
+            <tr><td><strong>JAXA Cell-Free RNA</strong></td><td>ISS JAXA (OSD-530)</td><td>120 days</td><td>All 8 hub genes consistently differentially expressed</td></tr>
+          </tbody>
+        </table></div>
+
+        <p>The fact that the same 8 ribosomal protein hub genes are differentially expressed across missions spanning <strong>3 to 340 days</strong> — covering civilian and professional astronauts, different mission profiles, and different measurement technologies — is a remarkably consistent signal. It suggests that ribosomal protein dysregulation is a <em>universal and early-onset</em> response to the space environment, not a peculiarity of any single mission.</p>
+
+        <div class="callout callout-tip">
+          <div class="callout-title">💡 Biological Significance — Ribosome Biogenesis and Spaceflight</div>
+          <ul>
+            <li><strong>Ribosome biogenesis disruption</strong> is caused by altered expression of ribosomal components and is linked to cell cycle arrest, senescence, and apoptosis</li>
+            <li>This interference is associated with cancer and age-related degenerative diseases — both conditions already known to have elevated risk in spaceflight</li>
+            <li>The space environment is increasingly recognized as an accelerator of biological ageing; ribosomal protein dysregulation may be one molecular mechanism underlying this observation</li>
+            <li>Under cellular stress, decreased ribosome activity leads to reduced protein synthesis and growth arrest — suggesting spaceflight may trigger a conserved stress-response program at the translational level</li>
+          </ul>
+        </div>
+
+        <div class="summary-box" id="s12-summary">
+          <h3>Session Summary</h3>
+          <ul>
+            <li>PPI network analysis extends DEG analysis by revealing which differentially expressed proteins occupy central positions in the molecular interaction landscape — revealing hub genes that may be missed by fold-change ranking alone</li>
+            <li>The pipeline flows: DEGs → UniProt ID mapping (coding only) → STRING PPI (confidence ≥ 0.7, FDR &lt; 0.05) → Cytoscape (with stringApp, cytoHubba, yFiles) → hub gene ranking → FEA (ShinyGO) → cross-validation (SOMA)</li>
+            <li>Degree centrality counts direct interactions; betweenness centrality measures global bridge importance — intersecting the top 30 of both measures gives robust, reproducible hub genes</li>
+            <li>The 8 hub genes of the Inspiration4 mission (UBA52, FAU, RACK1, RPS2, RPS11, RPS14, RPS15, RPL35) all encode ribosomal proteins, revealing a consistent spaceflight signature of translational disruption</li>
+            <li>FEA with ShinyGO confirmed ribosome-related GO and KEGG terms as significantly enriched; COVID-19 KEGG co-enrichment is a known artifact of ribosomal protein gene sets and should not be over-interpreted</li>
+            <li>SOMA cross-validation showed the same 8 hub genes are differentially expressed across 3-day, 120-day, and 340-day missions, suggesting ribosomal protein dysregulation is a universal and early-onset response to spaceflight</li>
+          </ul>
+        </div>
+
+      </div><!-- /content-body -->
+    
+        <div class="download-box">
+          <h4>📄 Reference Paper</h4>
+          <div class="download-grid">
+            <div class="download-item">
+              <div class="download-item-info">
+                <div class="download-item-name">Uncovering Hub Genes in Short Duration Spaceflight</div>
+                <div class="download-item-desc">Gasatan, Improso &amp; Macalalad · Philippine Space Agency · 2025</div>
+              </div>
+              <a href="../assets/philsa-hub-genes-paper.pdf" class="download-btn">⬇ PDF</a>
+            </div>
+          </div>
+        </div>
+</main>
+  </div>
+</div>
+
+<script>
+(function(){
+  const sf=document.getElementById('starfield');
+  for(let i=0;i<120;i++){
+    const s=document.createElement('div');s.className='star';
+    const sz=Math.random()*2.5+0.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*4}s;--min:${0.1+Math.random()*0.2};--max:${0.6+Math.random()*0.4};animation-delay:${Math.random()*4}s;`;
+    sf.appendChild(s);
+  }
+})();
+function toggleTheme(){
+  const html=document.documentElement,isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  document.getElementById('theme-icon').textContent=isDark?'🌙':'☀️';
+  document.getElementById('theme-label').textContent=isDark?'Dark Mode':'Light Mode';
+  localStorage.setItem('theme',isDark?'light':'dark');
+}
+(function(){
+  const t=localStorage.getItem('theme');
+  if(t&&t!=='dark'){document.documentElement.setAttribute('data-theme',t);document.getElementById('theme-icon').textContent='🌙';document.getElementById('theme-label').textContent='Dark Mode';}
+})();
+const tocLinks=document.querySelectorAll('.sidebar-toc a[href^="#"]');
+new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){tocLinks.forEach(l=>l.classList.remove('active'));const a=document.querySelector(`.sidebar-toc a[href="#${e.target.id}"]`);if(a)a.classList.add('active');}});
+},{rootMargin:'-20% 0px -70% 0px'}).observe(...[document.querySelectorAll('h2[id],h3[id]')].flatMap(nl=>[...nl]));,{id:'s9',label:'Session 9 · DEG Pipeline'},{id:'s10',label:'Session 10 · DEG Worksheet'},{id:'s11',label:'Session 11 · NASA OSDR'},{id:'s12',label:'Session 12 · Network Pipeline'},{id:'s13',label:'Session 13 · Network Worksheet'}];
+  nav.innerHTML=ss.map(s=>{const ic=s.id===c;return `<a href="session-${s.id}.html" style="display:block;padding:5px 12px;font-size:12px;color:${ic?'var(--accent-primary)':'var(--text-muted)'};text-decoration:none;border-radius:6px;background:${ic?'var(--bg-card)':'transparent'};border-left:2px solid ${ic?'var(--accent-primary)':'transparent'};">${s.label}</a>`;}).join('');
+}
+buildSessionNav('s13');
+// fix observer for multiple nodes
+document.querySelectorAll('h2[id],h3[id]').forEach(el=>{new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){tocLinks.forEach(l=>l.classList.remove('active'));const a=document.querySelector(`.sidebar-toc a[href="#${e.target.id}"]`);if(a)a.classList.add('active');}});},{rootMargin:'-20% 0px -70% 0px'}).observe(el);});
+</script>
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s13');</script>
+</body>
+</html>

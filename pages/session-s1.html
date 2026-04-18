@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 1 · Introduction to Space Biology · PhilSA-ISMDD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="starfield" aria-hidden="true"></div>
+<div id="app">
+  <nav id="main-nav"><div class="nav-inner">
+    <a href="../index.html" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/><circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/><circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/><circle cx="30" cy="22" r="2" fill="var(--accent-primary)" opacity="0.7"/></svg>
+      <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+    </a>
+    <div class="nav-right"><button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon" id="theme-icon">☀️</span><span id="theme-label">Light Mode</span></button></div>
+  </div></nav>
+  <div class="content-area">
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 1 · Session 1</div>
+        <div class="sidebar-session-title">Introduction to Space Biology</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s1-what">1.1 What is Space Biology?</a></li>
+          <li><a href="#s1-why" class="toc-sub">1.1.1 Why Study Life in Space?</a></li>
+          <li><a href="#s1-env">1.2 The Space Environment</a></li>
+          <li><a href="#s1-microgravity" class="toc-sub">1.2.1 Microgravity</a></li>
+          <li><a href="#s1-radiation" class="toc-sub">1.2.2 Space Radiation</a></li>
+          <li><a href="#s1-other" class="toc-sub">1.2.3 Other Stressors</a></li>
+          <li><a href="#s1-physio">1.3 Physiological Effects on Astronauts</a></li>
+          <li><a href="#s1-missions">1.4 Key Space Biology Missions</a></li>
+          <li><a href="#s1-twin" class="toc-sub">1.4.1 NASA Twin Study</a></li>
+          <li><a href="#s1-osdr" class="toc-sub">1.4.2 NASA OSDR</a></li>
+          <li><a href="#s1-philsa">1.5 PhilSA & Space Biology</a></li>
+          <li><a href="#s1-summary">Session Summary</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">All Sessions</div><div id="all-sessions-nav"></div></div>
+    </aside>
+    <main class="content-main">
+      <div class="session-hero">
+        <div class="session-badge">Module 1 · Session 1</div>
+        <h1 class="session-main-title">Introduction to Space Biology</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">Space environment</span>
+          <span class="topic-pill">Microgravity biology</span>
+          <span class="topic-pill">Space radiation</span>
+          <span class="topic-pill">ISS experiments</span>
+          <span class="topic-pill">NASA Twin Study</span>
+          <span class="topic-pill">Spaceflight physiology</span>
+        </div>
+      </div>
+      <div class="objectives-box">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Define space biology and explain its relevance to human deep-space exploration</li>
+          <li>Identify the major physical stressors present in the spaceflight environment and their biological consequences</li>
+          <li>Describe how microgravity, radiation, and other stressors affect organisms at the cellular and systems level</li>
+          <li>Summarize key findings from landmark space biology missions including the NASA Twin Study</li>
+          <li>Explain how NASA OSDR and GeneLab make spaceflight biological data accessible to researchers worldwide</li>
+          <li>Appreciate the Philippine Space Agency's contributions to space biology research</li>
+        </ul>
+      </div>
+      <div class="content-body">
+
+        <h2 id="s1-what">1.1 What is Space Biology?</h2>
+        <p><strong>Space biology</strong> — also called space life sciences or astrobiology in its broader form — is the scientific discipline that studies how living organisms respond, adapt, and survive in the space environment. It encompasses research conducted aboard spacecraft, orbital stations like the International Space Station (ISS), and ground-based analogs that simulate spaceflight conditions.</p>
+        <p>The field sits at the intersection of physiology, molecular biology, genetics, ecology, and biomedical science. Its outputs are critically important for two reasons: understanding <strong>fundamental biology</strong> (space provides unique experimental conditions impossible on Earth) and enabling <strong>safe long-duration human spaceflight</strong> as humanity prepares for missions to the Moon and Mars.</p>
+
+        <h3 id="s1-why">1.1.1 Why Study Life in Space?</h3>
+        <p>The space environment is simultaneously a threat and an opportunity. As a threat, it exposes organisms to conditions that damage biological systems — high-energy radiation, unloading of gravity, disrupted circadian cycles, and confinement. As an opportunity, the removal of Earth's dominant physical forces reveals hidden biological processes that gravity normally masks.</p>
+        <div class="callout callout-info">
+          <div class="callout-title">💡 A Unique Scientific Window</div>
+          <p>Many cellular processes — from bone formation to plant root growth — are so strongly gravity-dependent that we cannot fully separate gravitational effects from other signals on Earth. Microgravity experiments aboard the ISS provide a unique window into the fundamental biology of these processes by removing gravity as a variable entirely.</p>
+        </div>
+
+        <h2 id="s1-env">1.2 The Space Environment</h2>
+        <p>The International Space Station orbits Earth at approximately 408 km altitude, completing one orbit every 90 minutes. Crew members are simultaneously exposed to multiple physical stressors that have no terrestrial equivalent and no easy way to be studied in isolation.</p>
+
+        <h3 id="s1-microgravity">1.2.1 Microgravity</h3>
+        <p>Astronauts in low Earth orbit experience <strong>microgravity</strong> — approximately 10⁻⁶ g. This is not "zero gravity" (Earth's gravitational field still acts on the station) but rather a state of continuous freefall that eliminates the mechanical loading that gravity normally imposes on all biological systems.</p>
+        <p>At the cellular level, microgravity removes <strong>mechanotransduction</strong> signals — the mechanical forces that cells sense and respond to through cytoskeletal tension and receptor activation. This disrupts normal cell signaling in almost every tissue type.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>System</th><th>Effect of Microgravity</th><th>Mechanism</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Skeletal muscle</strong></td><td>Atrophy of 1–2% muscle mass per month without countermeasures; fiber-type shift toward fast-twitch (fatigue-susceptible) fibers</td><td>Reduced mechanical loading removes anabolic signals; increased protein degradation via ubiquitin-proteasome pathway</td></tr>
+            <tr><td><strong>Bone</strong></td><td>Density loss of 1–2% per month in weight-bearing bones; increased fracture risk</td><td>Osteoclast activity exceeds osteoblast activity in unloaded bone; altered Wnt and RANKL signaling</td></tr>
+            <tr><td><strong>Cardiovascular</strong></td><td>Cephalad fluid shift; cardiac atrophy; orthostatic intolerance upon return</td><td>Loss of hydrostatic pressure gradient; reduced cardiac preload; vascular remodeling</td></tr>
+            <tr><td><strong>Immune system</strong></td><td>Impaired T-cell activation; altered cytokine profiles; reactivation of latent viruses (EBV, VZV, CMV)</td><td>Changed cell-cell signaling in 3D vs. 2D environments; stress hormone elevation</td></tr>
+            <tr><td><strong>Neuro-ocular</strong></td><td>Spaceflight-associated neuro-ocular syndrome (SANS): visual changes, optic disc edema</td><td>Cephalad fluid shift increases intracranial pressure; optic nerve sheath distension</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3 id="s1-radiation">1.2.2 Space Radiation</h3>
+        <p>The ISS is partially shielded by Earth's magnetic field, but crew members still receive approximately <strong>0.5–1 mSv per day</strong>, compared to ~3 mSv per year at sea level. Beyond low Earth orbit — on a mission to Mars — exposure rises dramatically to ~300–900 mSv for a round trip.</p>
+        <p>Space radiation includes two primary types: <strong>galactic cosmic rays (GCRs)</strong> — high-energy atomic nuclei from outside our solar system that can penetrate all current spacecraft shielding — and <strong>solar energetic particles (SEPs)</strong> from solar flares and coronal mass ejections, which arrive unpredictably and at intense doses.</p>
+        <div class="callout callout-warning">
+          <div class="callout-title">⚠️ DNA Damage at the Molecular Level</div>
+          <p>High-LET (linear energy transfer) particles from galactic cosmic rays produce <strong>clustered DNA lesions</strong> — multiple double-strand breaks in close proximity — that are far more difficult for cellular repair machinery to fix than the single-strand breaks caused by terrestrial radiation sources. This elevates the risk of carcinogenesis and heritable mutations.</p>
+        </div>
+
+        <h3 id="s1-other">1.2.3 Other Spaceflight Stressors</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Stressor</th><th>Biological Effect</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Psychological isolation &amp; confinement</strong></td><td>HPA axis activation; elevated cortisol; altered immune function; disrupted sleep</td></tr>
+            <tr><td><strong>Circadian disruption</strong></td><td>16 sunrises/sunsets per day on ISS disrupts the suprachiasmatic clock; clock gene oscillations (CLOCK, BMAL1, PER1-3, CRY1-2) flatten in amplitude</td></tr>
+            <tr><td><strong>Altered nutrition &amp; diet</strong></td><td>Reduced caloric intake; changed gut microbiome composition; potential micronutrient shifts</td></tr>
+            <tr><td><strong>Hypercapnia risk</strong></td><td>Elevated CO₂ levels in spacecraft atmosphere (higher than on Earth) may contribute to headaches and SANS</td></tr>
+            <tr><td><strong>Noise &amp; vibration</strong></td><td>Continuous spacecraft noise causes cumulative hearing fatigue; vibration affects vestibular processing</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s1-physio">1.3 Physiological Effects on Astronauts — The Big Picture</h2>
+        <p>When we speak of "the effects of spaceflight," we are describing the integrated outcome of all these stressors acting simultaneously on a single biological system. No single stressor causes the full phenotype — the resulting physiology is an emergent consequence of their interaction. This is what makes space biology uniquely challenging and uniquely interesting.</p>
+        <p>Practically, astronauts undergo extensive countermeasures to mitigate the worst effects: resistive and aerobic exercise (2+ hours per day) to combat muscle and bone loss; nutritional supplementation; sleep aids; and pharmacological interventions. Despite these, most astronauts show measurable physiological changes after long-duration missions, and some effects persist for months after return to Earth.</p>
+        <div class="callout callout-tip">
+          <div class="callout-title">💡 Spaceflight as Accelerated Aging</div>
+          <p>Many effects of long-duration spaceflight — muscle wasting, bone loss, immune dysfunction, cardiovascular deconditioning, cognitive changes — parallel the processes of aging on Earth. This makes astronaut studies a valuable model for accelerated aging research, and conversely, understanding aging biology helps predict and prevent spaceflight hazards.</p>
+        </div>
+
+        <h2 id="s1-missions">1.4 Key Space Biology Missions & Resources</h2>
+
+        <h3 id="s1-twin">1.4.1 The NASA Twin Study (2015–2016)</h3>
+        <p>The most comprehensive human spaceflight biology study to date compared astronaut <strong>Scott Kelly</strong> — who spent 340 days aboard the ISS — to his identical twin brother <strong>Mark Kelly</strong>, who remained on Earth as a ground control. Because the twins share the same genome, differences in omics profiles could be attributed to spaceflight rather than genetic variation.</p>
+        <p>Ten complementary omics analyses were conducted simultaneously, including telomere biology, epigenomics, whole-genome sequencing, transcriptomics, proteomics, metabolomics, and microbiome profiling. Key published findings included:</p>
+        <ul>
+          <li>Telomeres <em>elongated</em> during spaceflight — counterintuitively — but rapidly shortened upon return to Earth</li>
+          <li>~91% of gene expression changes returned to preflight baseline within 6 months post-flight; ~9% showed persistent alteration</li>
+          <li>DNA methylation patterns changed significantly, particularly in immune-related and DNA-repair genes</li>
+          <li>Cognitive performance scores declined during and after the mission, persisting for months post-return</li>
+          <li>Gut microbiome composition shifted during flight and moved toward baseline after landing</li>
+        </ul>
+
+        <h3 id="s1-osdr">1.4.2 NASA Open Science Data Repository (OSDR)</h3>
+        <p>NASA OSDR (<a href="https://osdr.nasa.gov" target="_blank" rel="noopener">osdr.nasa.gov</a>) is the world's largest open repository of spaceflight biology data. It archives omics data, physiological measurements, behavioral data, and metadata from over 500 spaceflight and analog experiments. All data are freely accessible — no login required for most datasets.</p>
+        <p>OSDR is the primary data source for this entire course. In Session 5, you will learn to navigate it in detail. The datasets you analyze in Sessions 10–14 are all real ISS experiments archived in OSDR.</p>
+
+        <h2 id="s1-philsa">1.5 Philippine Space Agency (PhilSA) & Space Biology</h2>
+        <p>The <strong>Philippine Space Agency (PhilSA)</strong>, established in 2019 under Republic Act 11363, is the primary government body responsible for space science, technology, and policy in the Philippines. The Interdisciplinary Space Missions Development Division (ISMDD) pursues research at the intersection of space science and the life sciences, including bioinformatics analysis of spaceflight data.</p>
+        <p>A recent example of PhilSA's space biology research is the study <em>"Uncovering Hub Genes in Short Duration Spaceflight"</em> (Gasatan, Improso, &amp; Macalalad), which analyzed the transcriptome of civilian astronauts from the SpaceX Inspiration4 mission using protein interaction network analysis — the exact pipeline taught in Sessions 13–14 of this course.</p>
+        <div class="callout callout-exercise">
+          <div class="callout-title">🖥️ Pre-Session Reflection</div>
+          <p>Before proceeding to Session 2, take 5 minutes to browse the NASA OSDR homepage at <a href="https://osdr.nasa.gov/bio/repo/" target="_blank" rel="noopener">osdr.nasa.gov/bio/repo/</a>. Note the number and variety of datasets. Consider: which organisms appear most frequently? What types of experiments have been conducted? What questions would you want to answer with this data?</p>
+        </div>
+
+        <div class="summary-box" id="s1-summary">
+          <h3>Session Summary</h3>
+          <ul>
+            <li>Space biology studies how living organisms respond and adapt to the spaceflight environment — microgravity, radiation, confinement, circadian disruption, and altered nutrition</li>
+            <li>Microgravity causes muscle atrophy (1–2%/month), bone density loss, cardiovascular deconditioning, immune dysregulation, and SANS — all through disrupted mechanotransduction and fluid dynamics</li>
+            <li>Space radiation (GCRs and SEPs) causes clustered DNA lesions, activates the DNA damage response, and elevates cancer risk — especially relevant for long-duration deep-space missions</li>
+            <li>The NASA Twin Study demonstrated that ~9% of gene expression changes persist beyond 6 months post-flight, and revealed changes in telomere length, epigenomics, cognition, and the microbiome</li>
+            <li>NASA OSDR hosts 500+ open-access spaceflight datasets — the primary data source for this entire course</li>
+            <li>The Philippine Space Agency contributes to space biology research, including network analysis of spaceflight transcriptomics — the subject of Sessions 13–14</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s1');</script>
+</body></html>

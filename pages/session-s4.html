@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 4 · Introduction to Spaceflight Omics · PhilSA-ISMDD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="starfield" aria-hidden="true"></div>
+<div id="app">
+  <nav id="main-nav"><div class="nav-inner">
+    <a href="../index.html" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/><circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/><circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/></svg>
+      <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+    </a>
+    <div class="nav-right"><button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon" id="theme-icon">☀️</span><span id="theme-label">Light Mode</span></button></div>
+  </div></nav>
+  <div class="content-area">
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 1 · Session 4</div>
+        <div class="sidebar-session-title">Introduction to Spaceflight Omics</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s4-env">3.1 The Spaceflight Environment</a></li>
+          <li><a href="#s4-microgravity" class="toc-sub">3.1.1 Microgravity Effects</a></li>
+          <li><a href="#s4-radiation" class="toc-sub">3.1.2 Radiation</a></li>
+          <li><a href="#s4-responses">3.2 Molecular Responses</a></li>
+          <li><a href="#s4-twin">3.3 NASA Twin Study</a></li>
+          <li><a href="#s4-challenges">3.4 Experimental Challenges</a></li>
+          <li><a href="#s4-summary">Session Summary</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">All Sessions</div><div id="all-sessions-nav"></div></div>
+    </aside>
+    <main class="content-main">
+      <div class="session-hero">
+        <div class="session-badge">Module 1 · Session 4</div>
+        <h1 class="session-main-title">Introduction to Spaceflight Omics</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">Microgravity biology</span>
+          <span class="topic-pill">Space radiation</span>
+          <span class="topic-pill">Physiological stressors</span>
+          <span class="topic-pill">NASA Twin Study</span>
+          <span class="topic-pill">Experimental design</span>
+        </div>
+      </div>
+      <div class="objectives-box">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Identify the major physical stressors present in the spaceflight environment</li>
+          <li>Explain how microgravity, radiation, and other stressors affect biological systems at the molecular level</li>
+          <li>Describe key findings from the NASA Twin Study and their significance for spaceflight biology</li>
+          <li>Recognize the unique experimental design challenges in spaceflight research</li>
+          <li>Understand why multi-omics integration is particularly valuable for spaceflight studies</li>
+        </ul>
+      </div>
+      <div class="content-body">
+        <h2 id="s4-env">3.1 The Spaceflight Environment</h2>
+        <p>The International Space Station (ISS) orbits Earth at approximately 408 km altitude, completing one orbit every 90 minutes. Crew members aboard the ISS are simultaneously exposed to multiple physical stressors that have no equivalent on Earth's surface. Understanding these stressors and their biological effects is essential before analyzing spaceflight omics data — because the data will reflect responses to all of them simultaneously.</p>
+
+        <h3 id="s4-microgravity">3.1.1 Microgravity Effects</h3>
+        <p>In low Earth orbit, astronauts experience <strong>microgravity</strong> (approximately 10⁻⁶ g). At the cellular level, microgravity removes gravity-dependent mechanical signals that cells normally use to maintain structure and function. Effects include: skeletal muscle atrophy (1–2% of muscle mass lost per month without countermeasures), bone density loss (1–2% per month in weight-bearing bones), fluid redistribution toward the upper body (cephalad fluid shift), and immune dysregulation.</p>
+        <p>At the molecular level, transcriptomics studies consistently show dysregulation of genes involved in cytoskeletal organization, mechanotransduction, and myogenesis in response to microgravity.</p>
+
+        <h3 id="s4-radiation">3.1.2 Space Radiation</h3>
+        <p>The ISS is partially shielded by Earth's magnetic field but crew members still receive approximately <strong>0.5–1 mSv per day</strong> (compared to ~3 mSv per year on Earth's surface). This radiation includes galactic cosmic rays (GCRs) — high-energy particles from outside our solar system that can penetrate spacecraft shielding — and solar energetic particles (SEPs) from solar flares. At the molecular level, space radiation causes DNA double-strand breaks, oxidative stress, and activates DNA damage repair pathways detectable by transcriptomics.</p>
+
+        <h2 id="s4-responses">3.2 Molecular Responses to Spaceflight</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Stressor</th><th>Primary Molecular Response</th><th>Observable in Omics Data</th></tr></thead>
+          <tbody>
+            <tr><td>Microgravity</td><td>Muscle fiber type transitions; reduced myosin heavy chain expression; cytoskeletal remodeling</td><td>RNA-seq: downregulation of structural muscle genes; upregulation of proteolytic pathway genes</td></tr>
+            <tr><td>Space radiation</td><td>DNA double-strand break repair; p53 pathway activation; oxidative stress response</td><td>RNA-seq: upregulation of ATM/ATR pathway genes; increased antioxidant gene expression</td></tr>
+            <tr><td>Psychological stress</td><td>HPA axis activation; glucocorticoid signaling; immune modulation</td><td>Transcriptomics: changes in immune cell gene expression; cortisol-responsive gene activation</td></tr>
+            <tr><td>Circadian disruption</td><td>Disruption of clock gene oscillations (CLOCK, BMAL1, PER1/2/3, CRY1/2)</td><td>RNA-seq time-series data: flattened circadian amplitude</td></tr>
+            <tr><td>Altered gut microbiome</td><td>Changes in microbial metabolite production; immune interactions</td><td>Metagenomics: shifts in microbial community composition</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s4-twin">3.3 The NASA Twin Study</h2>
+        <p>The most comprehensive omics study of human spaceflight to date is the NASA Twin Study (2015–2016), which compared astronaut Scott Kelly — who spent 340 days aboard the ISS — to his identical twin brother Mark Kelly, who remained on Earth as a ground control. Because the twins share the same genome, any differences in omics profiles could be attributed to the spaceflight environment rather than genetic variation.</p>
+        <p>Omics data collected included telomere length and telomerase activity, whole-genome sequencing (somatic mutations), epigenomics, transcriptomics (RNA-seq of peripheral blood mononuclear cells), proteomics, metabolomics, and microbiome analysis.</p>
+        <p><strong>Key Findings:</strong></p>
+        <ul>
+          <li><strong>Telomere elongation during spaceflight:</strong> counterintuitively, telomeres lengthened during flight but rapidly shortened upon return</li>
+          <li><strong>Gene expression changes:</strong> ~91% of gene expression changes returned to preflight levels within 6 months, but ~9% showed persistent changes</li>
+          <li><strong>Cognitive performance decline:</strong> cognitive scores were lower after spaceflight, persisting for months post-flight</li>
+          <li><strong>Epigenetic changes:</strong> DNA methylation patterns changed significantly, particularly in immune-related genes</li>
+          <li><strong>Microbiome shifts:</strong> gut microbiome composition changed during flight and returned toward baseline upon landing</li>
+        </ul>
+        <div class="callout callout-tip">
+          <div class="callout-title">💡 Why Multi-Omics?</div>
+          <p>If only one omics layer had been measured, many of the most important findings would have been missed. For example: telomere changes would be invisible in a transcriptomics-only study. The integration of multiple omics layers allows researchers to distinguish which changes are at the DNA level, the RNA level, the protein level, and whether they are consistent across layers.</p>
+        </div>
+
+        <h2 id="s4-challenges">3.4 Experimental Design Challenges</h2>
+        <ul>
+          <li><strong>Sample size limitations:</strong> The ISS typically hosts only 6 astronauts simultaneously. A spaceflight experiment might have n=3–6 biological replicates per group — leading to reduced statistical power and higher false discovery rates.</li>
+          <li><strong>Ground control design:</strong> Defining the appropriate control condition is non-trivial. The gold standard is a 1g centrifuge aboard the ISS, which provides normal gravity in space, isolating microgravity effects specifically.</li>
+          <li><strong>Confounding variables:</strong> Because spaceflight simultaneously presents microgravity, radiation, stress, dietary changes, and circadian disruption, it is often impossible to attribute molecular changes to a single cause.</li>
+        </ul>
+
+        <div class="summary-box" id="s4-summary">
+          <h3>Session Summary</h3>
+          <ul>
+            <li>Spaceflight presents multiple simultaneous biological stressors: microgravity, radiation, psychological stress, altered nutrition, and microbiome disruption</li>
+            <li>These stressors have measurable molecular correlates detectable through omics approaches</li>
+            <li>The NASA Twin Study demonstrated that ~9% of gene expression changes persist beyond 6 months post-flight</li>
+            <li>Small sample sizes, confounding variables, and ground control design are key experimental challenges</li>
+            <li>Multi-omics integration is essential because no single layer captures the full biological picture</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s4');</script>
+</body></html>

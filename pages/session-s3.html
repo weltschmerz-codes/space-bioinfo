@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 3 · Bioinformatics Tools &amp; Databases · PhilSA-ISMDD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/main.css" />
+</head>
+<body>
+<div id="starfield" aria-hidden="true"></div>
+<div id="app">
+  <nav id="main-nav"><div class="nav-inner">
+    <a href="../index.html" class="nav-brand">
+      <svg class="nav-logo" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="var(--accent-primary)" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="18" cy="18" r="11" stroke="var(--accent-primary)" stroke-width="1" fill="none" opacity="0.3"/><circle cx="18" cy="18" r="5" fill="var(--accent-primary)" opacity="0.9"/><circle cx="18" cy="7" r="2.5" fill="var(--accent-teal)"/></svg>
+      <div class="nav-title">Bioinformatics for Space Biology<span>Philippine Space Agency · ISMDD</span></div>
+    </a>
+    <div class="nav-right"><button class="theme-toggle" onclick="toggleTheme()"><span class="theme-icon" id="theme-icon">☀️</span><span id="theme-label">Light Mode</span></button></div>
+  </div></nav>
+
+  <div class="content-area">
+    <aside class="sidebar">
+      <a href="../index.html" class="sidebar-back">← Back to Course</a>
+      <div class="sidebar-section">
+        <div class="sidebar-session-label">Module 1 · Session 3</div>
+        <div class="sidebar-session-title">Bioinformatics Tools &amp; Databases</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Contents</div>
+        <ul class="sidebar-toc">
+          <li><a href="#s3-cats">2.1 Tool Categories</a></li>
+          <li><a href="#s3-align">2.2 Sequence Alignment</a></li>
+          <li><a href="#s3-blast" class="toc-sub">2.2.1 BLAST</a></li>
+          <li><a href="#s3-star" class="toc-sub">2.2.2 STAR & HISAT2</a></li>
+          <li><a href="#s3-deg">2.3 DGE Analysis Tools</a></li>
+          <li><a href="#s3-go">2.4 GO & Pathway Tools</a></li>
+          <li><a href="#s3-db">2.5 Major Databases</a></li>
+          <li><a href="#s3-formats">2.6 File Formats</a></li>
+          <li><a href="#s3-summary">Session Summary</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section"><div class="sidebar-section-title">All Sessions</div><div id="all-sessions-nav"></div></div>
+    </aside>
+
+    <main class="content-main">
+      <div class="session-hero">
+        <div class="session-badge">Module 1 · Session 3</div>
+        <h1 class="session-main-title">Bioinformatics Tools & Databases</h1>
+        <div class="session-topic-pills">
+          <span class="topic-pill">BLAST · STAR · HISAT2</span>
+          <span class="topic-pill">DESeq2 · edgeR · limma</span>
+          <span class="topic-pill">DAVID · g:Profiler · GSEA</span>
+          <span class="topic-pill">NCBI · Ensembl · UniProt · STRING</span>
+          <span class="topic-pill">File formats</span>
+        </div>
+      </div>
+      <div class="objectives-box">
+        <h3>🎯 Learning Objectives</h3>
+        <ul>
+          <li>Categorize bioinformatics tools by their primary function in analysis workflows</li>
+          <li>Explain the principle of sequence alignment and why it underlies most analyses</li>
+          <li>Describe major databases and what types of data they contain</li>
+          <li>Recognize common bioinformatics file formats and their contents</li>
+          <li>Navigate to NCBI, Ensembl, and UniProt to retrieve biological information</li>
+        </ul>
+      </div>
+      <div class="content-body">
+        <h2 id="s3-cats">2.1 Categories of Bioinformatics Tools</h2>
+        <p>Bioinformatics tools can be organized according to the stage of analysis they address. Most RNA-seq-based analyses follow a standard workflow from raw data to biological interpretation.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Analysis Stage</th><th>What It Does</th><th>Example Tools</th></tr></thead>
+          <tbody>
+            <tr><td>Quality Control (QC)</td><td>Evaluates raw sequencing data quality; trims adapters and low-quality bases</td><td>FastQC, Trim Galore, Trimmomatic, MultiQC</td></tr>
+            <tr><td>Read Alignment / Mapping</td><td>Maps short reads to a reference genome or transcriptome</td><td>STAR, HISAT2, BWA, Bowtie2, Salmon, KALLISTO</td></tr>
+            <tr><td>Quantification</td><td>Counts reads per gene or transcript</td><td>featureCounts, HTSeq, Salmon, StringTie</td></tr>
+            <tr><td>Differential Expression Analysis</td><td>Identifies statistically significant changes in gene expression</td><td>DESeq2, edgeR, limma-voom, sleuth</td></tr>
+            <tr><td>Gene Ontology / Pathway Analysis</td><td>Interprets gene lists in biological context</td><td>DAVID, g:Profiler, GSEA, clusterProfiler, Enrichr</td></tr>
+            <tr><td>Visualization</td><td>Generates plots and figures for data exploration</td><td>ggplot2, pheatmap, EnhancedVolcano, UMAP</td></tr>
+            <tr><td>Network Analysis</td><td>Builds and analyzes molecular interaction networks</td><td>STRING, Cytoscape, igraph, WGCNA, NetworkX</td></tr>
+            <tr><td>Variant Calling</td><td>Identifies mutations and polymorphisms from genome data</td><td>GATK, FreeBayes, Strelka2, DeepVariant</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s3-align">2.2 Sequence Alignment Tools</h2>
+        <p>Sequence alignment is one of the most fundamental operations in bioinformatics. It is the process of comparing two or more sequences to find regions of similarity. Almost every downstream analysis — from finding which genome a read came from to identifying homologous proteins — relies on alignment.</p>
+
+        <h3 id="s3-blast">2.2.1 BLAST (Basic Local Alignment Search Tool)</h3>
+        <p>BLAST is the most widely used bioinformatics tool in history. It searches a query sequence (DNA or protein) against a database to find similar sequences. Key BLAST variants: <strong>blastn</strong> (nucleotide vs nucleotide), <strong>blastp</strong> (protein vs protein), <strong>blastx</strong> (translated nucleotide vs protein database).</p>
+        <div class="callout callout-tip">
+          <div class="callout-title">💡 BLAST E-value Explained</div>
+          <p>The E-value (expect value) is the number of hits you would expect to see by chance with a given score. An E-value of 0.001 means you would expect 0.001 random hits of that score in a database of this size — meaning the hit is almost certainly real. A rule of thumb: E &lt; 1e-5 is significant; E &lt; 1e-10 is strong; E &lt; 1e-50 means very high sequence similarity.</p>
+        </div>
+
+        <h3 id="s3-star">2.2.2 STAR and HISAT2: RNA-seq Aligners</h3>
+        <p>For RNA-seq, short reads must be aligned to a reference genome in a <em>splice-aware</em> manner — meaning the aligner must recognize that a read might span an exon-exon junction. Standard aligners like BWA cannot do this. <strong>STAR</strong> (Spliced Transcripts Alignment to a Reference) and <strong>HISAT2</strong> are the two most commonly used splice-aware aligners. STAR is typically faster and preferred for large genomes. HISAT2 uses less memory, making it suitable for servers with limited RAM.</p>
+
+        <h2 id="s3-deg">2.3 Differential Gene Expression Tools</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Tool</th><th>Language</th><th>Statistical Model</th><th>Best Used For</th></tr></thead>
+          <tbody>
+            <tr><td>DESeq2</td><td>R (Bioconductor)</td><td>Negative binomial; empirical Bayes shrinkage of fold changes</td><td>Small sample sizes (n=3–10); recommended by NASA GeneLab consensus pipeline</td></tr>
+            <tr><td>edgeR</td><td>R (Bioconductor)</td><td>Negative binomial; TMM normalization</td><td>Very small sample sizes; when DESeq2 convergence fails</td></tr>
+            <tr><td>limma-voom</td><td>R (Bioconductor)</td><td>Linear model with precision weights; based on normal distribution</td><td>Larger sample sizes (n&gt;10); complex experimental designs with many covariates</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s3-go">2.4 Gene Ontology and Pathway Analysis Tools</h2>
+        <p>Once a list of DEGs is obtained, the next step is biological interpretation. A list of gene names is not directly interpretable — we need to know what biological processes, molecular functions, or cellular compartments those genes are enriched in. This is the role of Gene Ontology (GO) analysis and pathway enrichment analysis.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Tool</th><th>Access</th><th>Best Feature</th></tr></thead>
+          <tbody>
+            <tr><td>DAVID</td><td>Web (david.ncifcrf.gov)</td><td>Simple web interface; good for quick annotation and pathway clustering</td></tr>
+            <tr><td>g:Profiler</td><td>Web + R package</td><td>Excellent for multi-organism support; regularly updated databases</td></tr>
+            <tr><td>GSEA</td><td>Desktop app + R</td><td>Gene set enrichment without arbitrary fold-change cutoffs; considers rank of all genes</td></tr>
+            <tr><td>clusterProfiler</td><td>R (Bioconductor)</td><td>Comprehensive R-based enrichment; integrates with ggplot2 for publication figures</td></tr>
+            <tr><td>Enrichr</td><td>Web (maayanlab.cloud/Enrichr)</td><td>Fast; over 200 gene set libraries; accepts gene lists directly</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s3-db">2.5 Major Databases</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Database</th><th>URL</th><th>Contents</th></tr></thead>
+          <tbody>
+            <tr><td>NCBI GenBank / SRA</td><td>ncbi.nlm.nih.gov</td><td>All nucleotide sequences; raw sequencing reads (SRA); protein sequences (RefSeq)</td></tr>
+            <tr><td>Ensembl</td><td>ensembl.org</td><td>Annotated reference genomes for hundreds of species; used by GeneLab pipelines</td></tr>
+            <tr><td>UniProt / Swiss-Prot</td><td>uniprot.org</td><td>Curated protein sequences, function annotations, domain information, literature links</td></tr>
+            <tr><td>STRING</td><td>string-db.org</td><td>Protein interaction networks; integrates experimental evidence, co-expression, text mining</td></tr>
+            <tr><td>Reactome</td><td>reactome.org</td><td>Curated human biological pathways; used for pathway enrichment analysis</td></tr>
+            <tr><td>Gene Ontology (GO)</td><td>geneontology.org</td><td>Standardized vocabulary for gene function; three aspects: biological process, molecular function, cellular component</td></tr>
+            <tr><td>NCBI GEO</td><td>ncbi.nlm.nih.gov/geo</td><td>Gene expression data repository; microarray and RNA-seq datasets including spaceflight studies</td></tr>
+            <tr><td>NASA OSDR / GeneLab</td><td>osdr.nasa.gov</td><td>Spaceflight-specific omics data; raw + processed + metadata + DEG results for 500+ studies</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2 id="s3-formats">2.6 Common Bioinformatics File Formats</h2>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Format</th><th>Extension</th><th>Contents</th></tr></thead>
+          <tbody>
+            <tr><td>FASTQ</td><td>.fastq / .fq / .fastq.gz</td><td>Raw sequencing reads with quality scores; 4 lines per read</td></tr>
+            <tr><td>FASTA</td><td>.fa / .fasta</td><td>Sequence data without quality scores; used for reference genomes and protein sequences</td></tr>
+            <tr><td>SAM / BAM</td><td>.sam / .bam</td><td>Aligned reads; BAM is the compressed binary version; used after STAR/HISAT2 alignment</td></tr>
+            <tr><td>GTF / GFF</td><td>.gtf / .gff3</td><td>Gene annotation file; defines gene and exon coordinates on the reference genome</td></tr>
+            <tr><td>CSV / TSV</td><td>.csv / .tsv</td><td>Count matrices and DESeq2 results; comma- or tab-separated text tables</td></tr>
+            <tr><td>BED</td><td>.bed</td><td>Genomic interval coordinates; used for ChIP-seq peaks, ATAC-seq peaks</td></tr>
+            <tr><td>VCF</td><td>.vcf</td><td>Variant Call Format; SNPs and indels from variant calling pipelines</td></tr>
+          </tbody>
+        </table></div>
+
+        <div class="summary-box" id="s3-summary">
+          <h3>Session Summary</h3>
+          <ul>
+            <li>Bioinformatics tools are organized by pipeline stage: QC → alignment → quantification → differential expression → pathway analysis</li>
+            <li>BLAST performs sequence similarity searches; STAR and HISAT2 perform splice-aware RNA-seq alignment</li>
+            <li>DESeq2, edgeR, and limma-voom are the three major differential expression tools; DESeq2 is preferred for small sample sizes</li>
+            <li>GO and pathway tools (DAVID, g:Profiler, GSEA, clusterProfiler) translate gene lists into biological meaning</li>
+            <li>FASTQ → SAM/BAM → count matrix → CSV/TSV is the standard file progression in an RNA-seq pipeline</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="../js/sessions.js"></script>
+<script src="../js/main.js"></script>
+<script>buildSessionNav('s3');</script>
+</body></html>
